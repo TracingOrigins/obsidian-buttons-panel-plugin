@@ -6,7 +6,7 @@
 
 ---
 
-## ✨ 功能特性
+## ✨ 功能介绍
 
 - 🎯 **快速访问**：一键打开文件、执行命令、访问链接或运行脚本
 - 🎨 **图标选择器**：集成 Lucide 图标库，支持搜索和预览
@@ -21,7 +21,7 @@
 
 ---
 
-## 🚀 安装
+## 🚀 下载安装
 
 1. 下载最新版本的插件（[Releases](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/releases)）
 2. 将插件文件夹放入你的 Obsidian 插件目录（通常为 `.obsidian/plugins/`，如 `你的库/.obsidian/plugins/obsidian-buttons-panel-plugin/`）
@@ -123,63 +123,6 @@
 
 ## 🛠️ 开发
 
-### 项目结构
-
-```text
-src/
-├── assets/             # 静态资源
-│   └── icons.json      # Lucide 图标数据
-├── core/               # 核心业务逻辑
-│   └── ActionDispatcher.ts # 动作执行逻辑
-├── services/           # 服务层
-│   ├── CreateFileService.ts # 创建文件服务
-│   ├── ExecuteCommandService.ts # 命令执行服务
-│   ├── OpenFileService.ts # 文件打开服务
-│   ├── OpenUrlService.ts # 链接打开服务
-│   └── RunScriptService.ts # 脚本运行服务
-├── views/              # 视图层组件
-│   ├── ButtonsPanel.ts # 按钮面板视图
-│   └── PanelSettingsView.ts # 面板设置视图
-├── settings/           # 设置相关组件
-│   ├── SettingsTab/    # 设置标签页组件
-│   │   ├── index.ts    # 设置标签页主组件
-│   │   ├── ButtonManagementSection.ts # 按钮管理部分
-│   │   ├── PanelConfigSection.ts # 面板设置部分
-│   │   ├── PathConfigSection.ts # 路径配置部分
-│   │   └── HelpSection.ts # 帮助文档部分
-│   └── modals/         # 设置相关弹窗
-│       ├── ButtonEditModal/ # 按钮编辑弹窗
-│       │   ├── index.ts # 主按钮编辑弹窗
-│       │   ├── NameSection.ts # 名称输入部分
-│       │   ├── IconSection.ts # 图标选择部分
-│       │   ├── ScopeSection.ts # 作用域下拉部分
-│       │   ├── OpenFileSection.ts # 文件选择部分
-│       │   ├── ExcuteCommandSection.ts # 命令选择部分
-│       │   ├── OpenUrlSection.ts # 链接输入部分
-│       │   ├── CreateFileSection.ts # 创建文件输入部分
-│       │   ├── RunScriptSection.ts # 脚本选择部分
-│       ├── CommandSearchModal.ts # 命令搜索弹窗
-│       ├── FileSearchModal.ts # 文件搜索弹窗
-│       ├── FolderSearchModal.ts # 文件夹搜索弹窗
-│       ├── IconSearchModal.ts # 图标搜索弹窗
-│       ├── FileNameSuggestModal.ts # 文件名建议弹窗
-│       ├── CreateCategoryModal.ts # 创建分类弹窗
-│       ├── RenameCategoryModal.ts # 重命名分类弹窗
-│       ├── DeleteButtonModal.ts # 删除按钮确认弹窗
-│       └── DeleteCategoryModal.ts # 删除分类确认弹窗
-├── locales/            # 国际化文件
-│   ├── en.json         # 英文翻译
-│   └── zh.json         # 中文翻译
-├── types/              # 类型定义
-│   ├── index.ts        # 接口和类型
-│   └── plugin.ts       # 插件类型声明
-├── utils/              # 工具函数
-│   ├── i18n.ts         # 国际化工具
-│   ├── path.ts         # 路径处理工具
-│   └── validation.ts   # 表单验证工具
-└── main.ts             # 主入口文件
-```
-
 ### 构建
 
 ```bash
@@ -221,23 +164,6 @@ MIT License
 
 ---
 
-## 📝 更新日志
-
-### v1.0.0
-- 🎉 首个正式版发布！
-- 📋 支持自定义按钮面板，快速访问文件、命令、链接和脚本
-- 🗂️ 分类管理与拖拽排序
-- ⚡ 支持文件、命令、链接及新建文件等多种动作
-- 🖼️ 内置 Lucide 图标选择器
-- 📱 响应式设计，自动适配明暗主题
-- 🎛️ 独立设置标签页，配置更便捷
-- 🧩 侧边栏集成，随时一键打开
-
-### v1.1.0
-- 🔧 重构：重命名一些文件名，更新相关类型和所有引用
-
----
-
-## 致谢
+## 🙏 致谢
 
 本插件部分图标资源来自开源项目 [Lucide](https://github.com/lucide-icons/lucide)，遵循 ISC License 协议。
