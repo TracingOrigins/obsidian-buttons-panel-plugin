@@ -1,10 +1,14 @@
 > Ehglish | [中文](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.zh.md)
 
-# Obsidian Buttons Panel Plugin
+<h1 align="center">Buttons Panel</h1>
 
-A modern Obsidian plugin for creating a customizable button panel to quickly access files, commands, links, and scripts.
-
----
+<p align="center">
+    <img alt="Release version" src="https://img.shields.io/github/v/release/TracingOrigins/obsidian-buttons-panel-plugin?style=for-the-badge">
+    <img alt="Download count" src="https://img.shields.io/github/downloads/TracingOrigins/obsidian-buttons-panel-plugin/total?style=for-the-badge">
+</p>
+<p align="center">
+    <span>Buttons Panel is a modern Obsidian plugin for creating a customizable button panel to quickly access files, commands, links, and scripts.</span>
+</p>
 
 ## ✨ Features
 
@@ -19,15 +23,11 @@ A modern Obsidian plugin for creating a customizable button panel to quickly acc
 - 🔄 **Live Updates**: Changes take effect immediately, no restart required
 - 🛡️ **Form Validation**: Required fields (button name, file path, command ID, URL, folder, script name) are highlighted in red if empty—no intrusive popups
 
----
-
 ## 🚀 Installation
 
 1. Download the latest release ([Releases](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/releases))
 2. Place the plugin folder into your Obsidian plugins directory (usually `.obsidian/plugins/`, e.g. `YourVault/.obsidian/plugins/obsidian-buttons-panel-plugin/`)
 3. Enable the plugin in Obsidian Settings → Community Plugins
-
----
 
 ## 📖 Usage
 
@@ -119,8 +119,6 @@ A modern Obsidian plugin for creating a customizable button panel to quickly acc
 
 > Example: Write batch processing or automation scripts and run them with a single click.
 
----
-
 ## 🛠️ Development
 
 ### Build
@@ -136,8 +134,6 @@ npm run build
 npm run dev
 ```
 
----
-
 ## 🎨 Tech Stack
 
 - **TypeScript**: Type-safe JavaScript
@@ -146,13 +142,9 @@ npm run dev
 - **CSS Grid**: Responsive layout
 - **ESBuild**: Fast build tool
 
----
-
 ## 📄 License
 
 MIT License
-
----
 
 ## 🤝 Contributing
 
@@ -161,8 +153,6 @@ Contributions are welcome! Submit Issues and Pull Requests.
 - For suggestions, bugs, or feature requests, please open a [GitHub Issue](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues)
 - Before contributing, please review the project structure and comments; PRs via branches are recommended
 - Documentation, translation, and style improvements are also welcome
-
----
 
 ## 🙏 Acknowledgements
 

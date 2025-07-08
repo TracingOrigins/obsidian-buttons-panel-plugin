@@ -1,10 +1,14 @@
 > 中文 | [Ehglish](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.md)
 
-# Obsidian 按钮面板插件
+<h1 align="center">Buttons Panel</h1>
 
-一个现代化的 Obsidian 插件，用于创建自定义按钮面板，快速访问文件、命令、链接和脚本。
-
----
+<p align="center">
+    <img alt="Release version" src="https://img.shields.io/github/v/release/TracingOrigins/obsidian-buttons-panel-plugin?style=for-the-badge">
+    <img alt="Download count" src="https://img.shields.io/github/downloads/TracingOrigins/obsidian-buttons-panel-plugin/total?style=for-the-badge">
+</p>
+<p align="center">
+    <span>Buttons Panel 是一个现代化的 Obsidian 插件，用于创建自定义按钮面板，快速访问文件、命令、链接和脚本。</span>
+</p>
 
 ## ✨ 功能介绍
 
@@ -19,15 +23,11 @@
 - 🔄 **实时更新**：设置变更实时生效，无需重启
 - 🛡️ **表单校验**：按钮编辑时，所有必填项（如按钮名称、文件路径、命令ID、网址、文件夹、脚本名称）为空会高亮红色边框，直观提示，**无弹窗打扰**
 
----
-
 ## 🚀 下载安装
 
 1. 下载最新版本的插件（[Releases](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/releases)）
 2. 将插件文件夹放入你的 Obsidian 插件目录（通常为 `.obsidian/plugins/`，如 `你的库/.obsidian/plugins/obsidian-buttons-panel-plugin/`）
 3. 在 Obsidian 设置 → 第三方插件中启用本插件
-
----
 
 ## 📖 使用方法
 
@@ -119,8 +119,6 @@
 
 > 示例：你可以编写批量处理、自动化等高级脚本，并通过按钮一键运行。
 
----
-
 ## 🛠️ 开发
 
 ### 构建
@@ -136,8 +134,6 @@ npm run build
 npm run dev
 ```
 
----
-
 ## 🎨 技术栈
 
 - **TypeScript**: 类型安全的 JavaScript
@@ -146,13 +142,9 @@ npm run dev
 - **CSS Grid**: 响应式布局
 - **ESBuild**: 快速构建工具
 
----
-
 ## 📄 许可证
 
 MIT License
-
----
 
 ## 🤝 贡献
 
@@ -161,8 +153,6 @@ MIT License
 - 如有建议、Bug 或新需求，欢迎在 [GitHub Issues](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues) 提出
 - 参与贡献请先阅读项目代码结构和注释，建议使用分支提交 PR
 - 也欢迎补充文档、翻译、优化样式等方面的贡献
-
----
 
 ## 🙏 致谢
 
