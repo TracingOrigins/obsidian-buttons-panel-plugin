@@ -14,9 +14,9 @@ export class OpenUrlService {
 	 */
 	async openUrl(url: string): Promise<void> {
 		// 确保URL有协议
-		if (!url.startsWith('http://') && !url.startsWith('https://')) {
-			url = 'https://' + url;
-		}
+		// if (!url.startsWith('http://') && !url.startsWith('https://')) {
+		// 	url = 'https://' + url;
+		// }
 		
 		// 在Obsidian中打开外部链接
 		window.open(url, '_blank');
