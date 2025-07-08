@@ -49,7 +49,7 @@ export interface ButtonAction {
  * 面板设置类型。
  * 控制面板的标题、显示方式、布局等。
  */
-export interface PanelSettings {
+export interface PanelConfig {
 	/** 面板标题 */
 	title: string;
 	/** 是否显示标题 */
@@ -68,7 +68,7 @@ export interface PanelSettings {
  * 路径设置类型。
  * 包含模板和脚本文件夹路径。
  */
-export interface PathSettings {
+export interface PathConfig {
 	/** 模板文件夹路径 */
 	templateFolderPath?: string;
 	/** 脚本文件夹路径 */
@@ -83,9 +83,9 @@ export interface ButtonsPanelPluginSettings {
 	/** 分类数组 */
 	categories: CategoryConfig[];
 	/** 面板设置 */
-	panelSettings: PanelSettings;
+	panelConfig: PanelConfig;
 	/** 路径设置 */
-	pathSettings: PathSettings;
+	pathConfig: PathConfig;
 }
 
 /**
@@ -94,7 +94,7 @@ export interface ButtonsPanelPluginSettings {
  */
 export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
 	categories: [],
-	panelSettings: {
+	panelConfig: {
 		title: 'Buttons Panel',
 		showTitle: true,
 		panelHeight: 'auto',
@@ -102,7 +102,7 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
 		panelViewType: 'list',
 		enableAnimation: true,
 	},
-	pathSettings: {
+	pathConfig: {
 		templateFolderPath: 'templates/',
 		scriptFolderPath: 'scripts/',
 	},

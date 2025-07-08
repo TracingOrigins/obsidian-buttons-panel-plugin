@@ -8,7 +8,7 @@ import {t} from '../../utils/i18n';
  * @param plugin 插件实例
  * @param onDisplayRefresh 刷新显示的回调函数
  */
-export function createPanelSettingsSection(
+export function createPanelConfigSection(
 	containerEl: HTMLElement,
 	plugin: ButtonsPanelPlugin,
 	onDisplayRefresh?: () => void
@@ -21,9 +21,9 @@ export function createPanelSettingsSection(
 		.setDesc(t('panel_title_desc', plugin))
 		.addText(text => text
 			.setPlaceholder(t('panel_title_setting', plugin))
-			.setValue(plugin.settings.panelSettings.title)
+			.setValue(plugin.settings.panelConfig.title)
 			.onChange(async (value) => {
-				plugin.settings.panelSettings.title = value;
+				plugin.settings.panelConfig.title = value;
 				await plugin.saveSettings();
 			}));
 
@@ -31,9 +31,9 @@ export function createPanelSettingsSection(
 		.setName(t('show_title', plugin))
 		.setDesc(t('show_title_desc', plugin))
 		.addToggle(toggle => toggle
-			.setValue(plugin.settings.panelSettings.showTitle)
+			.setValue(plugin.settings.panelConfig.showTitle)
 			.onChange(async (value) => {
-				plugin.settings.panelSettings.showTitle = value;
+				plugin.settings.panelConfig.showTitle = value;
 				await plugin.saveSettings();
 			}));
 
@@ -42,13 +42,13 @@ export function createPanelSettingsSection(
 		.setDesc(t('panel_height_desc', plugin))
 		.addText(text => text
 			.setPlaceholder(t('auto', plugin))
-			.setValue(plugin.settings.panelSettings.panelHeight)
+			.setValue(plugin.settings.panelConfig.panelHeight)
 			.onChange(async (value) => {
 				let v = value.trim();
 				if (/^\d+$/.test(v)) {
 					v = v + 'px';
 				}
-				plugin.settings.panelSettings.panelHeight = v;
+				plugin.settings.panelConfig.panelHeight = v;
 				await plugin.saveSettings();
 			}));
 
@@ -59,9 +59,9 @@ export function createPanelSettingsSection(
 			dropdown
 				.addOption('list', t('list_view', plugin))
 				.addOption('tabs', t('tabs_view', plugin))
-				.setValue(plugin.settings.panelSettings.panelViewType || 'list')
+				.setValue(plugin.settings.panelConfig.panelViewType || 'list')
 				.onChange(async (value: 'list' | 'tabs') => {
-					plugin.settings.panelSettings.panelViewType = value;
+					plugin.settings.panelConfig.panelViewType = value;
 					await plugin.saveSettings();
 					onDisplayRefresh?.();
 				});
@@ -74,9 +74,9 @@ export function createPanelSettingsSection(
 			dropdown
 				.addOption('default', t('icon_text_same_line', plugin))
 				.addOption('icon_top', t('icon_top_text_bottom', plugin))
-				.setValue(plugin.settings.panelSettings.displayStyle || 'default')
+				.setValue(plugin.settings.panelConfig.displayStyle || 'default')
 				.onChange(async (value: 'default' | 'icon_top') => {
-					plugin.settings.panelSettings.displayStyle = value;
+					plugin.settings.panelConfig.displayStyle = value;
 					await plugin.saveSettings();
 					onDisplayRefresh?.();
 				});
@@ -86,9 +86,9 @@ export function createPanelSettingsSection(
 		.setName(t('enable_button_animation', plugin))
 		.setDesc(t('enable_button_animation_desc', plugin))
 		.addToggle(toggle => toggle
-			.setValue(plugin.settings.panelSettings.enableAnimation ?? true)
+			.setValue(plugin.settings.panelConfig.enableAnimation ?? true)
 			.onChange(async (value) => {
-				plugin.settings.panelSettings.enableAnimation = value;
+				plugin.settings.panelConfig.enableAnimation = value;
 				await plugin.saveSettings();
 			}));
 } 

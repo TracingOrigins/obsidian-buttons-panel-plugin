@@ -1,9 +1,9 @@
 import {App, PluginSettingTab} from 'obsidian';
 import {ButtonsPanelPlugin} from '../../types/plugin';
-import {createPanelSettingsSection} from './PanelSettingsSection';
+import {createPanelConfigSection} from './PanelConfigSection';
 import {createHelpSection} from './HelpSection';
-import {createPathsSettingsSection} from './PathsSettingsSection';
-import {createButtonsManagementSection} from './ButtonsManagementSection';
+import {createPathConfigSection} from './PathConfigSection';
+import {createButtonManagementSection} from './ButtonManagementSection';
 import {t} from '../../utils/i18n';
 
 /**
@@ -55,11 +55,11 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
 
 		const content = containerEl.createDiv('settings-tab-content');
 		if (this.currentActiveTab === 'panel') {
-			createPanelSettingsSection(content, this.plugin, () => this.display());
+			createPanelConfigSection(content, this.plugin, () => this.display());
 		} else if (this.currentActiveTab === 'paths') {
-			createPathsSettingsSection(content, this.plugin, this.app);
+			createPathConfigSection(content, this.plugin, this.app);
 		} else if (this.currentActiveTab === 'buttons') {
-			createButtonsManagementSection(
+			createButtonManagementSection(
 				content,
 				this.plugin,
 				this.app,

@@ -31,7 +31,7 @@ export class RunScriptService {
 
 			const scriptFileName = action.value;
 			// 获取脚本文件夹路径（从插件设置中读取）
-			let scriptFolderPath = this.plugin?.settings?.pathSettings?.scriptFolderPath ?? '';
+			let scriptFolderPath = this.plugin?.settings?.pathConfig?.scriptFolderPath ?? '';
 			// 清理路径，去除首尾斜杠，防止拼接出错
 			scriptFolderPath = scriptFolderPath.replace(/^\/+/g, '').replace(/\/+$/g, '').replace(/^\/+/g, '').replace(/\/+$/g, '');
 			// 拼接完整脚本文件路径

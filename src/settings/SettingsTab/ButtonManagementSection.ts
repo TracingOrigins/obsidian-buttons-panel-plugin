@@ -12,7 +12,7 @@ import { safeSetSVG } from '../../utils/validation';
 /**
  * 按钮管理区域类，负责渲染和管理按钮设置界面
  */
-export class ButtonsManagementSection {
+export class ButtonManagementSection {
 	private plugin: ButtonsPanelPlugin;
 	private app: App;
 	private displayCallback?: () => void;
@@ -543,7 +543,7 @@ export class ButtonsManagementSection {
 			order: this.plugin.settings.categories.length,
 			buttons: category.buttons.map((button, index) => ({
 				...JSON.parse(JSON.stringify(button)),
-				id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+				id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
 				order: index // 重新设置按钮顺序
 			}))
 		};
@@ -693,13 +693,13 @@ export class ButtonsManagementSection {
  * @param app Obsidian应用实例
  * @param displayCallback 刷新显示的回调函数
  */
-export function createButtonsManagementSection(
+export function createButtonManagementSection(
 	containerEl: HTMLElement,
 	plugin: ButtonsPanelPlugin,
 	app: App,
 	displayCallback?: () => void
 ): void {
-	const buttonsManagement = new ButtonsManagementSection(
+	const buttonsManagement = new ButtonManagementSection(
 		plugin,
 		app,
 		displayCallback

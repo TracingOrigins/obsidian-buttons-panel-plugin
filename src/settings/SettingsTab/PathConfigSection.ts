@@ -9,7 +9,7 @@ import {FolderSearchModal} from '../modals/FolderSearchModal';
  * @param plugin 插件实例
  * @param app Obsidian应用实例
  */
-export function createPathsSettingsSection(containerEl: HTMLElement, plugin: ButtonsPanelPlugin, app: App): void {
+export function createPathConfigSection(containerEl: HTMLElement, plugin: ButtonsPanelPlugin, app: App): void {
 	// 创建卡片组
 	const card = containerEl.createDiv('settings-card-group');
 
@@ -17,10 +17,10 @@ export function createPathsSettingsSection(containerEl: HTMLElement, plugin: But
 	const templateWrapper = containerEl.createDiv({cls: 'path-input-wrapper'});
 	const templateInput = new TextComponent(templateWrapper)
 		.setPlaceholder(t('template_folder_placeholder', plugin))
-		.setValue(plugin.settings.pathSettings.templateFolderPath ?? '');
+		.setValue(plugin.settings.pathConfig.templateFolderPath ?? '');
 
 	// 初始化时验证路径
-	const initialTemplatePath = plugin.settings.pathSettings.templateFolderPath ?? '';
+	const initialTemplatePath = plugin.settings.pathConfig.templateFolderPath ?? '';
 	const cleanInitialTemplatePath = cleanPath(initialTemplatePath);
 	const templateFolder = cleanInitialTemplatePath ? app.vault.getAbstractFileByPath(String(cleanInitialTemplatePath)) : null;
 	if (cleanInitialTemplatePath && !templateFolder) {
@@ -38,7 +38,7 @@ export function createPathsSettingsSection(containerEl: HTMLElement, plugin: But
 			.onClick(() => {
 				new FolderSearchModal(app, plugin, (folderPath: string) => {
 					templateInput.setValue(folderPath);
-					plugin.settings.pathSettings.templateFolderPath = folderPath;
+					plugin.settings.pathConfig.templateFolderPath = folderPath;
 					plugin.saveSettings();
 					// 实时验证
 					const folder = cleanPath(folderPath) ? app.vault.getAbstractFileByPath(cleanPath(folderPath)) : null;
@@ -55,7 +55,7 @@ export function createPathsSettingsSection(containerEl: HTMLElement, plugin: But
 
 	templateInput.onChange(async (value) => {
 		// 只保存原始值，允许为空
-		plugin.settings.pathSettings.templateFolderPath = value;
+		plugin.settings.pathConfig.templateFolderPath = value;
 		await plugin.saveSettings();
 		// 实时验证路径
 		const folder = cleanPath(value) ? app.vault.getAbstractFileByPath(String(cleanPath(value))) : null;
@@ -70,10 +70,10 @@ export function createPathsSettingsSection(containerEl: HTMLElement, plugin: But
 	const scriptWrapper = containerEl.createDiv({cls: 'path-input-wrapper'});
 	const scriptInput = new TextComponent(scriptWrapper)
 		.setPlaceholder(t('script_folder_placeholder', plugin))
-		.setValue(plugin.settings.pathSettings.scriptFolderPath ?? '');
+		.setValue(plugin.settings.pathConfig.scriptFolderPath ?? '');
 
 	// 初始化时验证路径
-	const initialScriptPath = plugin.settings.pathSettings.scriptFolderPath ?? '';
+	const initialScriptPath = plugin.settings.pathConfig.scriptFolderPath ?? '';
 	const cleanInitialScriptPath = cleanPath(initialScriptPath);
 	const scriptFolder = cleanInitialScriptPath ? app.vault.getAbstractFileByPath(String(cleanInitialScriptPath)) : null;
 	if (cleanInitialScriptPath && !scriptFolder) {
@@ -91,7 +91,7 @@ export function createPathsSettingsSection(containerEl: HTMLElement, plugin: But
 			.onClick(() => {
 				new FolderSearchModal(app, plugin, (folderPath: string) => {
 					scriptInput.setValue(folderPath);
-					plugin.settings.pathSettings.scriptFolderPath = folderPath;
+					plugin.settings.pathConfig.scriptFolderPath = folderPath;
 					plugin.saveSettings();
 					// 实时验证
 					const folder = cleanPath(folderPath) ? app.vault.getAbstractFileByPath(cleanPath(folderPath)) : null;
@@ -108,7 +108,7 @@ export function createPathsSettingsSection(containerEl: HTMLElement, plugin: But
 
 	scriptInput.onChange(async (value) => {
 		// 只保存原始值，允许为空
-		plugin.settings.pathSettings.scriptFolderPath = value;
+		plugin.settings.pathConfig.scriptFolderPath = value;
 		await plugin.saveSettings();
 		// 实时验证路径
 		const folder = cleanPath(value) ? app.vault.getAbstractFileByPath(String(cleanPath(value))) : null;
@@ -135,8 +135,8 @@ export function createPathsSettingsSection(containerEl: HTMLElement, plugin: But
  * 只创建不存在的路径，全部存在则提示。
  */
 async function createPathsOnly(plugin: ButtonsPanelPlugin, app: App, templateInput: TextComponent, scriptInput: TextComponent): Promise<void> {
-	const templatePath = plugin.settings.pathSettings.templateFolderPath;
-	const scriptPath = plugin.settings.pathSettings.scriptFolderPath;
+	const templatePath = plugin.settings.pathConfig.templateFolderPath;
+	const scriptPath = plugin.settings.pathConfig.scriptFolderPath;
 	let createdFolders: string[] = [];
 	let allExist = true;
 	// 模板
@@ -175,8 +175,8 @@ async function createPathsOnly(plugin: ButtonsPanelPlugin, app: App, templateInp
 		new Notice(t('all_paths_exist', plugin));
 	}
 	// 创建成功后刷新输入框状态
-	const templateValue = plugin.settings.pathSettings.templateFolderPath;
-	const scriptValue = plugin.settings.pathSettings.scriptFolderPath;
+	const templateValue = plugin.settings.pathConfig.templateFolderPath;
+	const scriptValue = plugin.settings.pathConfig.scriptFolderPath;
 	if (templateInput && templateInput.inputEl) {
 		const folder = cleanPath(templateValue) ? app.vault.getAbstractFileByPath(cleanPath(templateValue)) : null;
 		if (cleanPath(templateValue) && !folder) {

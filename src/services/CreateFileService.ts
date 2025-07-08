@@ -34,7 +34,7 @@ export class CreateFileService {
 			let fileContent = '';
 			const templateName = params?.templateName;
 			if (templateName) {
-				let templateFolder = this.plugin?.settings?.pathSettings?.templateFolderPath ?? '';
+				let templateFolder = this.plugin?.settings?.pathConfig?.templateFolderPath ?? '';
 				templateFolder = templateFolder.replace(/^\/+|\/+$/g, '').replace(/^\/|\/$/g, '');
 				let templatePath = templateFolder ? `${templateFolder}/${templateName}` : templateName;
 				templatePath = normalizePath(templatePath);

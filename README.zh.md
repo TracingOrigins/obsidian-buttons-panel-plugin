@@ -143,9 +143,9 @@ src/
 ├── settings/           # 设置相关组件
 │   ├── SettingsTab/    # 设置标签页组件
 │   │   ├── index.ts    # 设置标签页主组件
-│   │   ├── ButtonsManagementSection.ts # 按钮管理部分
-│   │   ├── PanelSettingsSection.ts # 面板设置部分
-│   │   ├── PathsSettingsSection.ts # 路径配置部分
+│   │   ├── ButtonManagementSection.ts # 按钮管理部分
+│   │   ├── PanelConfigSection.ts # 面板设置部分
+│   │   ├── PathConfigSection.ts # 路径配置部分
 │   │   └── HelpSection.ts # 帮助文档部分
 │   └── modals/         # 设置相关弹窗
 │       ├── ButtonEditModal/ # 按钮编辑弹窗

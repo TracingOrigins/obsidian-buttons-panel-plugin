@@ -1,6 +1,6 @@
 import {ItemView, WorkspaceLeaf} from 'obsidian';
 import {ButtonsPanelPlugin} from '../types/plugin';
-import {ButtonConfig, PanelSettings} from '../types';
+import {ButtonConfig, PanelConfig} from '../types';
 import {CategoryConfig} from '../types';
 import {ActionDispatcher} from '../core/ActionDispatcher';
 import {t} from '../utils/i18n';
@@ -13,7 +13,7 @@ export class ButtonsPanelView extends ItemView {
 	/** 当前面板的按钮数据 */
 	private buttons: ButtonConfig[] = [];
 	/** 面板的显示设置 */
-	private panelSettings: PanelSettings;
+	private panelConfig: PanelConfig;
 	/** 按钮动作执行器 */
 	private ActionDispatcher: ActionDispatcher;
 	/** 插件主类实例 */
@@ -30,18 +30,18 @@ export class ButtonsPanelView extends ItemView {
 	 * @param leaf Obsidian的WorkspaceLeaf对象
 	 * @param plugin 插件主类实例
 	 * @param buttons 按钮数据数组
-	 * @param panelSettings 面板设置
+	 * @param panelConfig 面板设置
 	 */
 	constructor(
 		leaf: WorkspaceLeaf,
 		plugin: ButtonsPanelPlugin,
 		buttons: ButtonConfig[],
-		panelSettings: PanelSettings
+		panelConfig: PanelConfig
 	) {
 		super(leaf);
 		this.plugin = plugin;
 		this.buttons = buttons;
-		this.panelSettings = panelSettings;
+		this.panelConfig = panelConfig;
 		this.ActionDispatcher = new ActionDispatcher(this.app, this.plugin);
 		this.containerEl.addClass('buttons-panel-plugin');
 	}
@@ -108,11 +108,11 @@ export class ButtonsPanelView extends ItemView {
 
 	/**
 	 * 更新面板设置并重新渲染。
-	 * @param settings 新的面板设置
+	 * @param config 新的面板设置
 	 */
-	updatePanelSettings(settings: PanelSettings): void {
+	updatePanelConfig(config: PanelConfig): void {
 		try {
-			this.panelSettings = settings;
+			this.panelConfig = config;
 			this.debouncedRender();
 		} catch (error) {
 			console.warn('更新面板设置时出错:', error);
@@ -124,8 +124,8 @@ export class ButtonsPanelView extends ItemView {
 	 * @param panelEl 面板元素
 	 */
 	private applyPanelStyles(panelEl: HTMLElement): void {
-		if (this.panelSettings.panelHeight && this.panelSettings.panelHeight !== 'auto') {
-			panelEl.style.height = this.panelSettings.panelHeight;
+		if (this.panelConfig.panelHeight && this.panelConfig.panelHeight !== 'auto') {
+			panelEl.style.height = this.panelConfig.panelHeight;
 		}
 	}
 
@@ -151,8 +151,8 @@ export class ButtonsPanelView extends ItemView {
 			const panelEl = container.createDiv('buttons-panel-container');
 			this.applyPanelStyles(panelEl);
 			// 显示面板标题
-			if (this.panelSettings.showTitle) {
-				const titleEl = panelEl.createEl('h2', {text: this.panelSettings.title});
+			if (this.panelConfig.showTitle) {
+				const titleEl = panelEl.createEl('h2', {text: this.panelConfig.title});
 				titleEl.addClass('buttons-panel-title');
 			}
 
@@ -164,7 +164,7 @@ export class ButtonsPanelView extends ItemView {
 			// 保证分类顺序与设置一致
 			const sortedCategories = this.plugin.settings.categories
 				.sort((a, b) => a.order - b.order);
-			const panelViewType = this.panelSettings.panelViewType || 'list';
+			const panelViewType = this.panelConfig.panelViewType || 'list';
 			if (panelViewType === 'tabs') {
 				this.renderTabsView(panelEl, groupedButtons, sortedCategories);
 			} else {
@@ -251,13 +251,13 @@ export class ButtonsPanelView extends ItemView {
 		// 创建按钮容器，不使用text属性
 		const buttonEl = container.createEl('button');
 		// 根据面板的全局设置来决定显示样式
-		if (this.panelSettings.displayStyle === 'icon_top') {
+		if (this.panelConfig.displayStyle === 'icon_top') {
 			buttonEl.addClass('icon-top');
 		} else {
 			buttonEl.addClass('icon-left');
 		}
 		// 根据设置决定是否添加动画
-		if (this.panelSettings.enableAnimation) {
+		if (this.panelConfig.enableAnimation) {
 			buttonEl.addClass('with-animation');
 		}
 		// 添加图标

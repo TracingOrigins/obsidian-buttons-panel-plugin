@@ -79,7 +79,7 @@ export function createCreateFileSection(container: HTMLElement, modalInstance: a
   const templateSetting = new Setting(container)
     .setName(t('template_file', modalInstance.plugin))
     .setDesc(t('template_file_desc', modalInstance.plugin));
-  const templateFolder = modalInstance.plugin?.settings?.pathSettings?.templateFolderPath ?? '';
+  const templateFolder = modalInstance.plugin?.settings?.pathConfig?.templateFolderPath ?? '';
   templateSetting.addButton(button => {
     button
       .setButtonText('')

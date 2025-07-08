@@ -23,7 +23,7 @@ export function createRunScriptSection(container: HTMLElement, modalInstance: an
     }
   };
 
-  const scriptFolder = modalInstance.plugin?.settings?.pathSettings?.scriptFolderPath ?? '';
+  const scriptFolder = modalInstance.plugin?.settings?.pathConfig?.scriptFolderPath ?? '';
 
   const setting = new Setting(container)
     .setName(t('script_file', modalInstance.plugin))

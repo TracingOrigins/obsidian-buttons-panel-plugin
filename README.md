@@ -143,9 +143,9 @@ src/
 ├── settings/           # Settings related components
 │   ├── SettingsTab/    # Settings tab components
 │   │   ├── index.ts    # Settings tab main component
-│   │   ├── ButtonsManagementSection.ts # Button management section
-│   │   ├── PanelSettingsSection.ts # Panel settings section
-│   │   ├── PathsSettingsSection.ts # Paths configuration section
+│   │   ├── ButtonManagementSection.ts # Button management section
+│   │   ├── PanelConfigSection.ts # Panel configuration section
+│   │   ├── PathConfigSection.ts # Path configuration section
 │   │   └── HelpSection.ts # Help and documentation section
 │   └── modals/         # Settings related modals
 │       ├── ButtonEditModal/ # Button editing modal

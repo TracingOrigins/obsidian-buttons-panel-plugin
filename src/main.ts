@@ -39,7 +39,7 @@ export default class ButtonsPanelPlugin extends Plugin {
 				leaf,
 				this,
 				this.getAllButtons(),
-				this.settings.panelSettings
+				this.settings.panelConfig
 			)
 		);
 
@@ -141,9 +141,9 @@ export default class ButtonsPanelPlugin extends Plugin {
 			this.app.workspace.getLeavesOfType(BUTTONS_PANEL_VIEW_TYPE).forEach(leaf => {
 				try {
 					const view = leaf.view as ButtonsPanelView;
-					if (view && typeof view.updateButtons === 'function' && typeof view.updatePanelSettings === 'function') {
+					if (view && typeof view.updateButtons === 'function' && typeof view.updatePanelConfig === 'function') {
 						view.updateButtons(this.getAllButtons());
-						view.updatePanelSettings(this.settings.panelSettings);
+						view.updatePanelConfig(this.settings.panelConfig);
 					}
 				} catch (error) {
 					console.warn('更新按钮面板视图时出错:', error);
@@ -218,7 +218,7 @@ export default class ButtonsPanelPlugin extends Plugin {
 			const view = leaf.view as ButtonsPanelView;
 			if (view) {
 				view.updateButtons(this.getAllButtons());
-				view.updatePanelSettings(this.settings.panelSettings);
+				view.updatePanelConfig(this.settings.panelConfig);
 			}
 		});
 	}
@@ -235,7 +235,7 @@ export default class ButtonsPanelPlugin extends Plugin {
 
 // 在插件 onload 或初始化时注册脚本命令
 async function registerScriptCommands(plugin: any) {
-	let scriptFolder = plugin.settings.pathSettings?.scriptFolderPath;
+	let scriptFolder = plugin.settings.pathConfig?.scriptFolderPath;
 	if (!scriptFolder) {
 		return;
 	}
