@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "buttons-panel",
+	"name": "Buttons Panel",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "A modern button panel plugin for quick access to files, commands, links, and scripts.",
+	"author": "Kevin",
+	"authorUrl": "https://github.com/TracingOrigins",
 	"isDesktopOnly": false
 }

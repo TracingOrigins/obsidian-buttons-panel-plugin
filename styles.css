@@ -1,8 +1,732 @@
-/*
+/* --------------------- ▼ 按钮面板样式 ▼ --------------------- */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+/* 按钮面板：外围样式 */
+.buttons-panel-plugin .buttons-panel-container {
+	padding: 20px;
+	background: var(--background-primary);
+	border-radius: 16px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-If your plugin does not need CSS, delete this file.
+/* 按钮面板：标题样式 */
+.buttons-panel-plugin .buttons-panel-title {
+	margin: 0 0 20px 0;
+	color: var(--text-normal);
+	font-size: 1.5em;
+	font-weight: 600;
+	text-align: center;
+}
 
-*/
+/* 按钮面板：grid布局样式 */
+.buttons-panel-plugin .buttons-panel-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	width: 100%;
+}
+
+/* 按钮面板：定义按钮动画函数 */
+@keyframes swing_image {
+	0%, 100% {
+		transform: rotate(0deg);
+	}
+	20% {
+		transform: rotate(15deg);
+	}
+	40% {
+		transform: rotate(-10deg);
+	}
+	60% {
+		transform: rotate(5deg);
+	}
+	80% {
+		transform: rotate(-5deg);
+	}
+}
+
+/* 按钮面板：调用按钮动画函数 */
+.buttons-panel-plugin button.with-animation:hover {
+	animation: swing_image 0.8s linear 0s 1 normal;
+}
+
+/* 按钮面板：浅色模式下按钮的悬浮阴影样式 */
+.theme-light .buttons-panel-plugin button.icon-left:hover,
+.theme-light .buttons-panel-plugin button.icon-top:hover {
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 按钮面板：深色模式下按钮的悬浮阴影样式 */
+.theme-dark .buttons-panel-plugin button.icon-left:hover,
+.theme-dark .buttons-panel-plugin button.icon-top:hover {
+	box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
+}
+
+/* 按钮面板：按钮的图标在左的样式 */
+.buttons-panel-plugin button.icon-left {
+	background-color: transparent;
+	box-shadow: none;
+	padding: 20px 8px;
+	gap: 4px;
+	align-items: center;
+	font-size: 14px;
+}
+
+.buttons-panel-plugin button.icon-left .button-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+}
+
+.buttons-panel-plugin button.icon-left .button-icon svg {
+	color: var(--text-normal);
+	display: block;
+}
+
+.buttons-panel-plugin button.icon-left .button-text {
+	font-size: 14px;
+	font-weight: 500;
+	text-align: left;
+	width: 60px;
+	overflow: hidden;
+}
+
+/* 按钮面板：按钮的图标在上的样式 */
+.buttons-panel-plugin button.icon-top {
+	flex-direction: column;
+	background-color: transparent;
+	box-shadow: none;
+	border: none;
+	padding: 0;
+	gap: 0;
+	color: var(--text-normal);
+	width: 56px;
+	height: 56px;
+}
+
+.buttons-panel-plugin button.icon-top .button-icon {
+	font-size: 24px;
+	margin-bottom: 2px;
+	width: 32px;
+	height: 32px;
+}
+
+.buttons-panel-plugin button.icon-top .button-icon svg {
+	width: 32px;
+	height: 32px;
+}
+
+.buttons-panel-plugin button.icon-top .button-text {
+	font-size: 12px;
+	text-align: center;
+	font-weight: 500;
+	width: 60px;
+	overflow: hidden;
+}
+
+/* 按钮面板：分类的样式 */
+.buttons-panel-plugin .buttons-panel-category {
+	margin-bottom: 20px;
+}
+
+.buttons-panel-plugin .buttons-panel-category-title {
+	font-size: 1em;
+	font-weight: 600;
+	color: var(--text-muted);
+	margin-bottom: 12px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* 按钮面板：标签栏的样式 */
+.buttons-panel-plugin .buttons-panel-tab-bar {
+	display: flex;
+	align-items: flex-end;
+	gap: 0;
+	border-bottom: 1px solid var(--background-modifier-border);
+	margin-bottom: 8px;
+	padding: 0;
+	background: none;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	flex-wrap: nowrap;
+	scrollbar-width: none;
+}
+
+/* 按钮面板：标签页的样式 */
+.buttons-panel-plugin .buttons-panel-tab {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 8px;
+	font-size: 1em;
+	font-weight: 500;
+	color: var(--text-faint);
+	background: none;
+	border: none;
+	border-radius: 6px 6px 0 0;
+	cursor: pointer;
+	position: relative;
+	transition: color 0.2s, background 0.2s;
+	flex-shrink: 0;
+}
+
+.buttons-panel-plugin .buttons-panel-tab .tab-icon {
+	display: flex;
+	align-items: center;
+	font-size: 1.1em;
+	width: 16px;
+	height: 16px;
+}
+
+.buttons-panel-plugin .buttons-panel-tab .tab-label {
+	font-weight: 500;
+}
+
+.buttons-panel-plugin .buttons-panel-tab.is-active {
+	color: var(--text-normal);
+	background: var(--background-primary-alt);
+}
+
+.buttons-panel-plugin .buttons-panel-tab.is-active::after {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	background: var(--interactive-accent);
+	border-radius: 2px;
+}
+
+.buttons-panel-plugin .buttons-panel-tab:hover:not(.is-active) {
+	color: var(--text-muted);
+	background: var(--background-modifier-hover);
+}
+
+.buttons-panel-plugin .buttons-panel-tab-content {
+	padding: 8px 0 0 0;
+}
+
+
+/* --------------------- ▼ 配置面板样式 ▼ --------------------- */
+
+/* 配置面板：标签栏样式 */
+.buttons-panel-plugin .settings-tab-bar {
+	display: flex;
+	gap: 8px;
+	border-bottom: 1.5px solid var(--background-modifier-border);
+	margin-bottom: 28px;
+	padding-bottom: 6px;
+	background: var(--background-primary);
+	border-radius: 12px 12px 0 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.buttons-panel-plugin .settings-tab {
+	cursor: pointer;
+	padding: 8px;
+	font-size: 1.12em;
+	color: var(--text-muted);
+	border-radius: 8px 8px 0 0;
+	transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+	user-select: none;
+	margin-bottom: -2px;
+}
+
+.buttons-panel-plugin .settings-tab:hover {
+	color: var(--text-normal);
+	background: var(--background-modifier-hover);
+}
+
+.buttons-panel-plugin .settings-tab.is-active {
+	color: var(--text-normal);
+	background: var(--background-primary-alt);
+	border-bottom: 2.5px solid var(--interactive-accent);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* 配置面板：自定义的卡片组和单个卡片的样式 */
+.buttons-panel-plugin .settings-card-group {
+	border-radius: 8px;
+	padding: 22px 24px 18px 24px;
+	margin-bottom: 16px;
+	border: 1px solid var(--background-modifier-border);
+}
+
+.buttons-panel-plugin .settings-card-single {
+	background: var(--background-primary);
+	border-radius: 8px;
+	padding: 16px;
+	margin-bottom: 16px;
+	border: 1px solid var(--background-modifier-border);
+}
+
+/* 配置面板：分类和按钮底部加号按钮样式 */
+.buttons-panel-plugin .add-category-card,
+.buttons-panel-plugin .add-button-card {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: none;
+	box-shadow: none;
+	border: none;
+}
+
+.buttons-panel-plugin .add-category-card button {
+	border: none;
+	background-color: unset;
+	color: var(--text-normal);
+	box-shadow: none;
+}
+
+.buttons-panel-plugin .add-button-card button {
+	border: none;
+	background-color: unset;
+	color: var(--text-normal);
+	box-shadow: none;
+}
+
+.buttons-panel-plugin .add-category-btn:hover,
+.buttons-panel-plugin .add-button-btn:hover {
+	border-color: var(--interactive-accent);
+	color: var(--interactive-accent);
+	background: var(--background-modifier-hover);
+}
+
+/* 配置面板：分类的样式 */
+.buttons-panel-plugin .button-category-group {
+	background: transparent;
+	margin-bottom: 16px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.buttons-panel-plugin .button-category-group[open] {
+	background: var(--background-primary);
+}
+
+.buttons-panel-plugin .button-category-summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: var(--background-primary);
+	cursor: pointer;
+	user-select: none;
+	position: relative;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.buttons-panel-plugin .button-category-group summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 1.2em;
+	padding: 8px 12px;
+	background: var(--background-primary);
+	border-radius: 6px;
+	cursor: pointer;
+	user-select: none;
+	position: relative;
+	margin-bottom: 8px;
+}
+
+/* 配置面板：自定义分类的折叠图标的样式 */
+.buttons-panel-plugin .custom-collapse-icon {
+	width: 18px;
+	height: 18px;
+	transition: transform 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-muted);
+}
+
+.buttons-panel-plugin .button-category-group[open] .custom-collapse-icon {
+	transform: rotate(90deg);
+}
+
+/* 配置面板：分类的左侧容器中的折叠图标的样式 */
+.buttons-panel-plugin .summary-left-container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex: 0 0 auto;
+	width: 24px;
+	cursor: pointer;
+}
+
+/* 配置面板：分类的中间容器中的分类名称的样式 */
+.buttons-panel-plugin .summary-center-container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex: 1;
+}
+
+/* 配置面板：分类的右侧容器中的操作按钮的样式 */
+.buttons-panel-plugin .summary-right-container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	flex: 0 0 auto;
+	gap: 4px;
+}
+
+/* 配置面板：分类的操作图标样式、按钮的操作图标的样式 */
+.buttons-panel-plugin .button-category-group button {
+	background-color: transparent;
+	color: var(--text-normal);
+	padding: 1px 6px;
+	gap: 0;
+}
+
+/* 配置面板：按钮列表的样式 */
+.buttons-panel-plugin .button-category-group .button-list-container {
+	padding: 8px;
+	background: var(--background-primary);
+	border-radius: 6px;
+	margin-top: 8px;
+	padding: 12px;
+	background: var(--background-primary);
+}
+
+
+/* 配置面板：按钮列表中按钮的样式 */
+.buttons-panel-plugin .button-setting-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px;
+	background: var(--background-primary);
+	border-radius: 4px;
+	margin-bottom: 4px;
+	cursor: move;
+	transition: all 0.2s ease;
+	gap: 8px;
+}
+
+.buttons-panel-plugin .button-setting-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+/* 配置面板：按钮列表中的按钮的图标和名称的容器的样式 */
+.buttons-panel-plugin .button-content {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	gap: 4px;
+}
+
+/* 配置面板：按钮列表中的按钮图标的样式 */
+.buttons-panel-plugin .button-list-icon {
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-normal);
+}
+
+.buttons-panel-plugin .button-list-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* 配置面板：按钮的操作图标的容器样式 */
+.buttons-panel-plugin .button-controls-container {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}
+
+/* 配置面板：按钮的拖动样式 */
+.buttons-panel-plugin .button-setting-item.is-dragging {
+	opacity: 0.5;
+	transform: rotate(2deg);
+	z-index: 1000;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.buttons-panel-plugin .button-setting-item.drag-over {
+	background: var(--background-modifier-hover);
+	border: 1px dashed var(--interactive-accent);
+}
+
+.buttons-panel-plugin .button-drag-handle {
+	display: flex;
+	cursor: move;
+	color: var(--text-muted);
+	padding: 4px;
+	border-radius: 4px;
+	transition: background-color 0.2s ease;
+}
+
+.buttons-panel-plugin .button-drag-handle:hover {
+	background: var(--background-modifier-hover);
+}
+
+/* 配置面板：分类的拖动样式 */
+.buttons-panel-plugin .button-category-group.is-dragging {
+	opacity: 0.5;
+	transform: rotate(2deg);
+}
+
+.buttons-panel-plugin .button-category-group.drag-over-category {
+	border: 1px dashed var(--interactive-accent);
+	border-radius: 8px;
+	position: relative;
+}
+
+/* --------------------- ▼ 模态框样式 ▼ --------------------- */
+
+/* 模态框：本插件专属的通用的模态框样式 */
+.modal .buttons-panel-plugin .setting-item {
+	padding-left: 8px;
+}
+
+.buttons-panel-plugin.modal-content {
+	max-width: 600px;
+}
+
+.buttons-panel-plugin .setting-item-description {
+	color: var(--text-muted);
+	font-size: 0.9em;
+	margin-top: 0.25rem;
+}
+
+.buttons-panel-plugin button.custom-button {
+	background-color: transparent;
+	color: var(--text-normal);
+	padding: 1px 6px;
+	gap: 0;
+}
+
+/* 模态框：图标搜索模态框、文件搜索模态框、文件夹搜索模态框、命令搜索模态框、文件名模态框的样式 */
+.buttons-panel-plugin.icon-search-modal,
+.buttons-panel-plugin.command-search-modal,
+.buttons-panel-plugin.file-search-modal,
+.buttons-panel-plugin.filename-suggest-modal,
+.buttons-panel-plugin.folder-search-modal {
+	height: 500px;
+	display: flex;
+	flex-direction: column;
+}
+
+.buttons-panel-plugin .search-input-wrapper {
+	display: flex;
+	justify-content: center;
+	margin: 24px;
+}
+
+.buttons-panel-plugin .search-input {
+	width: 320px;
+	height: 35px;
+	text-align: center;
+	font-size: 1.1em;
+	border: 1px solid var(--interactive-accent);
+	border-radius: 16px;
+}
+
+.buttons-panel-plugin input:focus,
+.buttons-panel-plugin select:focus,
+.buttons-panel-plugin select.dropdown:focus,
+.buttons-panel-plugin textarea:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+	box-shadow: unset;
+}
+
+.buttons-panel-plugin .icon-list,
+.buttons-panel-plugin .category-suggestions-container,
+.buttons-panel-plugin .file-suggestions-container,
+.buttons-panel-plugin .folder-suggestions-container,
+.buttons-panel-plugin .command-suggestions-container,
+.buttons-panel-plugin .filename-suggestions-container {
+	max-height: 400px;
+	overflow-y: auto;
+	margin: 0 auto;
+	width: 90%;
+}
+
+.buttons-panel-plugin .suggestion-item {
+	padding: 8px 12px;
+	cursor: pointer;
+	margin: 2px 0;
+	border-radius: 4px;
+	transition: background-color 0.2s;
+	border: 1px solid transparent;
+}
+
+.buttons-panel-plugin .suggestion-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.buttons-panel-plugin .suggestion-item.is-active,
+.buttons-panel-plugin .icon-item.is-active {
+	background: var(--background-modifier-hover);
+	border-radius: 6px;
+	border-color: var(--interactive-accent);
+}
+
+.buttons-panel-plugin .icon-item {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	margin: 2px;
+	padding: 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	cursor: pointer;
+	text-align: center;
+	line-height: 24px;
+	transition: all 0.2s;
+}
+
+.buttons-panel-plugin .icon-item:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.buttons-panel-plugin .icon-loading-tip {
+	text-align: center;
+	color: var(--text-muted);
+}
+
+.buttons-panel-plugin .icon-item svg {
+	width: 24px;
+	height: 24px;
+	stroke: currentColor;
+	fill: none;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.buttons-panel-plugin .format-preview {
+	color: var(--text-muted);
+}
+
+/* 编辑按钮模态框：输入框空白错误提示 */
+.buttons-panel-plugin .input-error {
+	border-color: red !important;
+}
+
+/* 编辑按钮模态框：按钮图标设置区域样式 */
+/* SVG预览容器 */
+.buttons-panel-plugin .icon-svg-preview {
+	margin-right: 0px;
+	margin-left: 0px;
+	vertical-align: middle;
+	height: 24px;
+	width: 24px;
+	display: inline-flex;
+	align-items: center;
+}
+/* 图标删除按钮 */
+.buttons-panel-plugin .icon-delete-btn {
+	position: absolute;
+	top: 50%;
+	right: 6px;
+	transform: translateY(-50%);
+	border: none;
+	border-radius: 50%;
+	width: 18px;
+	height: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	z-index: 2;
+	padding: 2px;
+	transition: background-color 0.2s ease;
+}
+/* 图标输入框容器 */
+.buttons-panel-plugin .icon-input-container {
+	position: relative;
+}
+.buttons-panel-plugin .icon-input-container input {
+	display: inline-block;
+	position: relative;
+}
+
+/* 编辑按钮模态框：动作类型为创建文件时，其下方的div的样式 */
+.buttons-panel-plugin .action-value-container {
+	padding-top: 0.75em;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+/* --------------------- ▼ 移动端样式 ▼ --------------------- */
+
+/* 配置面板、模态框：让移动端选项中的文字和输入框在同一行显示 */
+.is-phone .buttons-panel-plugin .setting-item:not(.mod-toggle):not(.setting-item-heading) {
+	flex-direction: unset;
+	align-items: center;
+}
+
+/* 配置面板、模态框：固定移动端上的按钮和输入框容器的长度 */
+.is-phone .buttons-panel-plugin .setting-item:not(.mod-toggle):not(.setting-item-heading) .setting-item-control {
+	margin-top: 0;
+	width: 250px;
+}
+
+/* 配置面板、模态框：优化移动端的输入框左侧按钮样式 */
+.is-phone .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).custom-button {
+	width: unset;
+	padding: 0;
+	padding: 0;
+	width: 30px;
+	height: 30px;
+	border: 1px solid var(--background-modifier-border);
+}
+
+/* 模态框：优化移动端的保存按钮样式 */
+.is-phone .buttons-panel-plugin .setting-item-control button:not(.clickable-icon) {
+	width: unset;
+	padding: 4px 12px;
+}
+
+/* 编辑按钮模态框：动作类型为创建文件时，其下方的div的样式 */
+.is-phone .buttons-panel-plugin .action-value-container {
+	padding-top: 0;
+}
+
+/* 配置面板：去除在移动端上长按分类或者按钮触发拖动事件的时候弹出的菜单的背景色 */
+.is-phone .buttons-panel-plugin .menu-item.mobile-tap:not(.is-disabled) {
+	background-color: unset;
+}
+
+/* 模态框：优化移动端的模态框的样式 */
+.is-phone .modal:has(.buttons-panel-plugin) {
+	border: 1px solid var(--interactive-accent);
+	border-radius: 8px;
+	width: 95vw;
+}
+
+/* 模态框，优化搜索框样式 */
+.is-mobile .buttons-panel-plugin .search-input {
+	width: 250px;
+}
+
+/* --------------------- ▼ 通用样式 ▼ --------------------- */
+
+/* 配置面板、模态框：输入框、下拉框等的样式 */
+.buttons-panel-plugin .setting-item-control input[type='text'],
+.buttons-panel-plugin .setting-item-control select,
+.buttons-panel-plugin .setting-item-control select.drdropdown {
+	width: 160px;
+	height: 30px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background-color: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 14px;
+	transition: border-color 0.2s ease;
+}
