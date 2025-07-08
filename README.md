@@ -233,6 +233,9 @@ Contributions are welcome! Submit Issues and Pull Requests.
 - 🎛️ Dedicated settings tab for easy configuration
 - 🧩 Sidebar integration for instant access
 
+### v1.1.0
+- 🔧 refactor: rename some file names, update related types and all references
+
 ---
 
 ## Acknowledgements
