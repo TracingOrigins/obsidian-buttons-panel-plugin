@@ -1,6 +1,7 @@
 import { App, Modal, Setting, Notice } from 'obsidian';
 import { ButtonsPanelPlugin } from '../../../types/plugin';
 import { ButtonConfig, CategoryConfig } from '../../../types';
+import type { ButtonAction } from '../../../types';
 import { t } from '../../../utils/i18n';
 import { validateButtonForm, showValidationErrors } from '../../../utils/validation';
 import { createOpenFileSection } from './OpenFileSection';
@@ -128,7 +129,7 @@ export class ButtonEditModal extends Modal {
 					.setValue(this.getCurrentButton()?.action.type || 'file')
 					.onChange((value) => {
 						const currentButton = this.getCurrentButton();
-						currentButton.action = { type: value as any, value: '' };
+						currentButton.action = { type: value as ButtonAction['type'], value: '' };
 						this.updateActionValueInput();
 					});
 			});
@@ -293,11 +294,13 @@ export class ButtonEditModal extends Modal {
 				btn
 					.setButtonText(t('save', this.plugin))
 					.setCta()
+					.setClass('custom-save-button')
 					.onClick(() => this.saveButton());
 			})
 			.addButton((btn) => {
 				btn
 					.setButtonText(t('cancel', this.plugin))
+					.setClass('custom-cancel-button')
 					.onClick(() => this.close());
 			});
 	}

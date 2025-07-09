@@ -63,12 +63,21 @@ export class ButtonManagementSection {
 
 			// 左侧：折叠图标容器
 			const leftContainer = summary.createDiv({cls: 'summary-left-container'});
-			leftContainer.innerHTML = `<span class="custom-collapse-icon" tabindex="0" aria-label="${t('toggle_collapse', this.plugin)}" role="button">
-				<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M6 4.5L12 9L6 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-			</span>`;
-			const collapseIcon = leftContainer.querySelector('.custom-collapse-icon') as HTMLElement;
+
+			// leftContainer.innerHTML = `<span class="custom-collapse-icon" tabindex="0" aria-label="${t('toggle_collapse', this.plugin)}" role="button">
+			// 	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+			// 		<path d="M6 4.5L12 9L6 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+			// 	</svg>
+			// </span>`;
+			// const collapseIcon = leftContainer.querySelector('.custom-collapse-icon') as HTMLElement;
+			
+			// 使用createElement和safeSetSVG等安全方式插入SVG和文本
+			const collapseIcon = leftContainer.createEl('span', 'custom-collapse-icon');
+			collapseIcon.setAttr('tabindex', '0');
+			collapseIcon.setAttr('role', 'button');
+			collapseIcon.setAttr('aria-label', t('toggle_collapse', this.plugin));
+			safeSetSVG(collapseIcon, `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 4.5L12 9L6 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+			
 			// 4. 图标点击时触发summary的点击事件
 			if (collapseIcon) {
 				collapseIcon.addEventListener('click', (e) => {
@@ -248,8 +257,8 @@ export class ButtonManagementSection {
 				
 				touchTimer = window.setTimeout(() => {
 					// 检查全局标记，若为true则不弹出分类菜单
-					if ((window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU) {
-						(window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
+					if (window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU) {
+						window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
 						return;
 					}
 					if (!hasMoved) {
@@ -316,7 +325,7 @@ export class ButtonManagementSection {
 					clearTimeout(touchTimer);
 					touchTimer = null;
 				}
-				(window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
+				window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
 			}, {passive: true});
 		}
 	}
@@ -449,7 +458,7 @@ export class ButtonManagementSection {
 				
 				touchTimer = window.setTimeout(() => {
 					if (!hasMoved) {
-						(window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = true;
+						window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = true;
 						if (typeof e.stopPropagation === 'function') e.stopPropagation();
 						const menu = new Menu();
 						const allCategories = this.plugin.settings.categories;
@@ -479,7 +488,7 @@ export class ButtonManagementSection {
 											await this.plugin.saveSettings();
 											this.displayCallback?.();
 										});
-									(item as any).dom?.style && ((item as any).dom.style.paddingLeft = '2em');
+									(item as any).dom?.classList && (item as any).dom.classList.add('button-indent');
 								});
 							});
 						});

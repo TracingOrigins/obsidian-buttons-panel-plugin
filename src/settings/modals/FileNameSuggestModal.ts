@@ -93,7 +93,7 @@ export class FileNameSuggestModal extends Modal {
         suggestionEl.createDiv({ text: `{{DATE:${f.format}}}` });
         // 显示预览
         suggestionEl.createDiv({ 
-          text: (window as any).moment ? (window as any).moment().format(f.format) + '.md' : '', 
+          text: window.moment ? window.moment().format(f.format) + '.md' : '', 
           cls: 'format-preview' 
         });
         

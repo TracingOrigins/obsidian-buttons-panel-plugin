@@ -62,7 +62,7 @@ export class CreateFileService {
 	 * @returns 替换后的路径
 	 */
 	private resolveDateVariables(filePath: string): string {
-		const moment = (window as any).moment;
+		const moment = window.moment;
 		if (!moment) {
 			new Notice(t('moment_not_available', this.plugin));
 			return filePath;

@@ -485,6 +485,21 @@
 	position: relative;
 }
 
+/* 配置面板：帮助的样式 */
+.help-content .help-title {
+	font-weight: bold;
+	color: var(--text-accent);
+	font-size: 1.1em;
+  }
+  .help-content .help-list {
+	margin: 0 0 0 1.5em;
+	padding: 0;
+  }
+  .help-content .help-sub-list {
+	margin: 0 0 0 1.5em;
+	padding: 0;
+  }
+
 /* --------------------- ▼ 模态框样式 ▼ --------------------- */
 
 /* 模态框：本插件专属的通用的模态框样式 */
@@ -631,7 +646,7 @@
 	align-items: center;
 }
 /* 图标删除按钮 */
-.buttons-panel-plugin .icon-delete-btn {
+.buttons-panel-plugin .setting-item-control button.icon-delete-btn {
 	position: absolute;
 	top: 50%;
 	right: 6px;
@@ -656,7 +671,11 @@
 	display: inline-block;
 	position: relative;
 }
-
+/* 通用隐藏样式 */
+.buttons-panel-plugin .icon-input-container .is-hidden {
+	display: none !important;
+}
+  
 /* 编辑按钮模态框：动作类型为创建文件时，其下方的div的样式 */
 .buttons-panel-plugin .action-value-container {
 	padding-top: 0.75em;
@@ -664,6 +683,16 @@
 }
 
 /* --------------------- ▼ 移动端样式 ▼ --------------------- */
+
+/* 配置面板：去除在移动端的按钮管理中长按分类或者按钮弹出的菜单中的选项的背景色 */
+.is-phone .buttons-panel-plugin .menu-item.mobile-tap:not(.is-disabled) {
+	background-color: unset;
+}
+
+/* 配置面板：给在移动端的按钮管理中长按按钮弹出的菜单中的按钮选项添加缩进样式 */
+.is-phone .menu.buttons-panel-plugin .button-indent {
+	padding-left: 2em;
+}
 
 /* 配置面板、模态框：让移动端选项中的文字和输入框在同一行显示 */
 .is-phone .buttons-panel-plugin .setting-item:not(.mod-toggle):not(.setting-item-heading) {
@@ -688,19 +717,10 @@
 }
 
 /* 模态框：优化移动端的保存按钮样式 */
-.is-phone .buttons-panel-plugin .setting-item-control button:not(.clickable-icon) {
+.is-phone .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).custom-save-button,
+.is-phone .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).custom-cancel-button {
 	width: unset;
 	padding: 4px 12px;
-}
-
-/* 编辑按钮模态框：动作类型为创建文件时，其下方的div的样式 */
-.is-phone .buttons-panel-plugin .action-value-container {
-	padding-top: 0;
-}
-
-/* 配置面板：去除在移动端上长按分类或者按钮触发拖动事件的时候弹出的菜单的背景色 */
-.is-phone .buttons-panel-plugin .menu-item.mobile-tap:not(.is-disabled) {
-	background-color: unset;
 }
 
 /* 模态框：优化移动端的模态框的样式 */
@@ -710,9 +730,14 @@
 	width: 95vw;
 }
 
-/* 模态框，优化搜索框样式 */
+/* 模态框：优化移动端的搜索框的样式 */
 .is-mobile .buttons-panel-plugin .search-input {
 	width: 250px;
+}
+
+/* 编辑按钮模态框：动作类型选项下方的div的样式 */
+.is-phone .buttons-panel-plugin .action-value-container {
+	padding-top: 0;
 }
 
 /* --------------------- ▼ 通用样式 ▼ --------------------- */
@@ -730,3 +755,5 @@
 	font-size: 14px;
 	transition: border-color 0.2s ease;
 }
+
+

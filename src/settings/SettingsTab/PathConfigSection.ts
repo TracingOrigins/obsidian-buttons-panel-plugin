@@ -2,6 +2,7 @@ import {App, Setting, ButtonComponent, Notice, TextComponent} from 'obsidian';
 import {ButtonsPanelPlugin} from '../../types/plugin';
 import {t} from '../../utils/i18n';
 import {FolderSearchModal} from '../modals/FolderSearchModal';
+import { safeSetSVG } from '../../utils/validation';
 
 /**
  * 创建路径设置区域
@@ -49,7 +50,6 @@ export function createPathConfigSection(containerEl: HTMLElement, plugin: Button
 					}
 				}).open();
 			})
-			.buttonEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
 		);
 	templateSetting.controlEl.appendChild(templateWrapper);
 
@@ -102,7 +102,6 @@ export function createPathConfigSection(containerEl: HTMLElement, plugin: Button
 					}
 				}).open();
 			})
-			.buttonEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
 		);
 	scriptSetting.controlEl.appendChild(scriptWrapper);
 

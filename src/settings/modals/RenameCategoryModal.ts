@@ -68,9 +68,11 @@ export class RenameCategoryModal extends Modal {
 			.addButton(button => button
 				.setButtonText(t('save', this.plugin))
 				.setCta()
+				.setClass('custom-save-button')
 				.onClick(() => this.handleSave()))
 			.addButton(button => button
 				.setButtonText(t('cancel', this.plugin))
+				.setClass('custom-cancel-button')
 				.onClick(() => this.close()));
 	}
 

@@ -1,4 +1,4 @@
-import { Setting, TextComponent } from 'obsidian';
+import { Setting, TextComponent, setIcon } from 'obsidian';
 import { t } from '../../../utils/i18n';
 import { IconSearchModal } from '../IconSearchModal';
 import { safeSetSVG } from '../../../utils/validation';
@@ -31,7 +31,6 @@ export function createIconSection(container: HTMLElement, modalInstance: any) {
         };
         fileInput.click();
       });
-    btn.buttonEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
     btn.buttonEl.classList.add('icon-upload-btn');
   });
 
@@ -48,7 +47,6 @@ export function createIconSection(container: HTMLElement, modalInstance: any) {
           refreshIconUI();
         }).open();
       });
-    btn.buttonEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
     btn.buttonEl.classList.add('icon-search-btn');
   });
 
@@ -72,27 +70,25 @@ export function createIconSection(container: HTMLElement, modalInstance: any) {
 
   const refreshIconUI = () => {
     const val = iconInputEl.value;
+    const HIDDEN_CLASS = 'is-hidden';
     if (val && val.trim() !== '') {
       // 隐藏上传和搜索按钮
       const uploadBtn = iconSetting.controlEl.querySelector('.icon-upload-btn') as HTMLButtonElement;
       const searchBtn = iconSetting.controlEl.querySelector('.icon-search-btn') as HTMLButtonElement;
-      if (uploadBtn) uploadBtn.style.display = 'none';
-      if (searchBtn) searchBtn.style.display = 'none';
-      
+      if (uploadBtn) uploadBtn.classList.add(HIDDEN_CLASS);
+      if (searchBtn) searchBtn.classList.add(HIDDEN_CLASS);
       // SVG预览
       if (!svgPreview) {
         svgPreview = iconSetting.controlEl.createSpan();
         svgPreview.className = 'icon-svg-preview';
       }
-      // svgPreview.innerHTML = val.startsWith('<svg') ? val : '';
       safeSetSVG(svgPreview, val);
-      svgPreview.style.display = '';
+      svgPreview.classList.remove(HIDDEN_CLASS);
       iconSetting.controlEl.insertBefore(svgPreview, iconInputEl);
-      
       // 删除按钮
       if (!deleteBtn) {
         deleteBtn = iconSetting.controlEl.createEl('button', { cls: 'icon-delete-btn' });
-        deleteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+        setIcon(deleteBtn, 'x'); // 使用Obsidian内置的“x”图标
         deleteBtn.onclick = () => {
           iconTextComponent.setValue('');
           const currentButton = modalInstance.getCurrentButton();
@@ -102,15 +98,15 @@ export function createIconSection(container: HTMLElement, modalInstance: any) {
         iconInputEl.parentElement!.classList.add('icon-input-container');
         iconInputEl.parentElement!.appendChild(deleteBtn);
       }
-      deleteBtn!.style.display = '';
+      deleteBtn!.classList.remove(HIDDEN_CLASS);
     } else {
       // 显示上传和搜索按钮
       const uploadBtn = iconSetting.controlEl.querySelector('.icon-upload-btn') as HTMLButtonElement;
       const searchBtn = iconSetting.controlEl.querySelector('.icon-search-btn') as HTMLButtonElement;
-      if (uploadBtn) uploadBtn.style.display = '';
-      if (searchBtn) searchBtn.style.display = '';
-      if (svgPreview) svgPreview.style.display = 'none';
-      if (deleteBtn) deleteBtn.style.display = 'none';
+      if (uploadBtn) uploadBtn.classList.remove(HIDDEN_CLASS);
+      if (searchBtn) searchBtn.classList.remove(HIDDEN_CLASS);
+      if (svgPreview) svgPreview.classList.add(HIDDEN_CLASS);
+      if (deleteBtn) deleteBtn.classList.add(HIDDEN_CLASS);
     }
   };
   iconInputEl.addEventListener('input', refreshIconUI);

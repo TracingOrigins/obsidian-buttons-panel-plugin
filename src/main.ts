@@ -95,12 +95,14 @@ export default class ButtonsPanelPlugin extends Plugin {
 	}
 
 	/**
-	 * 插件卸载时自动调用，注销所有自定义视图。
+	 * 插件卸载时自动调用。
 	 */
 	onunload() {
 		// 注销按钮面板视图和设置视图
-		this.app.workspace.detachLeavesOfType(BUTTONS_PANEL_VIEW_TYPE);
-		this.app.workspace.detachLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE);
+		// this.app.workspace.detachLeavesOfType(BUTTONS_PANEL_VIEW_TYPE);
+		// this.app.workspace.detachLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE);
+		// 不需要手动detach leaves，Obsidian会自动管理
+		// 如有手动注册的事件或资源，请在此清理
 	}
 
 	/**

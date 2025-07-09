@@ -194,7 +194,8 @@ export class ButtonsPanelView extends ItemView {
 		sortedCategories.forEach(category => {
 			const tabEl = tabBar.createDiv('buttons-panel-tab');
 			const iconEl = tabEl.createSpan({cls: 'tab-icon'});
-			iconEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-layout-grid"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>`;
+			// iconEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-layout-grid"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>`;
+			safeSetSVG(iconEl, `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-layout-grid"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>`);
 			tabEl.createSpan({text: category.name, cls: 'tab-lable'});
 			tabEl.toggleClass('is-active', category.id === this.activeTabId);
 			tabEl.addEventListener('click', () => {
@@ -332,10 +333,6 @@ export class ButtonsPanelView extends ItemView {
 				menu.addItem((item) => {
 					item.setTitle(t('delete', this.plugin) || '删除')
 						.setIcon('trash');
-					// 兼容 setWarning 方法（Obsidian 1.0+），老版本无此方法
-					if (typeof (item as any).setWarning === 'function') {
-						(item as any).setWarning();
-					}
 					item.onClick(() => {
 						const category = this.plugin.settings.categories.find(cat => cat.buttons.some(b => b.id === button.id));
 						if (category) {
