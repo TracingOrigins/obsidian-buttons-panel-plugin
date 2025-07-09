@@ -10,15 +10,18 @@ import {DeleteButtonModal} from '../modals/DeleteButtonModal';
 import { safeSetSVG } from '../../utils/validation';
 
 /**
- * 按钮管理区域类，负责渲染和管理按钮设置界面
+ * 按钮管理区域类，负责渲染和管理按钮设置界面，包括分类、按钮的增删改查、拖拽排序、移动、长按菜单等。
+ * 支持移动端和桌面端的交互优化。
  */
 export class ButtonManagementSection {
-	private plugin: ButtonsPanelPlugin;
-	private app: App;
-	private displayCallback?: () => void;
-	/** 当前拖拽的分类索引 */
-	private draggedCategoryIndex: number = -1;
+	private plugin: ButtonsPanelPlugin; // 插件主类实例
+	private app: App; // Obsidian应用实例
+	private displayCallback?: () => void; // 刷新回调
+	private draggedCategoryIndex: number = -1; // 当前拖拽的分类索引
 
+	/**
+	 * 构造函数，初始化插件、app、回调
+	 */
 	constructor(
 		plugin: ButtonsPanelPlugin,
 		app: App,
@@ -181,7 +184,7 @@ export class ButtonManagementSection {
 	}
 
 	/**
-	 * 设置分类拖动逻辑
+	 * 设置分类拖动逻辑，支持分类的拖拽排序。
 	 * @param details 分类详情元素
 	 * @param index 当前分类索引
 	 * @param sortedCategories 排序后的分类数组
@@ -231,53 +234,89 @@ export class ButtonManagementSection {
 			this.displayCallback?.();
 		});
 
-		// 移动端：长按弹出"移动到..."菜单
+		// 分类长按菜单
 		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 			let touchTimer: number | null = null;
+			let touchStartX = 0;
+			let touchStartY = 0;
+			let hasMoved = false;
+
 			details.addEventListener('touchstart', (e) => {
+				touchStartX = e.touches[0].clientX;
+				touchStartY = e.touches[0].clientY;
+				hasMoved = false;
+				
 				touchTimer = window.setTimeout(() => {
-					const menu = new Menu();
-					const currentCategory = sortedCategories[index];
-					sortedCategories.forEach((cat, idx) => {
-						if (cat.id === currentCategory.id) return;
-						menu.addItem((item) => {
-							item.setTitle(`${t('move_to', this.plugin)}: ${cat.name}`)
-								.setIcon('arrow-right')
-								.onClick(async () => {
-									const categories = [...this.plugin.settings.categories];
-									const from = categories.findIndex(c => c.id === currentCategory.id);
-									const to = categories.findIndex(c => c.id === cat.id);
-									if (from === -1 || to === -1 || from === to) return;
-									const [moved] = categories.splice(from, 1);
-									categories.splice(to, 0, moved);
-									categories.forEach((c, i) => c.order = i);
-									this.plugin.settings.categories = categories;
-									await this.plugin.saveSettings();
-									this.displayCallback?.();
-								});
+					// 检查全局标记，若为true则不弹出分类菜单
+					if ((window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU) {
+						(window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
+						return;
+					}
+					if (!hasMoved) {
+						details.addClass('is-dragging');
+						const menu = new Menu();
+						const currentCategory = sortedCategories[index];
+						sortedCategories.forEach((cat, idx) => {
+							if (cat.id === currentCategory.id) return;
+							menu.addItem((item) => {
+								item.setTitle(`${t('move_to', this.plugin)}: ${cat.name}`)
+									.setIcon('arrow-right')
+									.onClick(async () => {
+										const categories = [...this.plugin.settings.categories];
+										const from = categories.findIndex(c => c.id === currentCategory.id);
+										const to = categories.findIndex(c => c.id === cat.id);
+										if (from === -1 || to === -1 || from === to) return;
+										const [moved] = categories.splice(from, 1);
+										categories.splice(to, 0, moved);
+										categories.forEach((c, i) => c.order = i);
+										this.plugin.settings.categories = categories;
+										await this.plugin.saveSettings();
+										this.displayCallback?.();
+										details.removeClass('is-dragging');
+									});
+							});
 						});
-					});
-					const touch = e.touches[0];
-					menu.showAtPosition({x: touch.clientX, y: touch.clientY});
-					setTimeout(() => {
-						const menuDom = document.body.querySelector('.menu');
-						if (menuDom) menuDom.classList.add('buttons-panel-plugin');
-					}, 0);
+						const touch = e.touches[0];
+						menu.showAtPosition({x: touch.clientX, y: touch.clientY});
+						setTimeout(() => {
+							const menuDom = document.body.querySelector('.menu');
+							if (menuDom) menuDom.classList.add('buttons-panel-plugin');
+							// 监听菜单外点击，自动移除is-dragging
+							const removeDragging = () => {
+								details.removeClass('is-dragging');
+								document.removeEventListener('mousedown', removeDragging, true);
+								document.removeEventListener('touchstart', removeDragging, true);
+							};
+							setTimeout(() => {
+								document.addEventListener('mousedown', removeDragging, true);
+								document.addEventListener('touchstart', removeDragging, true);
+							}, 0);
+						}, 0);
+					}
 				}, 500);
 			}, {passive: true});
+			
+			details.addEventListener('touchmove', (e) => {
+				const touchX = e.touches[0].clientX;
+				const touchY = e.touches[0].clientY;
+				const deltaX = Math.abs(touchX - touchStartX);
+				const deltaY = Math.abs(touchY - touchStartY);
+				
+				if (deltaX > 10 || deltaY > 10) {
+					hasMoved = true;
+					if (touchTimer) {
+						clearTimeout(touchTimer);
+						touchTimer = null;
+					}
+				}
+			}, {passive: true});
+			
 			details.addEventListener('touchend', () => {
 				if (touchTimer) {
 					clearTimeout(touchTimer);
 					touchTimer = null;
 				}
-				details.removeClass('is-dragging');
-			}, {passive: true});
-			details.addEventListener('touchmove', () => {
-				if (touchTimer) {
-					clearTimeout(touchTimer);
-					touchTimer = null;
-				}
-				details.removeClass('is-dragging');
+				(window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
 			}, {passive: true});
 		}
 	}
@@ -396,61 +435,81 @@ export class ButtonManagementSection {
 			}
 		});
 
-		// 移动端：长按弹出"移动到..."菜单
+		// 按钮长按菜单
 		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 			let touchTimer: number | null = null;
+			let touchStartX = 0;
+			let touchStartY = 0;
+			let hasMoved = false;
+
 			itemEl.addEventListener('touchstart', (e) => {
-				e.stopPropagation();
+				touchStartX = e.touches[0].clientX;
+				touchStartY = e.touches[0].clientY;
+				hasMoved = false;
+				
 				touchTimer = window.setTimeout(() => {
-					const menu = new Menu();
-					const allCategories = this.plugin.settings.categories;
-					const currentCategory = category;
-					const currentButton = button;
-					allCategories.forEach((cat: CategoryConfig) => {
-						// 分类项
-						menu.addItem((item) => {
-							item.setIcon('arrow-right')
-								.setTitle(cat.name)
-								.onClick(async () => {
-									// 移动到分类末尾
-									this.removeButtonFromCategory(currentCategory, currentButton.id);
-									this.insertButtonToCategory(cat, currentButton, cat.buttons.length);
-									await this.plugin.saveSettings();
-									this.displayCallback?.();
-								});
-						});
-						// 分类下的按钮项
-						cat.buttons.forEach((btn: ButtonConfig, idx: number) => {
-							if (cat.id === currentCategory.id && btn.id === currentButton.id) return; // 跳过自身
+					if (!hasMoved) {
+						(window as any).__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = true;
+						if (typeof e.stopPropagation === 'function') e.stopPropagation();
+						const menu = new Menu();
+						const allCategories = this.plugin.settings.categories;
+						const currentCategory = category;
+						const currentButton = button;
+						allCategories.forEach((cat: CategoryConfig) => {
+							// 分类项
 							menu.addItem((item) => {
 								item.setIcon('arrow-right')
-									.setTitle(btn.name)
+									.setTitle(cat.name)
 									.onClick(async () => {
 										this.removeButtonFromCategory(currentCategory, currentButton.id);
-										this.insertButtonToCategory(cat, currentButton, idx);
+										this.insertButtonToCategory(cat, currentButton, cat.buttons.length);
 										await this.plugin.saveSettings();
 										this.displayCallback?.();
 									});
-								// 直接操作dom实现整体缩进
-								(item as any).dom?.style && ((item as any).dom.style.paddingLeft = '2em');
+							});
+							// 分类下的按钮项
+							cat.buttons.forEach((btn: ButtonConfig, idx: number) => {
+								if (cat.id === currentCategory.id && btn.id === currentButton.id) return;
+								menu.addItem((item) => {
+									item.setIcon('arrow-right')
+										.setTitle(btn.name)
+										.onClick(async () => {
+											this.removeButtonFromCategory(currentCategory, currentButton.id);
+											this.insertButtonToCategory(cat, currentButton, idx);
+											await this.plugin.saveSettings();
+											this.displayCallback?.();
+										});
+									(item as any).dom?.style && ((item as any).dom.style.paddingLeft = '2em');
+								});
 							});
 						});
-					});
-					const touch = e.touches[0];
-					menu.showAtPosition({x: touch.clientX, y: touch.clientY});
-					setTimeout(() => {
-						const menuDom = document.body.querySelector('.menu');
-						if (menuDom) menuDom.classList.add('buttons-panel-plugin');
-					}, 0);
+						const touch = e.touches[0];
+						menu.showAtPosition({x: touch.clientX, y: touch.clientY});
+						setTimeout(() => {
+							const menuDom = document.body.querySelector('.menu');
+							if (menuDom) menuDom.classList.add('buttons-panel-plugin');
+						}, 0);
+					}
 				}, 500);
-			}, {passive: true});
-			itemEl.addEventListener('touchend', () => {
-				if (touchTimer) {
-					clearTimeout(touchTimer);
-					touchTimer = null;
+			}, {passive: false});
+			
+			itemEl.addEventListener('touchmove', (e) => {
+				const touchX = e.touches[0].clientX;
+				const touchY = e.touches[0].clientY;
+				const deltaX = Math.abs(touchX - touchStartX);
+				const deltaY = Math.abs(touchY - touchStartY);
+				
+				// 如果移动距离超过阈值，标记为已移动并取消长按
+				if (deltaX > 10 || deltaY > 10) {
+					hasMoved = true;
+					if (touchTimer) {
+						clearTimeout(touchTimer);
+						touchTimer = null;
+					}
 				}
 			}, {passive: true});
-			itemEl.addEventListener('touchmove', () => {
+			
+			itemEl.addEventListener('touchend', () => {
 				if (touchTimer) {
 					clearTimeout(touchTimer);
 					touchTimer = null;
@@ -519,8 +578,8 @@ export class ButtonManagementSection {
 	}
 
 	/**
-	 * 处理删除分类的逻辑。
-	 * @param category 要删除的分类对象
+	 * 处理删除分类逻辑，弹出确认模态框
+	 * @param category 要删除的分类
 	 */
 	private handleDeleteCategory(category: CategoryConfig): void {
 		new DeleteCategoryModal(this.app, this.plugin, category, () => {
@@ -529,8 +588,8 @@ export class ButtonManagementSection {
 	}
 
 	/**
-	 * 处理复制分类的逻辑。
-	 * @param category 要复制的分类对象
+	 * 处理复制分类逻辑，深拷贝分类及其按钮
+	 * @param category 要复制的分类
 	 */
 	private async handleCopyCategory(category: CategoryConfig): Promise<void> {
 		// 直接使用原分类名称，允许重名
@@ -562,8 +621,8 @@ export class ButtonManagementSection {
 	}
 
 	/**
-	 * 使分类区域支持拖拽放置按钮。
-	 * @param categoryEl 分类区域元素
+	 * 使分类区域支持拖拽放置按钮（拖动到分类空白处）
+	 * @param categoryEl 分类详情元素
 	 * @param category 分类对象
 	 */
 	private makeCategoryDroppable(categoryEl: HTMLElement, category: CategoryConfig): void {
@@ -636,7 +695,7 @@ export class ButtonManagementSection {
 	/**
 	 * 查找按钮及其所属分类
 	 * @param buttonId 按钮ID
-	 * @returns 包含源分类和按钮的对象
+	 * @returns { sourceCategory, buttonToMove }
 	 */
 	private findButtonAndCategory(buttonId: string): {
 		sourceCategory: CategoryConfig | null;
@@ -665,10 +724,10 @@ export class ButtonManagementSection {
 	}
 
 	/**
-	 * 将按钮插入到分类的指定位置
+	 * 向分类指定位置插入按钮
 	 * @param category 分类对象
 	 * @param button 按钮对象
-	 * @param position 插入位置
+	 * @param position 插入位置索引
 	 */
 	private insertButtonToCategory(category: CategoryConfig, button: ButtonConfig, position: number): void {
 		category.buttons.splice(position, 0, button);
@@ -676,7 +735,7 @@ export class ButtonManagementSection {
 	}
 
 	/**
-	 * 重新排序分类内的按钮
+	 * 重新排序分类内按钮的order字段
 	 * @param category 分类对象
 	 */
 	private reorderCategoryButtons(category: CategoryConfig): void {
@@ -687,11 +746,11 @@ export class ButtonManagementSection {
 }
 
 /**
- * 创建按钮管理区域的便捷函数
+ * 工具函数：创建按钮管理区域
  * @param containerEl 容器元素
- * @param plugin 插件实例
+ * @param plugin 插件主类
  * @param app Obsidian应用实例
- * @param displayCallback 刷新显示的回调函数
+ * @param displayCallback 刷新回调
  */
 export function createButtonManagementSection(
 	containerEl: HTMLElement,
