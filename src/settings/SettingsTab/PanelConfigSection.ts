@@ -91,4 +91,14 @@ export function createPanelConfigSection(
 				plugin.settings.panelConfig.enableAnimation = value;
 				await plugin.saveSettings();
 			}));
+
+	new Setting(card)
+		.setName('启用按钮右键菜单')
+		.setDesc('开启后，右侧按钮面板的按钮支持右键菜单（编辑/复制/删除）')
+		.addToggle(toggle => toggle
+			.setValue(plugin.settings.panelConfig.enableButtonContextMenu ?? false)
+			.onChange(async (value) => {
+				plugin.settings.panelConfig.enableButtonContextMenu = value;
+				await plugin.saveSettings();
+			}));
 } 

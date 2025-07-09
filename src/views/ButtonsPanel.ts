@@ -1,4 +1,4 @@
-import {ItemView, WorkspaceLeaf} from 'obsidian';
+import {ItemView, WorkspaceLeaf, Menu} from 'obsidian';
 import {ButtonsPanelPlugin} from '../types/plugin';
 import {ButtonConfig, PanelConfig} from '../types';
 import {CategoryConfig} from '../types';
@@ -292,5 +292,64 @@ export class ButtonsPanelView extends ItemView {
 				buttonEl.disabled = false;
 			}
 		});
+
+		// 新增：右键菜单
+		if (this.panelConfig.enableButtonContextMenu) {
+			buttonEl.addEventListener('contextmenu', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				const menu = new Menu();
+				menu.addItem((item) => {
+					item.setTitle(t('edit', this.plugin) || '编辑')
+						.setIcon('pencil')
+						.onClick(() => {
+							const category = this.plugin.settings.categories.find(cat => cat.buttons.some(b => b.id === button.id));
+							if (category) {
+								new (require('../settings/modals/ButtonEditModal').ButtonEditModal)(this.app, this.plugin, button, category, async () => {
+									await this.plugin.saveSettings();
+									this.debouncedRender();
+								}).open();
+							}
+					});
+				});
+				menu.addItem((item) => {
+					item.setTitle(t('copy', this.plugin) || '复制')
+						.setIcon('copy')
+						.onClick(async () => {
+							const category = this.plugin.settings.categories.find(cat => cat.buttons.some(b => b.id === button.id));
+							if (category) {
+								const newButton = {
+									...JSON.parse(JSON.stringify(button)),
+									id: Date.now().toString(),
+									order: category.buttons.length
+								};
+								category.buttons.push(newButton);
+								await this.plugin.saveSettings();
+								this.debouncedRender();
+							}
+					});
+				});
+				menu.addItem((item) => {
+					item.setTitle(t('delete', this.plugin) || '删除')
+						.setIcon('trash');
+					// 兼容 setWarning 方法（Obsidian 1.0+），老版本无此方法
+					if (typeof (item as any).setWarning === 'function') {
+						(item as any).setWarning();
+					}
+					item.onClick(() => {
+						const category = this.plugin.settings.categories.find(cat => cat.buttons.some(b => b.id === button.id));
+						if (category) {
+							new (require('../settings/modals/DeleteButtonModal').DeleteButtonModal)(this.app, this.plugin, button, category, async () => {
+								const idx = category.buttons.findIndex(b => b.id === button.id);
+								if (idx > -1) category.buttons.splice(idx, 1);
+								await this.plugin.saveSettings();
+								this.debouncedRender();
+							}).open();
+						}
+					});
+				});
+				menu.showAtPosition({x: e.clientX, y: e.clientY});
+			});
+		}
 	}
 } 

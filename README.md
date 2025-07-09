@@ -25,25 +25,33 @@
 
 ## 🚀 Installation
 
+### 📦 Manual Installation
+
 1. Download the latest release ([Releases](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/releases))
-2. Place the plugin folder into your Obsidian plugins directory (usually `.obsidian/plugins/`, e.g. `YourVault/.obsidian/plugins/obsidian-buttons-panel-plugin/`)
+2. Place the plugin folder into your Obsidian plugins directory (usually `.obsidian/plugins/`, e.g. `YourVault/.obsidian/plugins/buttons-panel/`)
 3. Enable the plugin in Obsidian Settings → Community Plugins
+
+### 🔧 Install via BRAT (Recommended for Beta Users)
+1. Install [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin
+2. Click "Add Beta plugin" in BRAT settings
+3. Enter `TracingOrigins/obsidian-buttons-panel-plugin`
+4. Enable the plugin
 
 ## 📖 Usage
 
-### Open the Button Panel
+### 🎯 Open the Button Panel
 
 - Use the command palette (Ctrl+P) and run "Open buttons panel (right sidebar)"
 - Click the grid icon in the left ribbon to quickly open the panel and settings
 - The button panel will appear in the right sidebar for quick access
 
-### Open the Button Panel Settings Page
+### ⚙️ Open the Button Panel Settings Page
 
 - Use the command palette to run "Open buttons panel settings (central content area)"
 - The settings page will open in the central content area for detailed configuration
 - You can also configure in the plugin settings under Obsidian Settings
 
-### Supported Action Types
+### 🔗 Supported Action Types
 
 - **File**: Open any file
 - **Command**: Execute an Obsidian command
@@ -51,13 +59,13 @@
 - **Create File**: Create a new file at a specified location, supports date variables (e.g. `{{DATE:YYYY-MM-DD}}`) and templates
 - **Script**: Run a custom JS script from your vault (supports both QuickAdd and Components script formats), enabling automation and advanced workflows. Scripts must be placed in the configured script folder.
 
-### Form Validation Experience
+### ✅ Form Validation Experience
 
 - When creating or editing a button, clicking "Save" will automatically validate all required fields
 - If any required field is empty, the corresponding input will be highlighted in red (no popup)
 - The red highlight disappears automatically once the field is filled
 
-### Panel Settings
+### 🎛️ Panel Settings
 
 - **Panel Title**: Set the panel's display title
 - **Show Title**: Toggle the display of the panel title
@@ -68,7 +76,7 @@
 
 > Example: Set the panel height to `400px` and choose "Tabbed View" to group buttons by category.
 
-### Path Configuration
+### 📁 Path Configuration
 
 - **Template Folder Path**: Set the folder path for storing template files (e.g., `templates/`). The create file action will use templates from this path
 - **Script Folder Path**: Set the folder path for storing script files (e.g., `scripts/`). The run script action will load script files from this path
@@ -77,7 +85,7 @@
 
 > Example: Set the template folder to `templates/` and script folder to `scripts/` so that the create file and run script features work properly.
 
-### Button Management
+### 🎮 Button Management
 
 - **Category Organization**: Manage buttons in groups by category
 - **Drag-and-Drop Sorting**: Reorder buttons and categories via drag-and-drop
@@ -85,6 +93,15 @@
 - **Live Preview**: Instantly preview button effects during configuration
 
 > Example: Create multiple categories, add different buttons to each, and rearrange them by dragging.
+
+### 🖱️ Button Context Menu (Right-Click)
+
+- You can enable the right-click context menu for sidebar panel buttons in the panel settings.
+- When enabled, right-clicking a button in the sidebar panel will show a menu with **Edit**, **Copy**, and **Delete** options:
+  - **Edit**: Open the button editor modal for quick modification.
+  - **Copy**: Duplicate the button (with a new ID) to the end of the same category.
+  - **Delete**: Remove the button after confirmation.
+- This feature is optional and can be toggled in the panel configuration section of the settings tab.
 
 ### 🧩 Script Feature
 
@@ -121,18 +138,13 @@
 
 ## 🛠️ Development
 
-### Build
+- Clone this repo
+- Make sure your NodeJS is at least v16 (`node --version`)
+- `npm i` or `yarn` to install dependencies
+- `npm run dev` to start compilation in watch mode
+- `npm run build` to build the plugin
+- `npm run build:vault` to build the plugin and copy it to your vault's plugins folder(need create a .env file in the project root and add the line: VAULT_PATH=/path/to/your/vault)
 
-```bash
-npm install
-npm run build
-```
-
-### Development Mode
-
-```bash
-npm run dev
-```
 
 ## 🎨 Tech Stack
 
@@ -144,15 +156,17 @@ npm run dev
 
 ## 📄 License
 
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+## 🌟 Support & Help
 
-Contributions are welcome! Submit Issues and Pull Requests.
-
-- For suggestions, bugs, or feature requests, please open a [GitHub Issue](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues)
-- Before contributing, please review the project structure and comments; PRs via branches are recommended
-- Documentation, translation, and style improvements are also welcome
+If this plugin helps you, consider:
+- ⭐ **Starring** the repository
+- 🐛 Using the [bug report template](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues/new?template=bug_report.md) to submit bug reports
+- 💡 Using the [feature request template](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues/new?template=feature_request.md) to submit feature suggestions
+- ❓ Asking questions or sharing ideas in our [Discussions](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/discussions)
+- 📝 Referring to the [Contributing Guide](./docs/contributing.md) to contribute code or documentation
+- 💰 Providing [sponsorship](https://support.tracingorigins.cn) to the developer (if available)
 
 ## 🙏 Acknowledgements
 

@@ -25,25 +25,34 @@
 
 ## 🚀 下载安装
 
+### 📦 手动安装
+
 1. 下载最新版本的插件（[Releases](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/releases)）
-2. 将插件文件夹放入你的 Obsidian 插件目录（通常为 `.obsidian/plugins/`，如 `你的库/.obsidian/plugins/obsidian-buttons-panel-plugin/`）
+2. 将插件文件夹放入你的 Obsidian 插件目录（通常为 `.obsidian/plugins/`，如 `你的库/.obsidian/plugins/buttons-panel/`）
 3. 在 Obsidian 设置 → 第三方插件中启用本插件
+
+### 🔧 通过BRAT安装（推荐给测试用户）
+
+1. 安装 [BRAT](https://github.com/TfTHacker/obsidian42-brat) 插件
+2. 在 BRAT 设置中点击"添加测试插件"
+3. 输入 `TracingOrigins/obsidian-buttons-panel-plugin`
+4. 启用插件
 
 ## 📖 使用方法
 
-### 打开按钮面板
+### 🎯 打开按钮面板
 
 - 命令面板（Ctrl+P）执行 "打开按钮面板（右侧边栏）"
 - 点击左侧 ribbon 网格图标快速打开面板和配置页
 - 按钮面板将在右侧边栏中打开，方便快速访问
 
-### 打开按钮面板设置页面
+### ⚙️ 打开按钮面板设置页面
 
 - 命令面板执行 "打开按钮面板设置（中央内容区域）"
 - 设置页面将在中央内容区域中打开，便于详细配置
 - 也可在 Obsidian 设置页面的插件设置中进行配置
 
-### 支持的动作类型
+### 🔗 支持的动作类型
 
 - **打开文件**: 打开任意文件
 - **执行命令**: 执行 Obsidian 命令
@@ -51,13 +60,13 @@
 - **创建文件**: 在指定位置创建新文件，支持日期变量（如 `{{DATE:YYYY-MM-DD}}`）和模板内容
 - **运行脚本**: 运行库中自定义的 JS 脚本（目前支持 QuickAdd和Components 两种脚本格式），可实现自动化、批量处理等高级功能。脚本需放在设置指定的脚本文件夹下。
 
-### 表单校验体验
+### ✅ 表单校验体验
 
 - 新建或编辑按钮时，点击"保存"会自动校验所有必填项
 - 若有必填项为空，相关输入框会高亮红色边框，**不会弹出提示框**
 - 补全内容后红色高亮自动消失，体验流畅
 
-### 面板配置
+### 🎛️ 面板配置
 
 - **面板标题**: 设置面板显示标题
 - **显示标题**: 控制是否在面板中显示标题
@@ -68,7 +77,7 @@
 
 > 示例：你可以将面板高度设置为 `400px`，并选择"标签页视图"，让不同分类的按钮分组显示。
 
-### 路径配置
+### 📁 路径配置
 
 - **模板文件夹路径**: 设置用于存储模板文件的文件夹路径（如 `templates/`），创建文件动作会使用此路径下的模板
 - **脚本文件夹路径**: 设置用于存储脚本文件的文件夹路径（如 `scripts/`），运行脚本动作会从此路径加载脚本文件
@@ -77,7 +86,7 @@
 
 > 示例：你可以设置模板文件夹为 `templates/`，脚本文件夹为 `scripts/`，这样创建文件和运行脚本功能就能正常工作了。
 
-### 按钮管理
+### 🎮 按钮管理
 
 - **分类组织**: 按分类分组管理按钮
 - **拖动排序**: 支持按钮和分类的拖动排序
@@ -85,6 +94,15 @@
 - **实时预览**: 配置时实时预览按钮效果
 
 > 示例：你可以新建多个分类，每个分类下添加不同的按钮，并通过拖拽调整顺序。
+
+### 🖱️ 按钮上下文菜单 (右键单击)
+
+- 您可以在面板设置中为边栏面板按钮启用右键点击上下文菜单。
+- 启用后，右键单击边栏面板中的按钮将显示一个菜单，其中包含 **Edit**、**Copy** 和 **Delete** 选项：
+  - **Edit**: 打开按钮编辑器模式以进行快速修改。
+  -**Copy**: 将按钮 (使用新 ID) 复制到同一类别的末尾。
+  - **Delete**: 确认后移除按钮。
+- 此功能是可选的，可以在设置选项卡的面板配置部分中切换。
 
 ### 🧩 脚本功能说明
 
@@ -119,20 +137,14 @@
 
 > 示例：你可以编写批量处理、自动化等高级脚本，并通过按钮一键运行。
 
-## 🛠️ 开发
+## 🛠️ 开发指南
 
-### 构建
-
-```bash
-npm install
-npm run build
-```
-
-### 开发模式
-
-```bash
-npm run dev
-```
+- 克隆此仓库
+- 确保你的 NodeJS 版本至少为 v16 (`node --version`)
+- 使用 `npm insall` 安装依赖
+- 使用 `npm run dev` 启动开发模式并进行实时编译
+- 运行 `npm run build` 构建插件
+- 运行 `npm run build:vault` 构建插件并将其复制到您的 vault 插件文件夹（需要在项目根目录创建一个 `.env` 文件并添加：`VAULT_PATH=/path/to/your/vault`）
 
 ## 🎨 技术栈
 
@@ -144,15 +156,17 @@ npm run dev
 
 ## 📄 许可证
 
-MIT License
+本项目采用 MIT 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件。
 
-## 🤝 贡献
+## 🌟 支持与帮助
 
-欢迎提交 Issue 和 Pull Request！
-
-- 如有建议、Bug 或新需求，欢迎在 [GitHub Issues](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues) 提出
-- 参与贡献请先阅读项目代码结构和注释，建议使用分支提交 PR
-- 也欢迎补充文档、翻译、优化样式等方面的贡献
+如果这个插件对您有帮助，请考虑：
+- ⭐ **给仓库“点星”**
+- 🐛 使用 [bug 报告模板](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues/new?template=bug_report.md) 提交错误报告
+- 💡 使用 [功能请求模板](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/issues/new?template=feature_request.md) 提交功能建议
+- ❓ 在我们的 [讨论区](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/discussions) 提问或分享想法
+- 📝 参阅 [贡献指南](./docs/贡献指南.md)，为本项目贡献代码或文档
+- 💰 为开发者提供[赞助](https://support.tracingorigins.cn/zh)（如果可用）
 
 ## 🙏 致谢
 

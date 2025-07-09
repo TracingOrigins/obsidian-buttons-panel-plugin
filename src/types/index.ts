@@ -62,6 +62,7 @@ export interface PanelConfig {
 	panelViewType?: 'list' | 'tabs';
 	/** 是否启用按钮动画 */
 	enableAnimation?: boolean;
+	enableButtonContextMenu?: boolean; // 新增
 }
 
 /**
@@ -101,6 +102,7 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
 		displayStyle: 'default',
 		panelViewType: 'list',
 		enableAnimation: true,
+		enableButtonContextMenu: false, // 新增
 	},
 	pathConfig: {
 		templateFolderPath: 'templates/',

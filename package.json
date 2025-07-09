@@ -12,10 +12,16 @@
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
+		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"build:vault": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && node scripts/copy-to-vault.js"
 	},
-	"keywords": [],
+	"keywords": [
+		"Buttons",
+		"Buttons Panel",
+		"Obsidian Plugin"
+	],
 	"devDependencies": {
+		"dotenv": "^16.0.0",
 		"@types/node": "^16.11.6",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",
