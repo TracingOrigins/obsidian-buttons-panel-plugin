@@ -1,7 +1,7 @@
 {
 	"id": "buttons-panel",
 	"name": "Buttons Panel",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"minAppVersion": "1.8.0",
 	"description": "A modern button panel plugin for quick access to files, commands, links, and scripts.",
 	"author": "Kevin",
