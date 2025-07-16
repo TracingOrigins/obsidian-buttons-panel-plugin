@@ -1,56 +1,58 @@
-import { Modal, Notice, Setting } from 'obsidian';
+import { Modal, Setting, Notice } from 'obsidian';
 import { ButtonConfig, CategoryConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
 import { ActionSequence } from '@/common/actions/ActionSequence';
 import { NameInput, IconInput } from '@/common/components';
 
 /**
- * AddButtonModal 新增按钮模态框类。
- * 用于在指定分类下创建新按钮，支持基本信息填写、动作配置、保存校验等。
+ * ButtonEditModal 按钮编辑模态框类。
+ * 用于编辑指定按钮的基本信息和动作配置，支持保存校验、同步更新等。
  */
-export class AddButtonModal extends Modal {
+export class ButtonEditModal extends Modal {
     // 插件主类实例
     plugin: any;
+    // 待编辑的按钮对象
+    button: ButtonConfig;
     // 按钮所属分类
     parentCategory: CategoryConfig;
     // 保存成功回调
     onSave?: () => void;
-    // 临时按钮对象
+    // 临时按钮对象，用于保存修改前的值
     tempButton: ButtonConfig;
-    // 动作序列对象
+    // 动作序列对象，用于管理动作的添加、删除、验证等
     actionSequence: ActionSequence;
-    // 名称输入组件
+    // 名称输入组件实例
     nameInput: NameInput | null = null;
-    // 图标输入组件
+    // 图标输入组件实例
     iconInput: IconInput | null = null;
 
     /**
      * 构造函数，初始化模态框和临时按钮对象。
      * @param app Obsidian应用实例
      * @param plugin 插件主类实例
+     * @param button 待编辑的按钮对象
      * @param parentCategory 按钮所属分类
      * @param onSave 保存成功回调
      */
-    constructor(app: any, plugin: any, parentCategory: CategoryConfig, onSave?: () => void) {
+    constructor(
+        app: any,
+        plugin: any,
+        button: ButtonConfig,
+        parentCategory: CategoryConfig,
+        onSave?: () => void
+    ) {
         super(app);
         this.plugin = plugin;
+        this.button = button;
         this.parentCategory = parentCategory;
         this.onSave = onSave;
-        this.tempButton = {
-            id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
-            name: '',
-            icon: '',
-            actions: [],
-            order: 0,
-            executionMode: 'sequential',
-            stopOnError: true,
-            delayBetweenActions: 0,
-        };
-        this.actionSequence = new ActionSequence(this.tempButton.actions);
-        // 新建时如果没有动作，自动添加一个默认动作
-        if (this.tempButton.actions.length === 0) {
-            this.actionSequence.addDefaultAction();
-        }
+        // 深拷贝按钮对象，避免直接修改原始数据
+        this.tempButton = JSON.parse(JSON.stringify(button));
+        // 过滤掉无效的 action
+        const validActions = Array.isArray(this.tempButton.actions)
+            ? this.tempButton.actions.filter((a) => a && typeof a === 'object' && a.type)
+            : [];
+        this.actionSequence = new ActionSequence(validActions);
     }
 
     /**
@@ -61,7 +63,7 @@ export class AddButtonModal extends Modal {
         contentEl.empty();
         contentEl.addClass('buttons-panel-plugin');
         contentEl.addClass('button-edit-modal');
-        contentEl.createEl('h2', { text: t('add_button', this.plugin) });
+        contentEl.createEl('h2', { text: t('edit_button', this.plugin) });
         const formContainer = contentEl.createDiv('form-container');
         // 拆分为两个独立容器
         const basicInfoContainer = formContainer.createDiv('basic-info-container');
@@ -231,12 +233,22 @@ export class AddButtonModal extends Modal {
             return;
         }
 
-        // 保存按钮
+        // 更新临时按钮的动作
         this.tempButton.actions = this.actionSequence.toJSON();
-        this.tempButton.order = this.parentCategory.buttons.length;
-        this.parentCategory.buttons.push({ ...this.tempButton });
+
+        // 更新原始按钮
+        Object.assign(this.button, this.tempButton);
+
+        // 更新分类中的按钮
+        const index = this.parentCategory.buttons.findIndex(
+            (b: ButtonConfig) => b.id === this.button.id
+        );
+        if (index > -1) {
+            this.parentCategory.buttons[index] = this.button;
+        }
+
         await this.plugin.saveSettings();
-        new Notice(t('button_create_success', this.plugin));
+        new Notice(t('button_update_success', this.plugin));
         this.close();
         this.onSave?.();
     }

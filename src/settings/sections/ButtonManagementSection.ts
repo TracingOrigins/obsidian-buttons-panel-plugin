@@ -2,12 +2,12 @@ import { App, ButtonComponent, setIcon, Menu } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { ButtonConfig, CategoryConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
-import { EditButtonModal } from '@/common/modals/EditButtonModal';
-import { AddButtonModal } from '@/common/modals/AddButtonModal';
-import { RenameCategoryModal } from '@/common/modals/RenameCategoryModal';
-import { CreateCategoryModal } from '@/common/modals/CreateCategoryModal';
-import { DeleteCategoryModal } from '@/common/modals/DeleteCategoryModal';
-import { DeleteButtonModal } from '@/common/modals/DeleteButtonModal';
+import { ButtonEditModal } from '@/common/modals/ButtonEditModal';
+import { ButtonCreateModal } from '@/common/modals/ButtonCreateModal';
+import { CategoryEditModal } from '@/common/modals/CategoryEditModal';
+import { CategoryCreateModal } from '@/common/modals/CategoryCreateModal';
+import { CategoryDeleteModal } from '@/common/modals/CategoryDeleteModal';
+import { ButtonDeleteModal } from '@/common/modals/ButtonDeleteModal';
 import { safeSetSVG } from '@/common/utils/dom';
 
 /**
@@ -114,12 +114,12 @@ export class ButtonManagementSection {
             const rightContainer = summary.createDiv({ cls: 'summary-right-container' });
             new ButtonComponent(rightContainer)
                 .setIcon('pencil')
-                .setTooltip(t('rename_category', this.plugin))
-                .setClass('rename-category-button')
+                .setTooltip(t('edit_category', this.plugin))
+                .setClass('edit-category-button')
                 .onClick((e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    new RenameCategoryModal(this.app, this.plugin, category, () => {
+                    new CategoryEditModal(this.app, this.plugin, category, () => {
                         this.displayCallback?.();
                     }).open();
                 });
@@ -157,7 +157,7 @@ export class ButtonManagementSection {
                 .setTooltip(t('add_button', this.plugin))
                 .setCta()
                 .onClick(() => {
-                    new AddButtonModal(this.app, this.plugin, category, () => {
+                    new ButtonCreateModal(this.app, this.plugin, category, () => {
                         this.displayCallback?.();
                     }).open();
                 });
@@ -173,7 +173,7 @@ export class ButtonManagementSection {
             .setTooltip(t('add_category', this.plugin))
             .setCta()
             .onClick(() => {
-                new CreateCategoryModal(this.app, this.plugin, async (value: string) => {
+                new CategoryCreateModal(this.app, this.plugin, async (value: string) => {
                     const newCategory: CategoryConfig = {
                         id: Date.now().toString(),
                         name: value,
@@ -620,7 +620,7 @@ export class ButtonManagementSection {
             .setIcon('pencil')
             .setTooltip(t('edit_button_tooltip', this.plugin))
             .onClick(() => {
-                new EditButtonModal(this.app, this.plugin, button, category, () => {
+                new ButtonEditModal(this.app, this.plugin, button, category, () => {
                     this.plugin.saveSettings();
                     this.displayCallback?.();
                 }).open();
@@ -645,7 +645,7 @@ export class ButtonManagementSection {
             .setWarning()
             .setTooltip(t('delete_button_tooltip', this.plugin))
             .onClick(() => {
-                new DeleteButtonModal(this.app, this.plugin, button, category, () => {
+                new ButtonDeleteModal(this.app, this.plugin, button, category, () => {
                     this.removeButtonFromCategory(category, button.id);
                     this.plugin.saveSettings();
                     this.displayCallback?.();
@@ -658,7 +658,7 @@ export class ButtonManagementSection {
      * @param category 待删除的分类
      */
     private handleDeleteCategory(category: CategoryConfig): void {
-        new DeleteCategoryModal(this.app, this.plugin, category, () => {
+        new CategoryDeleteModal(this.app, this.plugin, category, () => {
             this.displayCallback?.();
         }).open();
     }

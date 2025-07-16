@@ -112,7 +112,6 @@
     "panel_title_desc": "显示在面板顶部的标题",
     "panel_title_setting": "面板标题",
     "path_config": "路径配置",
-    "rename_category": "重命名分类",
     "save": "保存",
     "script": "运行脚本",
     "script_command_registered": "已注册命令：运行脚本 {scriptName}",

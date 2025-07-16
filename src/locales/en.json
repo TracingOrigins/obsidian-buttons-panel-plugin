@@ -112,7 +112,6 @@
     "panel_title_desc": "Title displayed at the top of the panel",
     "panel_title_setting": "Panel title",
     "path_config": "Path Config",
-    "rename_category": "Rename category",
     "save": "Save",
     "script": "Run Script",
     "script_command_registered": "Registered command:\nRun script {scriptName}",

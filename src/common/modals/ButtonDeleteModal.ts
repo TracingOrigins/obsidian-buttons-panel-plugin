@@ -4,10 +4,10 @@ import { CategoryConfig, ButtonConfig } from '@/common/types';
 import { t, tWithParams } from '@/common/utils/i18n';
 
 /**
- * DeleteButtonModal 删除按钮确认模态框类。
+ * ButtonDeleteModal 按钮删除模态框类。
  * 用于弹出确认对话框，确认后删除指定按钮。
  */
-export class DeleteButtonModal extends Modal {
+export class ButtonDeleteModal extends Modal {
     plugin: ButtonsPanelPlugin;
     button: ButtonConfig;
     category: CategoryConfig;

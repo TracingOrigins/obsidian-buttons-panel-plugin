@@ -3,10 +3,10 @@ import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 
 /**
- * CreateCategoryModal 创建分类模态框类。
+ * CategoryCreateModal 分类创建模态框。
  * 用于弹出对话框让用户输入新分类名称，并回调创建逻辑。
  */
-export class CreateCategoryModal extends Modal {
+export class CategoryCreateModal extends Modal {
     /** 插件主类实例 */
     plugin: ButtonsPanelPlugin;
     /** 创建分类后的回调函数，参数为新分类名称 */

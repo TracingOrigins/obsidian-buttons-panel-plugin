@@ -11,7 +11,7 @@
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
 import { Plugin, WorkspaceLeaf, Editor, TFile, Notice } from 'obsidian';
 import { ButtonsPanelView } from '@/views/ButtonsPanelView';
-import { PanelSettingsView } from '@/views/PanelSettingsView';
+import { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
 import { ButtonsPanelSettingTab } from '@/settings/ButtonsPanelSettingTab';
 import {
     DEFAULT_SETTINGS,
@@ -61,7 +61,7 @@ export default class ButtonsPanelPlugin extends Plugin {
         // 注册配置面板视图（主页面新标签页）
         this.registerView(
             BUTTONS_PANEL_SETTINGS_VIEW_TYPE,
-            (leaf: WorkspaceLeaf) => new PanelSettingsView(leaf, this)
+            (leaf: WorkspaceLeaf) => new ButtonsPanelSettingsView(leaf, this)
         );
 
         // 添加命令：打开按钮面板（右侧边栏）
@@ -182,7 +182,7 @@ export default class ButtonsPanelPlugin extends Plugin {
         try {
             this.app.workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE).forEach((leaf) => {
                 try {
-                    const view = leaf.view as PanelSettingsView;
+                    const view = leaf.view as ButtonsPanelSettingsView;
                     if (view && typeof view.refreshSettings === 'function') {
                         view.refreshSettings();
                     }

@@ -4,8 +4,8 @@ import { Menu } from 'obsidian';
 import { ActionDispatcher } from '@/core/ActionDispatcher';
 import { ButtonConfig, CategoryConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
-import { EditButtonModal } from '@/common/modals/EditButtonModal';
-import { DeleteButtonModal } from '@/common/modals/DeleteButtonModal';
+import { ButtonEditModal } from '@/common/modals/ButtonEditModal';
+import { ButtonDeleteModal } from '@/common/modals/ButtonDeleteModal';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { safeSetSVG } from '@/common/utils/dom';
 import { App } from 'obsidian';
@@ -211,7 +211,7 @@ export class ButtonRenderer {
                         cat.buttons.some((b) => b.id === button.id)
                     );
                     if (category) {
-                        new EditButtonModal(this.app, this.plugin, button, category, async () => {
+                        new ButtonEditModal(this.app, this.plugin, button, category, async () => {
                             await this.plugin.saveSettings();
                         }).open();
                     }
@@ -251,7 +251,7 @@ export class ButtonRenderer {
                         cat.buttons.some((b) => b.id === button.id)
                     );
                     if (category) {
-                        new DeleteButtonModal(this.app, this.plugin, button, category, async () => {
+                        new ButtonDeleteModal(this.app, this.plugin, button, category, async () => {
                             const idx = category.buttons.findIndex((b) => b.id === button.id);
                             if (idx > -1) category.buttons.splice(idx, 1);
                             await this.plugin.saveSettings();

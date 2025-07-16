@@ -1,9 +1,9 @@
-// PanelSettingsView.ts
-// 本文件定义了面板设置视图类 PanelSettingsView，用于在 Obsidian 插件中渲染和管理按钮面板的设置界面。
+// ButtonsPanelSettingsView.ts
+// 本文件定义了面板设置视图类 ButtonsPanelSettingsView，用于在 Obsidian 插件中渲染和管理按钮面板的设置界面。
 // 该视图负责展示和处理与按钮面板相关的所有设置项，支持用户交互和配置保存。
 //
 // 主要内容：
-// - PanelSettingsView 类：主视图类，负责初始化、渲染和事件处理
+// - ButtonsPanelSettingsView 类：主视图类，负责初始化、渲染和事件处理
 // - 构造函数与生命周期方法
 // - 视图渲染、设置项展示、事件绑定等核心逻辑
 // - 详细参数、返回值、用途说明
@@ -19,7 +19,7 @@ export const BUTTONS_PANEL_SETTINGS_VIEW_TYPE = 'buttons-panel-settings-view';
 /**
  * 按钮面板配置视图类，在主页面新标签页中显示面板设置界面。
  */
-export class PanelSettingsView extends ItemView {
+export class ButtonsPanelSettingsView extends ItemView {
     /** 插件主类实例 */
     plugin: ButtonsPanelPlugin;
     /** 设置页签实例 */

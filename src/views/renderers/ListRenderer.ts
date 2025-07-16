@@ -4,10 +4,10 @@ import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { ButtonConfig, CategoryConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
 import { ButtonComponent, App, Menu } from 'obsidian';
-import { CreateCategoryModal } from '@/common/modals/CreateCategoryModal';
-import { RenameCategoryModal } from '@/common/modals/RenameCategoryModal';
-import { DeleteCategoryModal } from '@/common/modals/DeleteCategoryModal';
-import { AddButtonModal } from '@/common/modals/AddButtonModal';
+import { CategoryCreateModal } from '@/common/modals/CategoryCreateModal';
+import { CategoryEditModal } from '@/common/modals/CategoryEditModal';
+import { CategoryDeleteModal } from '@/common/modals/CategoryDeleteModal';
+import { ButtonCreateModal } from '@/common/modals/ButtonCreateModal';
 import { ButtonRenderer } from '@/views/renderers/ButtonRenderer';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import { CategoryMoveManager } from '@/views/managers/CategoryMoveManager';
@@ -160,7 +160,7 @@ export class ListRenderer {
                     .setTitle(t('edit'))
                     .setIcon('pencil')
                     .onClick(() => {
-                        new RenameCategoryModal(this.app, this.plugin, category, async () => {
+                        new CategoryEditModal(this.app, this.plugin, category, async () => {
                             await this.plugin.saveSettings();
                         }).open();
                     })
@@ -196,7 +196,7 @@ export class ListRenderer {
                     .setTitle(t('delete'))
                     .setIcon('trash')
                     .onClick(() => {
-                        new DeleteCategoryModal(this.app, this.plugin, category, async () => {
+                        new CategoryDeleteModal(this.app, this.plugin, category, async () => {
                             await this.plugin.saveSettings();
                         }).open();
                     })
@@ -242,7 +242,7 @@ export class ListRenderer {
                 .setIcon('plus')
                 .setTooltip(t('add_button'))
                 .onClick(() => {
-                    new AddButtonModal(this.app, this.plugin, category, async () => {
+                    new ButtonCreateModal(this.app, this.plugin, category, async () => {
                         await this.plugin.saveSettings();
                         // 可选：刷新面板
                     }).open();
@@ -300,7 +300,7 @@ export class ListRenderer {
                 .setIcon('plus')
                 .setTooltip(t('add_category'))
                 .onClick(() => {
-                    new CreateCategoryModal(this.app, this.plugin, async (categoryName: string) => {
+                    new CategoryCreateModal(this.app, this.plugin, async (categoryName: string) => {
                         const newCategory = {
                             id: Date.now().toString(),
                             name: categoryName,

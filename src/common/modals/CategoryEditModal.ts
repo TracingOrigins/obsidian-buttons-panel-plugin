@@ -4,10 +4,10 @@ import { CategoryConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
 
 /**
- * RenameCategoryModal 重命名分类模态框类。
+ * CategoryEditModal 分类编辑模态框类（目前仅支持重命名）。
  * 用于输入新分类名称并保存，支持回车提交、空名校验。
  */
-export class RenameCategoryModal extends Modal {
+export class CategoryEditModal extends Modal {
     // 插件主类实例
     plugin: ButtonsPanelPlugin;
     // 要重命名的分类ID
@@ -52,7 +52,7 @@ export class RenameCategoryModal extends Modal {
         contentEl.addClass('rename-category-modal');
 
         // 标题
-        contentEl.createEl('h2', { text: t('rename_category', this.plugin) });
+        contentEl.createEl('h2', { text: t('edit_category', this.plugin) });
 
         // 分类名称输入框
         const nameSetting = new Setting(contentEl).setName(t('category_name', this.plugin));
