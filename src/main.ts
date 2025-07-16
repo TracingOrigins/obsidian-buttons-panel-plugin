@@ -83,7 +83,7 @@ export default class ButtonsPanelPlugin extends Plugin {
         });
 
         // 添加左侧ribbon图标，点击可快速打开按钮面板和设置
-        this.addRibbonIcon('layout-grid', t('open_buttons_panel', this), () => {
+        this.addRibbonIcon('mouse', t('open_buttons_panel', this), () => {
             this.activateView();
             this.activateSettingsView();
         });

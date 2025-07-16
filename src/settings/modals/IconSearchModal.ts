@@ -101,7 +101,7 @@ export class IconSearchModal extends Modal {
                 } else {
                     item.textContent = icon.name || t('unknown_icon', this.plugin);
                 }
-                item.title = icon.name;
+                item.setAttr('aria-label', icon.name);
                 item.onclick = () => {
                     this.onSelect(icon);
                     this.close();

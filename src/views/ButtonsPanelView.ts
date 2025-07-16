@@ -176,7 +176,8 @@ export class ButtonsPanelView extends ItemView {
      * @returns 图标名称字符串
      */
     getIcon(): string {
-        return 'layout-grid';
+        // return 'layout-grid';
+        return 'mouse';
     }
 
     /**

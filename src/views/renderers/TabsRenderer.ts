@@ -1,6 +1,6 @@
 // TabsRenderer.ts
 // 标签页渲染器，负责渲染按钮面板的标签页视图。
-import { App, ButtonComponent, Menu } from 'obsidian';
+import { App, ButtonComponent, Menu, setIcon } from 'obsidian';
 import { ButtonConfig, CategoryConfig } from '@/types';
 import { t } from '@/utils/i18n';
 import { CreateCategoryModal } from '@/settings/modals/CreateCategoryModal';
@@ -164,10 +164,7 @@ export class TabsRenderer {
      */
     private renderTabIcon(tabEl: HTMLElement): void {
         const iconEl = tabEl.createSpan({ cls: 'tab-icon' });
-        safeSetSVG(
-            iconEl,
-            `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-layout-grid"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>`
-        );
+        setIcon(iconEl, 'layout-grid');
     }
 
     /**

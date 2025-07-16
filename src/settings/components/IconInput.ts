@@ -1,4 +1,4 @@
-import { Setting, TextComponent } from 'obsidian';
+import { setIcon, Setting, TextComponent } from 'obsidian';
 import { t } from '@/utils/i18n';
 import { IconSearchModal } from '@/settings/modals/IconSearchModal';
 import { safeSetSVG } from '@/utils/dom';
@@ -143,7 +143,7 @@ export class IconInput {
                 this.deleteBtn = this.setting.controlEl.createEl('button', {
                     cls: 'icon-delete-btn',
                 });
-                // setIcon(this.deleteBtn, 'x'); // This line was removed as per the edit hint
+                setIcon(this.deleteBtn, 'x');
                 this.deleteBtn.onclick = () => {
                     this.setValue('');
                 };

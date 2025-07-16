@@ -710,6 +710,7 @@ button.button-move-indicator.icon-top .button-text,
     z-index: 2;
     padding: 2px;
     transition: background-color 0.2s ease;
+    color: var(--text-muted);
 }
 
 /* 图标输入框容器 */
