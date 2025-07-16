@@ -1,7 +1,7 @@
 import { App, Notice, WorkspaceLeaf } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonAction, FileActionParams } from '@/types/action';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonAction, FileActionParams } from '@/common/types/action';
+import { t } from '@/common/utils/i18n';
 
 /**
  * 文件动作服务类，负责处理文件打开和相关的动作。

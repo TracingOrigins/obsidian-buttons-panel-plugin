@@ -1,10 +1,10 @@
 // PanelActionsRenderer.ts
 // 面板操作按钮渲染器，负责渲染面板顶部的操作按钮区域。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { PanelConfig } from '@/types';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { PanelConfig } from '@/common/types';
+import { t } from '@/common/utils/i18n';
 import { setIcon } from 'obsidian';
-import { refreshAllSettingsViews } from '@/utils/obsidian';
+import { refreshAllSettingsViews } from '@/common/utils/obsidian';
 
 /**
  * PanelActionsRenderer 面板操作按钮渲染器。

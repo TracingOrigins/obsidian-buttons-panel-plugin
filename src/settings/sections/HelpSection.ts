@@ -1,5 +1,5 @@
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { t } from '@/common/utils/i18n';
 
 /**
  * createHelpSection 创建帮助说明区域。

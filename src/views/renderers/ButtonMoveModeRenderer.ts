@@ -1,11 +1,11 @@
 // ButtonMoveModeRenderer.ts
 // 按钮移动模式渲染器，专门处理按钮移动模式下的界面渲染。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/types';
-import { ViewStateManager } from '../managers/ViewStateManager';
-import { ButtonMoveManager } from '../managers/ButtonMoveManager';
-import { ButtonRenderer } from './ButtonRenderer';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { ViewStateManager } from '@/views/managers/ViewStateManager';
+import { ButtonMoveManager } from '@/views/managers/ButtonMoveManager';
+import { ButtonRenderer } from '@/views/renderers/ButtonRenderer';
+import { t } from '@/common/utils/i18n';
 
 /**
  * ButtonMoveModeRenderer 按钮移动模式渲染器。

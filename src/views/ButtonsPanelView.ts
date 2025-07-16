@@ -12,8 +12,8 @@
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
 
 import { ItemView, WorkspaceLeaf, Menu } from 'obsidian';
-import { ButtonConfig, ButtonsPanelPlugin, CategoryConfig, PanelConfig } from '@/types';
-import { t } from '@/utils/i18n';
+import { ButtonConfig, ButtonsPanelPlugin, CategoryConfig, PanelConfig } from '@/common/types';
+import { t } from '@/common/utils/i18n';
 import { ActionDispatcher } from '@/core/ActionDispatcher';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import { ButtonMoveManager } from '@/views/managers/ButtonMoveManager';

@@ -1,7 +1,7 @@
 import { App, Notice, TFile, normalizePath } from 'obsidian';
-import { ButtonAction } from '@/types/action';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { t, tWithParams } from '@/utils/i18n';
+import { ButtonAction } from '@/common/types/action';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { t, tWithParams } from '@/common/utils/i18n';
 
 /**
  * 脚本动作服务类，负责处理用户自定义脚本执行。
@@ -13,7 +13,10 @@ export class ScriptService {
      * @param app Obsidian 应用实例
      * @param plugin 插件主类实例（可选）
      */
-    constructor(private app: App, private plugin?: ButtonsPanelPlugin) {}
+    constructor(
+        private app: App,
+        private plugin?: ButtonsPanelPlugin
+    ) {}
 
     /**
      * 运行用户自定义的脚本文件。

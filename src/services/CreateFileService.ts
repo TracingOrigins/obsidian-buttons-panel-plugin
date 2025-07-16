@@ -1,8 +1,8 @@
 import { App, Notice, TFile, normalizePath } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { t } from '@/common/utils/i18n';
 import { FileService } from '@/services/FileService';
-import { ButtonAction, CreateFileActionParams } from '@/types/action';
+import { ButtonAction, CreateFileActionParams } from '@/common/types/action';
 
 /**
  * 文件创建动作服务类，负责处理文件创建相关的动作。

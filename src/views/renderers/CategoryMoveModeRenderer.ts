@@ -1,10 +1,10 @@
 // CategoryMoveModeRenderer.ts
 // 分类移动模式渲染器，专门处理分类移动模式下的界面渲染。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { CategoryConfig } from '@/types';
-import { ViewStateManager } from '../managers/ViewStateManager';
-import { CategoryMoveManager } from '../managers/CategoryMoveManager';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { CategoryConfig } from '@/common/types';
+import { ViewStateManager } from '@/views/managers/ViewStateManager';
+import { CategoryMoveManager } from '@/views/managers/CategoryMoveManager';
+import { t } from '@/common/utils/i18n';
 
 /**
  * CategoryMoveModeRenderer 分类移动模式渲染器。

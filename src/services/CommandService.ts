@@ -1,7 +1,7 @@
 import { App, Notice } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { t } from '@/utils/i18n';
-import { ButtonAction, CommandActionParams } from '@/types/action';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { t } from '@/common/utils/i18n';
+import { ButtonAction, CommandActionParams } from '@/common/types/action';
 
 /**
  * 命令动作服务类，负责处理 Obsidian 命令的执行。

@@ -1,6 +1,6 @@
 import { App } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonAction, UrlActionParams } from '@/types/action';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonAction, UrlActionParams } from '@/common/types/action';
 
 /**
  * URL 动作服务类，负责处理外部链接打开。
@@ -12,7 +12,10 @@ export class UrlService {
      * @param app Obsidian 应用实例
      * @param plugin 插件主类实例（可选）
      */
-    constructor(private app: App, private plugin?: ButtonsPanelPlugin) {}
+    constructor(
+        private app: App,
+        private plugin?: ButtonsPanelPlugin
+    ) {}
 
     /**
      * 在 Obsidian 中打开外部链接。

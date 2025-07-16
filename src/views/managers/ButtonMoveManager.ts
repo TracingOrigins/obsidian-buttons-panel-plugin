@@ -1,10 +1,10 @@
 // ButtonMoveManager.ts
 // 按钮移动管理器，负责处理按钮的移动逻辑。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonConfig } from '@/types';
-import { ViewStateManager } from './ViewStateManager';
-import { safeSetSVG } from '@/utils/dom';
-import { refreshAllSettingsViews } from '@/utils/obsidian';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonConfig } from '@/common/types';
+import { ViewStateManager } from '@/views/managers/ViewStateManager';
+import { safeSetSVG } from '@/common/utils/dom';
+import { refreshAllSettingsViews } from '@/common/utils/obsidian';
 
 /**
  * ButtonMoveManager 按钮移动管理器。

@@ -11,8 +11,8 @@
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { ButtonsPanelSettingTab } from '@/settings/ButtonsPanelSettingTab';
-import { t } from '@/utils/i18n';
-import { ButtonsPanelPlugin } from '@/types';
+import { t } from '@/common/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types';
 
 export const BUTTONS_PANEL_SETTINGS_VIEW_TYPE = 'buttons-panel-settings-view';
 

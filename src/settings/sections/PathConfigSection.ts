@@ -1,8 +1,8 @@
 import { App, Setting, ButtonComponent, Notice, TextComponent } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { t } from '@/utils/i18n';
-import { FolderSearchModal } from '@/settings/modals/FolderSearchModal';
-import { safeSetSVG } from '@/utils/dom';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { t } from '@/common/utils/i18n';
+import { FolderSearchModal } from '@/common/modals/FolderSearchModal';
+import { safeSetSVG } from '@/common/utils/dom';
 
 /**
  * createPathConfigSection 创建路径设置区域。

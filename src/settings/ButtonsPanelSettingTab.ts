@@ -1,10 +1,10 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
-import { ButtonsPanelPlugin, ButtonsPanelPluginSettings } from '@/types';
+import { ButtonsPanelPlugin, ButtonsPanelPluginSettings } from '@/common/types';
 import { createPanelConfigSection } from '@/settings/sections/PanelConfigSection';
 import { createHelpSection } from '@/settings/sections/HelpSection';
 import { createPathConfigSection } from '@/settings/sections/PathConfigSection';
 import { createButtonManagementSection } from '@/settings/sections/ButtonManagementSection';
-import { t } from '@/utils/i18n';
+import { t } from '@/common/utils/i18n';
 
 /**
  * ButtonsPanelSettingTab 插件设置页签类。

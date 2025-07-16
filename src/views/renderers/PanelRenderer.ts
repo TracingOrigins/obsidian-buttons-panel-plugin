@@ -1,12 +1,12 @@
 // PanelRenderer.ts
 // 面板渲染器，负责渲染按钮面板的主体结构。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/types';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { t } from '@/common/utils/i18n';
 import { setIcon } from 'obsidian';
-import { TabsRenderer } from './TabsRenderer';
-import { ListRenderer } from './ListRenderer';
-import { ViewStateManager } from '../managers/ViewStateManager';
+import { TabsRenderer } from '@/views/renderers/TabsRenderer';
+import { ListRenderer } from '@/views/renderers/ListRenderer';
+import { ViewStateManager } from '@/views/managers/ViewStateManager';
 
 /**
  * PanelRenderer 面板渲染器。

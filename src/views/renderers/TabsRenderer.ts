@@ -1,17 +1,16 @@
 // TabsRenderer.ts
 // 标签页渲染器，负责渲染按钮面板的标签页视图。
 import { App, ButtonComponent, Menu, setIcon } from 'obsidian';
-import { ButtonConfig, CategoryConfig } from '@/types';
-import { t } from '@/utils/i18n';
-import { CreateCategoryModal } from '@/settings/modals/CreateCategoryModal';
-import { RenameCategoryModal } from '@/settings/modals/RenameCategoryModal';
-import { DeleteCategoryModal } from '@/settings/modals/DeleteCategoryModal';
-import { AddButtonModal } from '@/settings/modals/AddButtonModal';
-import { ButtonsPanelPlugin } from '@/types/plugin';
+import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { t } from '@/common/utils/i18n';
+import { CreateCategoryModal } from '@/common/modals/CreateCategoryModal';
+import { RenameCategoryModal } from '@/common/modals/RenameCategoryModal';
+import { DeleteCategoryModal } from '@/common/modals/DeleteCategoryModal';
+import { AddButtonModal } from '@/common/modals/AddButtonModal';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import { CategoryMoveManager } from '@/views/managers/CategoryMoveManager';
-import { ButtonRenderer } from './ButtonRenderer';
-import { safeSetSVG } from '@/utils/dom';
+import { ButtonRenderer } from '@/views/renderers/ButtonRenderer';
 
 /**
  * TabsRenderer 标签页渲染器。

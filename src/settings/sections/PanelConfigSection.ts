@@ -1,8 +1,8 @@
 // PanelConfigSection.ts
 // 用于在设置界面配置按钮面板的显示、样式、动画等参数。
 import { Setting } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { t } from '@/common/utils/i18n';
 
 /**
  * createPanelConfigSection 创建面板设置区域。

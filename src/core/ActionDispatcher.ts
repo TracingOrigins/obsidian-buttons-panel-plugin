@@ -1,7 +1,7 @@
 import { App, Notice } from 'obsidian';
-import { ButtonAction } from '@/types';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { t } from '@/utils/i18n';
+import { ButtonAction } from '@/common/types';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { t } from '@/common/utils/i18n';
 import { FileService } from '@/services/FileService';
 import { CreateFileService } from '@/services/CreateFileService';
 import { CommandService } from '@/services/CommandService';

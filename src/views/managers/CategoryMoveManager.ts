@@ -1,9 +1,9 @@
 // CategoryMoveManager.ts
 // 分类移动管理器，负责处理分类的移动逻辑。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { CategoryConfig } from '@/types';
-import { ViewStateManager } from './ViewStateManager';
-import { refreshAllSettingsViews } from '@/utils/obsidian';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { CategoryConfig } from '@/common/types';
+import { ViewStateManager } from '@/views/managers/ViewStateManager';
+import { refreshAllSettingsViews } from '@/common/utils/obsidian';
 
 /**
  * CategoryMoveManager 分类移动管理器。

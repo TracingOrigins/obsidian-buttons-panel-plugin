@@ -1,14 +1,14 @@
 import { App, ButtonComponent, setIcon, Menu } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/types';
-import { t } from '@/utils/i18n';
-import { EditButtonModal } from '@/settings/modals/EditButtonModal';
-import { AddButtonModal } from '@/settings/modals/AddButtonModal';
-import { RenameCategoryModal } from '@/settings/modals/RenameCategoryModal';
-import { CreateCategoryModal } from '@/settings/modals/CreateCategoryModal';
-import { DeleteCategoryModal } from '@/settings/modals/DeleteCategoryModal';
-import { DeleteButtonModal } from '@/settings/modals/DeleteButtonModal';
-import { safeSetSVG } from '@/utils/dom';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { t } from '@/common/utils/i18n';
+import { EditButtonModal } from '@/common/modals/EditButtonModal';
+import { AddButtonModal } from '@/common/modals/AddButtonModal';
+import { RenameCategoryModal } from '@/common/modals/RenameCategoryModal';
+import { CreateCategoryModal } from '@/common/modals/CreateCategoryModal';
+import { DeleteCategoryModal } from '@/common/modals/DeleteCategoryModal';
+import { DeleteButtonModal } from '@/common/modals/DeleteButtonModal';
+import { safeSetSVG } from '@/common/utils/dom';
 
 /**
  * ButtonManagementSection 按钮管理区域类。

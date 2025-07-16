@@ -2,12 +2,12 @@
 // 按钮渲染器，负责渲染单个按钮及其事件绑定、右键菜单等。
 import { Menu } from 'obsidian';
 import { ActionDispatcher } from '@/core/ActionDispatcher';
-import { ButtonConfig, CategoryConfig } from '@/types';
-import { t } from '@/utils/i18n';
-import { EditButtonModal } from '@/settings/modals/EditButtonModal';
-import { DeleteButtonModal } from '@/settings/modals/DeleteButtonModal';
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { safeSetSVG } from '@/utils/dom';
+import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { t } from '@/common/utils/i18n';
+import { EditButtonModal } from '@/common/modals/EditButtonModal';
+import { DeleteButtonModal } from '@/common/modals/DeleteButtonModal';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { safeSetSVG } from '@/common/utils/dom';
 import { App } from 'obsidian';
 
 /**

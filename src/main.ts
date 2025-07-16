@@ -18,8 +18,8 @@ import {
     ButtonsPanelPluginSettings,
     CategoryConfig,
     ButtonConfig,
-} from '@/types';
-import { t, tWithParams } from '@/utils/i18n';
+} from '@/common/types';
+import { t, tWithParams } from '@/common/utils/i18n';
 
 // 视图类型常量
 export const BUTTONS_PANEL_VIEW_TYPE = 'buttons-panel-view';

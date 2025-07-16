@@ -1,16 +1,16 @@
 // ListRenderer.ts
 // 列表渲染器，负责渲染按钮面板的列表视图。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/types';
-import { t } from '@/utils/i18n';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { t } from '@/common/utils/i18n';
 import { ButtonComponent, App, Menu } from 'obsidian';
-import { CreateCategoryModal } from '../../settings/modals/CreateCategoryModal';
-import { RenameCategoryModal } from '../../settings/modals/RenameCategoryModal';
-import { DeleteCategoryModal } from '../../settings/modals/DeleteCategoryModal';
-import { AddButtonModal } from '../../settings/modals/AddButtonModal';
-import { ButtonRenderer } from './ButtonRenderer';
-import { ViewStateManager } from '../managers/ViewStateManager';
-import { CategoryMoveManager } from '../managers/CategoryMoveManager';
+import { CreateCategoryModal } from '@/common/modals/CreateCategoryModal';
+import { RenameCategoryModal } from '@/common/modals/RenameCategoryModal';
+import { DeleteCategoryModal } from '@/common/modals/DeleteCategoryModal';
+import { AddButtonModal } from '@/common/modals/AddButtonModal';
+import { ButtonRenderer } from '@/views/renderers/ButtonRenderer';
+import { ViewStateManager } from '@/views/managers/ViewStateManager';
+import { CategoryMoveManager } from '@/views/managers/CategoryMoveManager';
 
 /**
  * ListRenderer 列表渲染器。

@@ -1,7 +1,7 @@
 // ViewStateManager.ts
 // 视图状态管理器，负责管理面板的各种运行时状态。
-import { ButtonsPanelPlugin } from '@/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/types';
+import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { ButtonConfig, CategoryConfig } from '@/common/types';
 
 /**
  * ViewStateManager 视图状态管理器。
