@@ -30,7 +30,7 @@ export class FileAction implements IButtonAction {
                 placeholder: t('file_path_placeholder', context.plugin),
                 searchTooltip: t('search_files_tooltip', context.plugin),
                 rootFolder: '',
-                fileExts: ['md'],
+                fileExts: [],
                 showFileNameOnly: false,
             },
             { app: context.app, plugin: context.plugin },
