@@ -116,6 +116,7 @@
     "script": "运行脚本",
     "script_command_registered": "已注册命令：运行脚本 {scriptName}",
     "script_command_run": "运行脚本 {scriptName}",
+    "script_command": "运行脚本 {scriptName}",
     "script_file": "脚本文件",
     "script_file_desc": "选择要运行的 JavaScript 文件",
     "script_file_empty": "脚本文件路径不能为空",

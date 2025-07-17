@@ -116,6 +116,7 @@
     "script": "Run Script",
     "script_command_registered": "Registered command:\nRun script {scriptName}",
     "script_command_run": "Run script {scriptName}",
+    "script_command": "Run script {scriptName}",
     "script_file": "Script File",
     "script_file_desc": "Select a javaScript file to run",
     "script_file_empty": "Script file path cannot be empty",

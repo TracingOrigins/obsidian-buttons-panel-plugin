@@ -20,6 +20,7 @@ import {
     ButtonConfig,
 } from '@/common/types';
 import { t, tWithParams } from '@/common/utils/i18n';
+import { Script } from 'vm';
 
 // 视图类型常量
 export const BUTTONS_PANEL_VIEW_TYPE = 'buttons-panel-view';
@@ -298,13 +299,16 @@ async function registerScriptCommands(plugin: any) {
     for (const file of files) {
         plugin.addCommand({
             id: `run-script:${file.name}`,
-            name: t('script', this.plugin) + `:${file.name}`,
+            name: tWithParams('script_command', { scriptName: file.name }, this.plugin),
             callback: async () => {
                 try {
                     // new Notice(tWithParams('script_command_run', { scriptName: file.name }, this.plugin));
-                    await plugin.ActionDispatcher.runScript(file.name);
+                    await plugin.ActionDispatcher.scriptService.runScript({
+                        type: 'script',
+                        parameters: { scriptName: file.name },
+                    });
                 } catch (e) {
-                    // new Notice(t('script_run_failed', this.plugin) + `：${e.message}`);
+                    new Notice(t('script_run_failed', this.plugin) + `：${e.message}`);
                 }
             },
         });
