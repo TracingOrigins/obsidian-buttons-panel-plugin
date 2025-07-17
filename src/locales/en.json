@@ -1,7 +1,5 @@
 {
     "action_execution_failed": "Action execution failed",
-    "action_scope": "Action scope",
-    "action_scope_desc": "Select action scope",
     "action_settings": "Action settings",
     "action_type": "Action type",
     "action_type_desc": "Select the type of action to perform",

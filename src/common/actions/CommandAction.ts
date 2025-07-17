@@ -1,7 +1,7 @@
 import { IButtonAction } from '@/common/actions/IButtonAction';
 import { Setting } from 'obsidian';
 import { t } from '@/common/utils/i18n';
-import { CommandInput, ScopeDropdown } from '@/common/components';
+import { CommandInput } from '@/common/components';
 
 /**
  * “执行命令”动作类，实现按钮动作表单的渲染、数据管理、校验和序列化。
@@ -10,16 +10,14 @@ export class CommandAction implements IButtonAction {
     type = 'command';
     commandId: string;
     args?: any[];
-    scope?: string;
     private commandInput: CommandInput | null = null;
 
     /**
      * 构造函数，初始化命令参数。
      */
-    constructor(params: { commandId: string; args?: any[]; scope?: string }) {
+    constructor(params: { commandId: string; args?: any[] }) {
         this.commandId = params.commandId;
         this.args = params.args;
-        this.scope = params.scope ?? 'global';
     }
 
     /**
@@ -41,22 +39,8 @@ export class CommandAction implements IButtonAction {
             }
         );
 
-        // 使用可复用的作用域下拉组件
-        const scopeDropdown = new ScopeDropdown(
-            container,
-            {
-                name: t('action_scope', context.plugin),
-                description: t('action_scope_desc', context.plugin),
-                onScopeChange: (value: string) => {
-                    this.scope = value;
-                },
-            },
-            { app: context.app, plugin: context.plugin }
-        );
-
         // 设置初始值
         this.commandInput.setValue(this.commandId || '');
-        scopeDropdown.setValue(this.scope || 'global');
     }
 
     /**
@@ -83,7 +67,6 @@ export class CommandAction implements IButtonAction {
             parameters: {
                 commandId: this.commandId,
                 args: this.args,
-                scope: this.scope ?? 'global',
             },
         };
     }

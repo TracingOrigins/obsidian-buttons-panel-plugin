@@ -2,10 +2,11 @@ import { App, Notice, TFile, normalizePath } from 'obsidian';
 import { ButtonAction } from '@/common/types/action';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t, tWithParams } from '@/common/utils/i18n';
+import { getLastActiveContentLeaf } from '@/common/utils/obsidian';
 
 /**
  * 脚本动作服务类，负责处理用户自定义脚本执行。
- * 支持 QuickAdd/Components 脚本格式、参数传递、作用域切换等。
+ * 支持 QuickAdd/Components 脚本格式。
  */
 export class ScriptService {
     /**
@@ -32,12 +33,14 @@ export class ScriptService {
      */
     async runScript(action: ButtonAction): Promise<void> {
         try {
-            // 作用域支持：如 scope 为 current-editor，则聚焦到最后激活的 markdown 标签页（如有）
-            if (action.type === 'script' && action.parameters.scope === 'current-editor') {
-                const currentEditor = this.plugin?.lastActiveMarkdownLeaf;
-                if (currentEditor) {
-                    this.app.workspace.setActiveLeaf(currentEditor, { focus: true });
-                }
+            // 动作执行前，自动激活最后激活的内容标签页（排除按钮面板）
+            const lastContentLeaf = getLastActiveContentLeaf(
+                this.app,
+                'buttons-panel-view',
+                (this.plugin as any).lastActiveContentLeaf
+            );
+            if (lastContentLeaf) {
+                this.app.workspace.setActiveLeaf(lastContentLeaf, { focus: true });
             }
 
             const scriptFileName = action.type === 'script' ? action.parameters.scriptName : '';

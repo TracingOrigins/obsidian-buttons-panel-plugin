@@ -19,8 +19,6 @@ export interface CommandActionParams {
     commandId: string;
     /** 命令参数（可选） */
     args?: any[];
-    /** 命令作用域（可选） */
-    scope?: string;
 }
 
 /**
@@ -54,8 +52,6 @@ export interface ScriptActionParams {
     scriptName: string;
     /** 脚本参数（可选） */
     args?: any[];
-    /** 脚本作用域（可选） */
-    scope?: string;
 }
 
 /**

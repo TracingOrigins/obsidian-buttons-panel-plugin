@@ -37,8 +37,8 @@ export default class ButtonsPanelPlugin extends Plugin {
     settingTab: ButtonsPanelSettingTab;
     /** 按钮动作执行器对象 */
     ActionDispatcher: any;
-    /** 记录最后激活的markdown标签页 */
-    lastActiveMarkdownLeaf: WorkspaceLeaf | null = null;
+    /** 记录最后激活的内容标签页（排除按钮面板） */
+    lastActiveContentLeaf: WorkspaceLeaf | null = null;
     /** 分类展开状态（运行时状态，不持久化） */
     categoryOpenState: Record<string, boolean> = {};
 
@@ -97,15 +97,15 @@ export default class ButtonsPanelPlugin extends Plugin {
             registerScriptCommands(this);
         });
 
-        // 监听标签页切换，记录最后激活的markdown标签页
+        // 监听标签页切换，记录最后激活的标签页（排除按钮面板）
         this.app.workspace.on('active-leaf-change', (leaf: WorkspaceLeaf | null) => {
             if (
                 leaf &&
                 leaf.view &&
                 leaf.view.getViewType &&
-                leaf.view.getViewType() === 'markdown'
+                leaf.view.getViewType() !== BUTTONS_PANEL_VIEW_TYPE // 排除按钮面板
             ) {
-                this.lastActiveMarkdownLeaf = leaf;
+                this.lastActiveContentLeaf = leaf;
             }
         });
     }

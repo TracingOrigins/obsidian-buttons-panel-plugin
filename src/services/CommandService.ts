@@ -2,6 +2,7 @@ import { App, Notice } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { ButtonAction, CommandActionParams } from '@/common/types/action';
+import { getLastActiveContentLeaf } from '@/common/utils/obsidian';
 
 /**
  * 命令动作服务类，负责处理 Obsidian 命令的执行。
@@ -32,12 +33,14 @@ export class CommandService {
             // 类型断言：现在 TypeScript 知道这是命令动作
             const commandParams = action.parameters as CommandActionParams;
 
-            // 作用域支持：如果 scope 为 current-editor，则聚焦到最后激活的 markdown 标签页（如有）
-            if (commandParams?.scope === 'current-editor') {
-                const currentEditor = this.plugin?.lastActiveMarkdownLeaf;
-                if (currentEditor) {
-                    this.app.workspace.setActiveLeaf(currentEditor, { focus: true });
-                }
+            // 动作执行前，自动激活最后激活的内容标签页（排除按钮面板）
+            const lastContentLeaf = getLastActiveContentLeaf(
+                this.app,
+                'buttons-panel-view',
+                (this.plugin as any).lastActiveContentLeaf
+            );
+            if (lastContentLeaf) {
+                this.app.workspace.setActiveLeaf(lastContentLeaf, { focus: true });
             }
 
             // 执行命令

@@ -1,7 +1,5 @@
 {
     "action_execution_failed": "执行动作失败",
-    "action_scope": "作用域",
-    "action_scope_desc": "选择作用域",
     "action_settings": "动作设置",
     "action_type": "动作类型",
     "action_type_desc": "选择要执行的动作类型",

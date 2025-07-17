@@ -16,8 +16,6 @@ export interface ButtonsPanelPlugin extends Plugin {
     /** 保存设置方法，异步 */
     saveSettings(): Promise<void>;
 
-    /** 记录最后激活的markdown标签页（可选） */
-    lastActiveMarkdownLeaf?: import('obsidian').WorkspaceLeaf | null;
     /** 分类展开状态（运行时状态，不持久化） */
     categoryOpenState: Record<string, boolean>;
 }

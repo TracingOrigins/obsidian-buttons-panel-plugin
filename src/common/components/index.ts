@@ -6,7 +6,6 @@ export { FileNameInput } from '@/common/components/FileNameInput';
 export { CommandInput } from '@/common/components/CommandInput';
 export { ScriptInput } from '@/common/components/ScriptInput';
 export { UrlInput } from '@/common/components/UrlInput';
-export { ScopeDropdown } from '@/common/components/ScopeDropdown';
 export { IconInput } from '@/common/components/IconInput';
 export { NameInput } from '@/common/components/NameInput';
 
@@ -17,5 +16,4 @@ export type { FileNameInputOptions } from '@/common/components/FileNameInput';
 export type { CommandInputOptions } from '@/common/components/CommandInput';
 export type { ScriptInputOptions } from '@/common/components/ScriptInput';
 export type { UrlInputOptions } from '@/common/components/UrlInput';
-export type { ScopeDropdownOptions } from '@/common/components/ScopeDropdown';
 export type { IconInputOptions } from '@/common/components/IconInput';
