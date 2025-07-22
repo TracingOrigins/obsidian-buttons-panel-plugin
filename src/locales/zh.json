@@ -181,5 +181,8 @@
     "command_desc": "选择要执行的命令",
     "url_desc": "选择要打开的链接",
     "basic_settings": "基本设置",
-    "please_complete_required_fields": "请完善所有必填项"
+    "please_complete_required_fields": "请完善所有必填项",
+    "move_up": "上移",
+    "move_down": "下移",
+    "only_sequential_effective": "该选项仅在顺序模式下生效"
 }

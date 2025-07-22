@@ -181,5 +181,8 @@
     "command_desc": "Select a command to execute",
     "url_desc": "Input a url to open",
     "basic_settings": "Basic settings",
-    "please_complete_required_fields": "Please complete all required fields"
+    "please_complete_required_fields": "Please complete all required fields",
+    "move_up": "Move up",
+    "move_down": "Move down",
+    "only_sequential_effective": "This option is only effective in sequential mode"
 }
