@@ -1,4 +1,4 @@
-> 中文 | [Ehglish](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.md)
+> 中文 | [English](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.md)
 
 <h1 align="center">Buttons Panel</h1>
 
