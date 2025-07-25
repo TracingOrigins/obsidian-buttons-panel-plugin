@@ -38,10 +38,10 @@ export class CategoryCreateModal extends Modal {
         contentEl.addClass('buttons-panel-plugin');
         contentEl.addClass('create-category-modal');
         // 标题
-        contentEl.createEl('h2', { text: t('create_new_category', this.plugin) });
+        contentEl.createEl('h2', { text: t('create_new_category') });
 
         // 分类名称输入框
-        const nameSetting = new Setting(contentEl).setName(t('category_name', this.plugin));
+        const nameSetting = new Setting(contentEl).setName(t('category_name'));
 
         this.nameInput = nameSetting.addText((text) => {
             text.setValue(this.newName).onChange((value) => {
@@ -62,14 +62,14 @@ export class CategoryCreateModal extends Modal {
         new Setting(contentEl)
             .addButton((button) =>
                 button
-                    .setButtonText(t('save', this.plugin))
+                    .setButtonText(t('save'))
                     .setCta()
                     .setClass('custom-save-button')
                     .onClick(() => this.handleCreate())
             )
             .addButton((button) =>
                 button
-                    .setButtonText(t('cancel', this.plugin))
+                    .setButtonText(t('cancel'))
                     .setClass('custom-cancel-button')
                     .onClick(() => this.close())
             );
@@ -81,8 +81,8 @@ export class CategoryCreateModal extends Modal {
     handleCreate() {
         // 校验分类名称不能为空
         if (!this.newName || this.newName.trim() === '') {
-            this.nameInput?.setError?.(t('category_name_empty', this.plugin));
-            new Notice(t('category_name_empty', this.plugin));
+            this.nameInput?.setError?.(t('category_name_empty'));
+            new Notice(t('category_name_empty'));
             return;
         }
 

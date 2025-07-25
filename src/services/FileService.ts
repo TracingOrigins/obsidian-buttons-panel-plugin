@@ -36,7 +36,7 @@ export class FileService {
         // 检查文件是否存在
         const file = this.app.vault.getAbstractFileByPath(filePath);
         if (!file) {
-            new Notice(t('file_not_found', this.plugin) + `: ${filePath}`);
+            new Notice(t('file_not_found') + `: ${filePath}`);
             return;
         }
 

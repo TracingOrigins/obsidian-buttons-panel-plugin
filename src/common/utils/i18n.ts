@@ -35,10 +35,9 @@ function getCurrentLang(): string {
 /**
  * 获取翻译文本。
  * @param key 翻译键名
- * @param plugin 插件实例（可选，保持向后兼容）
  * @returns 翻译后的文本，如果找不到则返回键名本身
  */
-export function t(key: string, plugin?: ButtonsPanelPlugin): string {
+export function t(key: string): string {
     const lang = getCurrentLang();
     return locales[lang]?.[key] || locales['en']?.[key] || key;
 }
@@ -47,15 +46,10 @@ export function t(key: string, plugin?: ButtonsPanelPlugin): string {
  * 获取带参数的翻译文本。
  * @param key 翻译键名
  * @param params 参数对象
- * @param plugin 插件实例（可选，保持向后兼容）
  * @returns 翻译后的文本，参数会被替换
  */
-export function tWithParams(
-    key: string,
-    params: Record<string, string | number>,
-    plugin?: ButtonsPanelPlugin
-): string {
-    let text = t(key, plugin);
+export function tWithParams(key: string, params: Record<string, string | number>): string {
+    let text = t(key);
     // 替换参数，格式：{paramName}
     Object.entries(params).forEach(([paramKey, paramValue]) => {
         text = text.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));

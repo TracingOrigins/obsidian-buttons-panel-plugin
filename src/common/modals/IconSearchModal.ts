@@ -42,7 +42,7 @@ export class IconSearchModal extends Modal {
         // 居中搜索框区域
         const inputWrapper = contentEl.createDiv({ cls: 'search-input-wrapper' });
         const input = new TextComponent(inputWrapper)
-            .setPlaceholder(t('search_icons', this.plugin))
+            .setPlaceholder(t('search_icons'))
             .setValue('');
         input.inputEl.classList.add('search-input');
 
@@ -55,7 +55,7 @@ export class IconSearchModal extends Modal {
 
         // 确保图标数据正确加载
         if (!icons || icons.length === 0) {
-            console.warn(t('icons_data_empty', this.plugin));
+            console.warn(t('icons_data_empty'));
             return;
         }
 
@@ -85,7 +85,7 @@ export class IconSearchModal extends Modal {
             const toShow = filteredIcons.slice(startIndex, endIndex);
             if (toShow.length === 0 && !append) {
                 iconList.createDiv({
-                    text: t('no_icons_available', this.plugin),
+                    text: t('no_icons_available'),
                     cls: 'suggestion-item',
                 });
                 return;
@@ -99,7 +99,7 @@ export class IconSearchModal extends Modal {
                 if (icon.svg) {
                     safeSetSVG(item, icon.svg);
                 } else {
-                    item.textContent = icon.name || t('unknown_icon', this.plugin);
+                    item.textContent = icon.name || t('unknown_icon');
                 }
                 item.setAttr('aria-label', icon.name);
                 item.onclick = () => {
@@ -110,7 +110,7 @@ export class IconSearchModal extends Modal {
             // 只在非追加模式下显示加载提示
             if (!append && toShow.length < filteredIcons.length) {
                 const loadingDiv = iconList.createDiv({
-                    text: t('scroll_load_more', this.plugin),
+                    text: t('scroll_load_more'),
                     cls: 'icon-loading-tip',
                 });
             }

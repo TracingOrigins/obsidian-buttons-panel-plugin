@@ -70,10 +70,10 @@ export class ButtonMoveModeRenderer {
         const moveTip = panelEl.createDiv('move-mode-tip');
         const tipContainer = moveTip.createDiv();
         const titleEl = tipContainer.createEl('strong');
-        titleEl.textContent = t('button_move_mode', this.plugin);
+        titleEl.textContent = t('button_move_mode');
         tipContainer.createEl('br');
         const descEl = tipContainer.createEl('span');
-        descEl.textContent = t('button_move_mode_desc', this.plugin);
+        descEl.textContent = t('button_move_mode_desc');
     }
 
     /**
@@ -214,7 +214,7 @@ export class ButtonMoveModeRenderer {
 
             // 创建提示文字
             const textDiv = contentDiv.createDiv();
-            textDiv.textContent = t('empty_category_placeholder', this.plugin);
+            textDiv.textContent = t('empty_category_placeholder');
 
             emptyPlaceholder.addEventListener('click', (e) => {
                 e.preventDefault();

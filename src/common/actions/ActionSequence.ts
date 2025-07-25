@@ -62,7 +62,7 @@ export class ActionSequence {
         container.empty();
 
         // 动作列表标题
-        container.createEl('h4', { text: t('actions_list', context.plugin) });
+        container.createEl('h4', { text: t('actions_list') });
 
         // 创建动作列表容器
         const actionsContainer = container.createDiv('actions-list-container');
@@ -76,7 +76,7 @@ export class ActionSequence {
         const addActionCard = container.createDiv('add-action-card');
         new ButtonComponent(addActionCard)
             .setIcon('plus')
-            .setTooltip(t('add_action', context.plugin))
+            .setTooltip(t('add_action'))
             .setClass('add-action-btn')
             .onClick(() => {
                 this.addDefaultAction();
@@ -96,8 +96,8 @@ export class ActionSequence {
 
         // 动作类型选择
         new Setting(actionEl)
-            .setName(`${t('action', context.plugin)} ${index + 1}`)
-            .setDesc(t('action_type_desc', context.plugin))
+            .setName(`${t('action')} ${index + 1}`)
+            .setDesc(t('action_type_desc'))
             .addDropdown((dropdown) => {
                 // 从动作实例获取当前类型
                 const currentType = action.type;
@@ -107,7 +107,7 @@ export class ActionSequence {
 
                 // 动态添加所有可用的动作类型选项
                 availableTypes.forEach((type) => {
-                    dropdown.addOption(type, t(type, context.plugin));
+                    dropdown.addOption(type, t(type));
                 });
 
                 dropdown.setValue(currentType).onChange((value) => {
@@ -135,7 +135,7 @@ export class ActionSequence {
             if (index > 0) {
                 btnSetting.addButton((btn) => {
                     btn.setIcon('arrow-up')
-                        .setTooltip(t('move_up', context.plugin))
+                        .setTooltip(t('move_up'))
                         .setClass('action-move-btn')
                         .setClass('custom-button')
                         .onClick(() => this.moveAction(index, 'up'));
@@ -144,7 +144,7 @@ export class ActionSequence {
             if (index < this.actions.length - 1) {
                 btnSetting.addButton((btn) => {
                     btn.setIcon('arrow-down')
-                        .setTooltip(t('move_down', context.plugin))
+                        .setTooltip(t('move_down'))
                         .setClass('action-move-btn')
                         .setClass('custom-button')
                         .onClick(() => this.moveAction(index, 'down'));
@@ -153,7 +153,7 @@ export class ActionSequence {
         }
         btnSetting.addButton((btn) => {
             btn.setIcon('trash-2')
-                .setTooltip(t('remove_action', context.plugin))
+                .setTooltip(t('remove_action'))
                 .setClass('action-delete-btn')
                 .setClass('custom-button')
                 .onClick(() => this.removeAction(index));

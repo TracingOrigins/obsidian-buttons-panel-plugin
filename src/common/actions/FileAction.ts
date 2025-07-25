@@ -25,10 +25,10 @@ export class FileAction implements IButtonAction {
         this.fileInput = new FileInput(
             container,
             {
-                name: t('file', context.plugin),
-                description: t('file_desc', context.plugin),
-                placeholder: t('file_path_placeholder', context.plugin),
-                searchTooltip: t('search_files_tooltip', context.plugin),
+                name: t('file'),
+                description: t('file_desc'),
+                placeholder: t('file_path_placeholder'),
+                searchTooltip: t('search_files_tooltip'),
                 rootFolder: '',
                 fileExts: [],
                 showFileNameOnly: false,

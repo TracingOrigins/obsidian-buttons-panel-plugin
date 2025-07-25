@@ -30,10 +30,10 @@ export class CreateFileAction implements IButtonAction {
         this.folderInput = new FolderInput(
             container,
             {
-                name: t('folder', context.plugin),
-                description: t('folder_placeholder', context.plugin),
-                placeholder: t('folder_placeholder', context.plugin),
-                searchTooltip: t('search_folders_tooltip', context.plugin),
+                name: t('folder'),
+                description: t('folder_placeholder'),
+                placeholder: t('folder_placeholder'),
+                searchTooltip: t('search_folders_tooltip'),
             },
             { app: context.app, plugin: context.plugin },
             (value: string) => {
@@ -45,11 +45,11 @@ export class CreateFileAction implements IButtonAction {
         this.fileNameInput = new FileNameInput(
             container,
             {
-                name: t('file_name', context.plugin),
-                description: t('file_name_desc', context.plugin),
-                placeholder: t('file_name_placeholder', context.plugin),
-                searchTooltip: t('search', context.plugin),
-                suggestTooltip: t('search_date_variables_tooltip', context.plugin),
+                name: t('file_name'),
+                description: t('file_name_desc'),
+                placeholder: t('file_name_placeholder'),
+                searchTooltip: t('search'),
+                suggestTooltip: t('search_date_variables_tooltip'),
                 onFileNameChange: (fileName: string) => {
                     this.fileName = fileName;
                 },
@@ -64,10 +64,10 @@ export class CreateFileAction implements IButtonAction {
         const templateInput = new FileInput(
             container,
             {
-                name: t('template_file', context.plugin),
-                description: t('template_file_desc', context.plugin),
-                placeholder: t('template_file_placeholder', context.plugin),
-                searchTooltip: t('search_files_tooltip', context.plugin),
+                name: t('template_file'),
+                description: t('template_file_desc'),
+                placeholder: t('template_file_placeholder'),
+                searchTooltip: t('search_files_tooltip'),
                 rootFolder: context.plugin?.settings?.pathConfig?.templateFolderPath || '',
                 fileExts: ['md'],
                 showFileNameOnly: true,

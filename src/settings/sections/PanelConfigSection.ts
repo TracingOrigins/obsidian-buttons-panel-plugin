@@ -20,11 +20,11 @@ export function createPanelConfigSection(
     const card = containerEl.createDiv('settings-card-group');
 
     new Setting(card)
-        .setName(t('panel_title_setting', plugin))
-        .setDesc(t('panel_title_desc', plugin))
+        .setName(t('panel_title_setting'))
+        .setDesc(t('panel_title_desc'))
         .addText((text) =>
             text
-                .setPlaceholder(t('panel_title_setting', plugin))
+                .setPlaceholder(t('panel_title_setting'))
                 .setValue(plugin.settings.panelConfig.title)
                 .onChange(async (value) => {
                     plugin.settings.panelConfig.title = value;
@@ -33,8 +33,8 @@ export function createPanelConfigSection(
         );
 
     new Setting(card)
-        .setName(t('show_title', plugin))
-        .setDesc(t('show_title_desc', plugin))
+        .setName(t('show_title'))
+        .setDesc(t('show_title_desc'))
         .addToggle((toggle) =>
             toggle.setValue(plugin.settings.panelConfig.showTitle).onChange(async (value) => {
                 plugin.settings.panelConfig.showTitle = value;
@@ -43,11 +43,11 @@ export function createPanelConfigSection(
         );
 
     new Setting(card)
-        .setName(t('panel_height', plugin))
-        .setDesc(t('panel_height_desc', plugin))
+        .setName(t('panel_height'))
+        .setDesc(t('panel_height_desc'))
         .addText((text) =>
             text
-                .setPlaceholder(t('auto', plugin))
+                .setPlaceholder(t('auto'))
                 .setValue(plugin.settings.panelConfig.panelHeight)
                 .onChange(async (value) => {
                     let v = value.trim();
@@ -60,12 +60,12 @@ export function createPanelConfigSection(
         );
 
     new Setting(card)
-        .setName(t('button_panel_view', plugin))
-        .setDesc(t('button_panel_view_desc', plugin))
+        .setName(t('button_panel_view'))
+        .setDesc(t('button_panel_view_desc'))
         .addDropdown((dropdown) => {
             dropdown
-                .addOption('list', t('list_view', plugin))
-                .addOption('tabs', t('tabs_view', plugin))
+                .addOption('list', t('list_view'))
+                .addOption('tabs', t('tabs_view'))
                 .setValue(plugin.settings.panelConfig.panelViewType || 'list')
                 .onChange(async (value: 'list' | 'tabs') => {
                     plugin.settings.panelConfig.panelViewType = value;
@@ -75,12 +75,12 @@ export function createPanelConfigSection(
         });
 
     new Setting(card)
-        .setName(t('button_display_style', plugin))
-        .setDesc(t('button_display_style_desc', plugin))
+        .setName(t('button_display_style'))
+        .setDesc(t('button_display_style_desc'))
         .addDropdown((dropdown) => {
             dropdown
-                .addOption('default', t('icon_text_same_line', plugin))
-                .addOption('icon_top', t('icon_top_text_bottom', plugin))
+                .addOption('default', t('icon_text_same_line'))
+                .addOption('icon_top', t('icon_top_text_bottom'))
                 .setValue(plugin.settings.panelConfig.displayStyle || 'default')
                 .onChange(async (value: 'default' | 'icon_top') => {
                     plugin.settings.panelConfig.displayStyle = value;
@@ -90,8 +90,8 @@ export function createPanelConfigSection(
         });
 
     new Setting(card)
-        .setName(t('enable_button_animation', plugin))
-        .setDesc(t('enable_button_animation_desc', plugin))
+        .setName(t('enable_button_animation'))
+        .setDesc(t('enable_button_animation_desc'))
         .addToggle((toggle) =>
             toggle
                 .setValue(plugin.settings.panelConfig.enableAnimation ?? true)
@@ -102,11 +102,8 @@ export function createPanelConfigSection(
         );
 
     new Setting(card)
-        .setName(t('enable_edit_mode', plugin) || '启用编辑模式')
-        .setDesc(
-            t('enable_edit_mode_desc', plugin) ||
-                '开启后可在按钮面板进行分类和按钮的编辑、移动等操作'
-        )
+        .setName(t('enable_edit_mode') || '启用编辑模式')
+        .setDesc(t('enable_edit_mode_desc') || '开启后可在按钮面板进行分类和按钮的编辑、移动等操作')
         .addToggle((toggle) =>
             toggle
                 .setValue(plugin.settings.panelConfig.enableEditMode ?? false)

@@ -29,7 +29,7 @@
     "buttons_panel": "Buttons Panel",
     "buttons_panel_settings": "Buttons Panel Settings",
     "cancel": "Cancel",
-    "category_copy_success": "Category \"{oldName}\" has been copied to \"{newName}\"",
+    "category_copy_success": "Category copy success",
     "category_name": "Category name",
     "category_name_empty": "Category name cannot be empty",
     "category_not_found": "Category to rename not found",

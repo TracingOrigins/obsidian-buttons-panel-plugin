@@ -62,7 +62,7 @@ export class ScriptService {
             const scriptFile = this.app.vault.getAbstractFileByPath(scriptFilePath);
             if (!scriptFile || !(scriptFile instanceof TFile)) {
                 // 未找到脚本文件，弹出通知
-                new Notice(t('script_file_not_found', this.plugin) + `: ${scriptFilePath}`);
+                new Notice(t('script_file_not_found') + `: ${scriptFilePath}`);
                 return;
             }
 
@@ -123,11 +123,11 @@ export class ScriptService {
                 );
             } else {
                 // 未正确导出函数，弹出通知
-                new Notice(tWithParams('script_invalid_export', { scriptFileName }, this.plugin));
+                new Notice(tWithParams('script_invalid_export', { scriptFileName }));
             }
         } catch (error) {
             // 捕获并通知脚本运行异常
-            new Notice(t('script_run_failed', this.plugin) + `: ${error.message}`);
+            new Notice(t('script_run_failed') + `: ${error.message}`);
         }
     }
 }

@@ -54,7 +54,7 @@ export class ButtonsPanelSettingsView extends ItemView {
      * 获取视图显示名称（顶部标题）。
      */
     getDisplayText(): string {
-        return t('buttons_panel_settings', this.plugin);
+        return t('buttons_panel_settings');
     }
 
     /**

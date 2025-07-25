@@ -48,7 +48,7 @@ export class FileSearchModal extends Modal {
         // 搜索框区域
         const inputWrapper = contentEl.createDiv({ cls: 'search-input-wrapper' });
         const input = new TextComponent(inputWrapper)
-            .setPlaceholder(t('search_files', this.plugin))
+            .setPlaceholder(t('search_files'))
             .setValue('');
         input.inputEl.classList.add('search-input');
 
@@ -79,7 +79,7 @@ export class FileSearchModal extends Modal {
             suggestions.empty();
             if (filteredFiles.length === 0) {
                 suggestions.createDiv({
-                    text: t('no_files_available', this.plugin),
+                    text: t('no_files_available'),
                     cls: 'suggestion-item',
                 });
                 return;

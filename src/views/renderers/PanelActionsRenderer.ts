@@ -94,9 +94,7 @@ export class PanelActionsRenderer {
         viewBtn.className = 'panel-action-btn view-btn clickable-icon nav-action-button';
         viewBtn.setAttr(
             'aria-label',
-            this.panelConfig.panelViewType === 'tabs'
-                ? t('list_view', this.plugin)
-                : t('tabs_view', this.plugin)
+            this.panelConfig.panelViewType === 'tabs' ? t('list_view') : t('tabs_view')
         );
         setIcon(viewBtn, 'view');
         viewBtn.onclick = () => {
@@ -122,8 +120,8 @@ export class PanelActionsRenderer {
         styleBtn.setAttr(
             'aria-label',
             this.panelConfig.displayStyle === 'icon_top'
-                ? t('icon_text_same_line', this.plugin)
-                : t('icon_top_text_bottom', this.plugin)
+                ? t('icon_text_same_line')
+                : t('icon_top_text_bottom')
         );
         setIcon(styleBtn, 'aperture');
         styleBtn.onclick = () => {
@@ -146,7 +144,7 @@ export class PanelActionsRenderer {
     private createSettingsButton(actionsGroup: HTMLElement): void {
         const settingsBtn = document.createElement('div');
         settingsBtn.className = 'panel-action-btn settings-btn clickable-icon nav-action-button';
-        settingsBtn.setAttr('aria-label', t('buttons_panel_settings', this.plugin));
+        settingsBtn.setAttr('aria-label', t('buttons_panel_settings'));
         setIcon(settingsBtn, 'settings');
         settingsBtn.onclick = () => {
             // @ts-ignore
@@ -167,9 +165,7 @@ export class PanelActionsRenderer {
         editBtn.className = 'panel-action-btn edit-mode-btn clickable-icon nav-action-button';
         // 优化提示文字
         const isActive = !!this.panelConfig.enableEditMode;
-        const label = isActive
-            ? t('disable_edit_mode', this.plugin) || '关闭编辑模式'
-            : t('enable_edit_mode', this.plugin);
+        const label = isActive ? t('disable_edit_mode') || '关闭编辑模式' : t('enable_edit_mode');
         editBtn.setAttr('aria-label', label);
         setIcon(editBtn, 'edit');
         // 优化颜色：激活为蓝色，未激活为灰色（用CSS类控制）

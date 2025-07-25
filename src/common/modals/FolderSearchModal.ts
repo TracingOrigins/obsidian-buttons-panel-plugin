@@ -36,7 +36,7 @@ export class FolderSearchModal extends Modal {
         // 搜索框区域
         const inputWrapper = contentEl.createDiv({ cls: 'search-input-wrapper' });
         const input = new TextComponent(inputWrapper)
-            .setPlaceholder(t('search_folders', this.plugin))
+            .setPlaceholder(t('search_folders'))
             .setValue('');
         input.inputEl.classList.add('search-input');
 
@@ -90,7 +90,7 @@ export class FolderSearchModal extends Modal {
             suggestions.empty();
             if (filteredFolders.length === 0) {
                 suggestions.createDiv({
-                    text: t('no_folders_available', this.plugin),
+                    text: t('no_folders_available'),
                     cls: 'suggestion-item',
                 });
                 return;

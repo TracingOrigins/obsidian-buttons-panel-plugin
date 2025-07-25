@@ -95,20 +95,20 @@ export class PanelRenderer {
             const moveTip = panelEl.createDiv('move-mode-tip');
             const tipContainer = moveTip.createDiv();
             const titleEl = tipContainer.createEl('strong');
-            titleEl.textContent = t('button_move_mode', this.plugin);
+            titleEl.textContent = t('button_move_mode');
             tipContainer.createEl('br');
             const descEl = tipContainer.createEl('span');
-            descEl.textContent = t('button_move_mode_desc', this.plugin);
+            descEl.textContent = t('button_move_mode_desc');
             return;
         }
         if (this.stateManager.isInCategoryMoveMode()) {
             const moveTip = panelEl.createDiv('move-mode-tip');
             const tipContainer = moveTip.createDiv();
             const titleEl = tipContainer.createEl('strong');
-            titleEl.textContent = t('category_move_mode', this.plugin);
+            titleEl.textContent = t('category_move_mode');
             tipContainer.createEl('br');
             const descEl = tipContainer.createEl('span');
-            descEl.textContent = t('category_move_mode_desc', this.plugin);
+            descEl.textContent = t('category_move_mode_desc');
         }
     }
 
@@ -132,9 +132,7 @@ export class PanelRenderer {
         viewBtn.className = 'panel-action-btn view-btn clickable-icon nav-action-button';
         viewBtn.setAttr(
             'aria-label',
-            panelConfig.panelViewType === 'tabs'
-                ? t('list_view', this.plugin)
-                : t('tabs_view', this.plugin)
+            panelConfig.panelViewType === 'tabs' ? t('list_view') : t('tabs_view')
         );
         setIcon(viewBtn, 'view');
         viewBtn.onclick = () => {
@@ -157,8 +155,8 @@ export class PanelRenderer {
         styleBtn.setAttr(
             'aria-label',
             panelConfig.displayStyle === 'icon_top'
-                ? t('icon_text_same_line', this.plugin)
-                : t('icon_top_text_bottom', this.plugin)
+                ? t('icon_text_same_line')
+                : t('icon_top_text_bottom')
         );
         setIcon(styleBtn, 'aperture');
         styleBtn.onclick = () => {
@@ -178,7 +176,7 @@ export class PanelRenderer {
     private createSettingsButton(actionsGroup: HTMLElement): void {
         const settingsBtn = document.createElement('div');
         settingsBtn.className = 'panel-action-btn settings-btn clickable-icon nav-action-button';
-        settingsBtn.setAttr('aria-label', t('buttons_panel_settings', this.plugin));
+        settingsBtn.setAttr('aria-label', t('buttons_panel_settings'));
         setIcon(settingsBtn, 'settings');
         settingsBtn.onclick = () => {
             // @ts-ignore

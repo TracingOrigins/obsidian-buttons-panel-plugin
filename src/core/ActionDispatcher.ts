@@ -50,7 +50,7 @@ export class ActionDispatcher {
         delayBetweenActions: number = 0
     ): Promise<void> {
         if (!actions || actions.length === 0) {
-            new Notice(t('no_actions_in_sequence', this.plugin));
+            new Notice(t('no_actions_in_sequence'));
             return;
         }
         if (executionMode === 'parallel') {
@@ -68,14 +68,10 @@ export class ActionDispatcher {
                 } catch (error) {
                     console.error(`执行动作序列中的第 ${i + 1} 个动作时出错:`, error);
                     if (stopOnError) {
-                        new Notice(
-                            t('sequence_stopped_on_error', this.plugin) + `: ${error.message}`
-                        );
+                        new Notice(t('sequence_stopped_on_error') + `: ${error.message}`);
                         break;
                     } else {
-                        new Notice(
-                            t('action_in_sequence_failed', this.plugin) + `: ${error.message}`
-                        );
+                        new Notice(t('action_in_sequence_failed') + `: ${error.message}`);
                     }
                 }
             }

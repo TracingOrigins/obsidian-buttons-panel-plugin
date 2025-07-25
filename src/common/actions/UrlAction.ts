@@ -25,9 +25,9 @@ export class UrlAction implements IButtonAction {
         this.urlInput = new UrlInput(
             container,
             {
-                name: t('url', context.plugin),
-                description: t('url_desc', context.plugin),
-                placeholder: t('url_placeholder', context.plugin),
+                name: t('url'),
+                description: t('url_desc'),
+                placeholder: t('url_placeholder'),
             },
             context,
             (value: string) => {

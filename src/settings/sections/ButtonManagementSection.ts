@@ -68,7 +68,7 @@ export class ButtonManagementSection {
             const collapseIcon = leftContainer.createEl('span', 'custom-collapse-icon');
             collapseIcon.setAttr('tabindex', '0');
             collapseIcon.setAttr('role', 'button');
-            collapseIcon.setAttr('aria-label', t('toggle_collapse', this.plugin));
+            collapseIcon.setAttr('aria-label', t('toggle_collapse'));
             safeSetSVG(
                 collapseIcon,
                 `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 4.5L12 9L6 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
@@ -114,7 +114,7 @@ export class ButtonManagementSection {
             const rightContainer = summary.createDiv({ cls: 'summary-right-container' });
             new ButtonComponent(rightContainer)
                 .setIcon('pencil')
-                .setTooltip(t('edit_category', this.plugin))
+                .setTooltip(t('edit_category'))
                 .setClass('edit-category-button')
                 .onClick((e) => {
                     e.preventDefault();
@@ -125,7 +125,7 @@ export class ButtonManagementSection {
                 });
             new ButtonComponent(rightContainer)
                 .setIcon('copy')
-                .setTooltip(t('copy_category', this.plugin))
+                .setTooltip(t('copy_category'))
                 .setClass('copy-category-button')
                 .onClick(async (e) => {
                     e.preventDefault();
@@ -134,7 +134,7 @@ export class ButtonManagementSection {
                 });
             new ButtonComponent(rightContainer)
                 .setIcon('trash')
-                .setTooltip(t('delete_category', this.plugin))
+                .setTooltip(t('delete_category'))
                 .setClass('delete-category-button')
                 .setWarning()
                 .onClick((e) => {
@@ -154,7 +154,7 @@ export class ButtonManagementSection {
             const addButtonCard = buttonListContainer.createDiv('add-button-card');
             const addBtn = new ButtonComponent(addButtonCard)
                 .setIcon('plus')
-                .setTooltip(t('add_button', this.plugin))
+                .setTooltip(t('add_button'))
                 .setCta()
                 .onClick(() => {
                     new ButtonCreateModal(this.app, this.plugin, category, () => {
@@ -170,7 +170,7 @@ export class ButtonManagementSection {
         const addCategoryCard = containerEl.createDiv('add-category-card');
         const addCategoryBtn = new ButtonComponent(addCategoryCard)
             .setIcon('plus')
-            .setTooltip(t('add_category', this.plugin))
+            .setTooltip(t('add_category'))
             .setCta()
             .onClick(() => {
                 new CategoryCreateModal(this.app, this.plugin, async (value: string) => {
@@ -274,7 +274,7 @@ export class ButtonManagementSection {
                             sortedCategories.forEach((cat, idx) => {
                                 if (cat.id === currentCategory.id) return;
                                 menu.addItem((item) => {
-                                    item.setTitle(`${t('move_to', this.plugin)}: ${cat.name}`)
+                                    item.setTitle(`${t('move_to')}: ${cat.name}`)
                                         .setIcon('arrow-right')
                                         .onClick(async () => {
                                             const categories = [...this.plugin.settings.categories];
@@ -618,7 +618,7 @@ export class ButtonManagementSection {
 
         new ButtonComponent(controlsContainer)
             .setIcon('pencil')
-            .setTooltip(t('edit_button_tooltip', this.plugin))
+            .setTooltip(t('edit_button_tooltip'))
             .onClick(() => {
                 new ButtonEditModal(this.app, this.plugin, button, category, () => {
                     this.plugin.saveSettings();
@@ -628,7 +628,7 @@ export class ButtonManagementSection {
 
         new ButtonComponent(controlsContainer)
             .setIcon('copy')
-            .setTooltip(t('copy_button_tooltip', this.plugin))
+            .setTooltip(t('copy_button_tooltip'))
             .onClick(async () => {
                 const newButton: ButtonConfig = {
                     ...JSON.parse(JSON.stringify(button)),
@@ -643,7 +643,7 @@ export class ButtonManagementSection {
         new ButtonComponent(controlsContainer)
             .setIcon('trash')
             .setWarning()
-            .setTooltip(t('delete_button_tooltip', this.plugin))
+            .setTooltip(t('delete_button_tooltip'))
             .onClick(() => {
                 new ButtonDeleteModal(this.app, this.plugin, button, category, () => {
                     this.removeButtonFromCategory(category, button.id);
@@ -693,7 +693,7 @@ export class ButtonManagementSection {
         this.displayCallback?.();
 
         // 显示成功消息
-        // new Notice(tWithParams('category_copy_success', { oldName: category.name, newName }, this.plugin));
+        // new Notice(t('category_copy_success'));
     }
 
     /**

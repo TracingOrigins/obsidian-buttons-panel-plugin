@@ -36,7 +36,7 @@ export class CommandSearchModal extends Modal {
         // 搜索框区域
         const inputWrapper = contentEl.createDiv({ cls: 'search-input-wrapper' });
         const input = new TextComponent(inputWrapper)
-            .setPlaceholder(t('search_commands', this.plugin))
+            .setPlaceholder(t('search_commands'))
             .setValue('');
         input.inputEl.classList.add('search-input');
 
@@ -67,7 +67,7 @@ export class CommandSearchModal extends Modal {
             suggestions.empty();
             if (filteredCommands.length === 0) {
                 suggestions.createDiv({
-                    text: t('no_commands_available', this.plugin),
+                    text: t('no_commands_available'),
                     cls: 'suggestion-item',
                 });
                 return;

@@ -52,10 +52,10 @@ export class CategoryEditModal extends Modal {
         contentEl.addClass('rename-category-modal');
 
         // 标题
-        contentEl.createEl('h2', { text: t('edit_category', this.plugin) });
+        contentEl.createEl('h2', { text: t('edit_category') });
 
         // 分类名称输入框
-        const nameSetting = new Setting(contentEl).setName(t('category_name', this.plugin));
+        const nameSetting = new Setting(contentEl).setName(t('category_name'));
 
         this.nameInput = nameSetting.addText((text) => {
             text.setValue(this.oldCategoryName).onChange((value) => {
@@ -75,14 +75,14 @@ export class CategoryEditModal extends Modal {
         new Setting(contentEl)
             .addButton((button) =>
                 button
-                    .setButtonText(t('save', this.plugin))
+                    .setButtonText(t('save'))
                     .setCta()
                     .setClass('custom-save-button')
                     .onClick(() => this.handleSave())
             )
             .addButton((button) =>
                 button
-                    .setButtonText(t('cancel', this.plugin))
+                    .setButtonText(t('cancel'))
                     .setClass('custom-cancel-button')
                     .onClick(() => this.close())
             );
@@ -93,8 +93,8 @@ export class CategoryEditModal extends Modal {
      */
     handleSave() {
         if (!this.newName || this.newName.trim() === '') {
-            this.nameInput?.setError?.(t('category_name_empty', this.plugin));
-            new Notice(t('category_name_empty', this.plugin));
+            this.nameInput?.setError?.(t('category_name_empty'));
+            new Notice(t('category_name_empty'));
             return;
         }
 
@@ -111,7 +111,7 @@ export class CategoryEditModal extends Modal {
             this.onRename();
             this.close();
         } else {
-            new Notice(t('category_not_found', this.plugin));
+            new Notice(t('category_not_found'));
         }
     }
 

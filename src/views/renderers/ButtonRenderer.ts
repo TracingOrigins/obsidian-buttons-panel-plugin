@@ -204,7 +204,7 @@ export class ButtonRenderer {
 
         // 编辑选项
         menu.addItem((item) => {
-            item.setTitle(t('edit', this.plugin))
+            item.setTitle(t('edit'))
                 .setIcon('pencil')
                 .onClick(() => {
                     const category = this.plugin.settings.categories.find((cat) =>
@@ -220,7 +220,7 @@ export class ButtonRenderer {
 
         // 复制选项
         menu.addItem((item) => {
-            item.setTitle(t('copy', this.plugin) || '复制')
+            item.setTitle(t('copy') || '复制')
                 .setIcon('copy')
                 .onClick(async () => {
                     const category = this.plugin.settings.categories.find((cat) =>
@@ -244,7 +244,7 @@ export class ButtonRenderer {
 
         // 删除选项
         menu.addItem((item) => {
-            item.setTitle(t('delete', this.plugin) || '删除')
+            item.setTitle(t('delete') || '删除')
                 .setIcon('trash')
                 .onClick(() => {
                     const category = this.plugin.settings.categories.find((cat) =>

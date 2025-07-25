@@ -46,7 +46,7 @@ export class FileNameInput {
 
         // 搜索按钮（用于文件名建议）
         this.setting.addButton((btn) => {
-            btn.setButtonText(t('search', context.plugin))
+            btn.setButtonText(t('search'))
                 .setClass('custom-button')
                 .setTooltip(options.suggestTooltip)
                 .setIcon('search')

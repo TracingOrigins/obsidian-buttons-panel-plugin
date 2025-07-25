@@ -185,7 +185,7 @@ export class ButtonsPanelView extends ItemView {
      * @returns 本地化后的视图名称
      */
     getDisplayText(): string {
-        return t('buttons_panel', this.plugin);
+        return t('buttons_panel');
     }
 
     /**

@@ -28,10 +28,10 @@ export class CommandAction implements IButtonAction {
         this.commandInput = new CommandInput(
             container,
             {
-                name: t('command', context.plugin),
-                description: t('command_desc', context.plugin),
-                placeholder: t('command_id_placeholder', context.plugin),
-                searchTooltip: t('search_commands_tooltip', context.plugin),
+                name: t('command'),
+                description: t('command_desc'),
+                placeholder: t('command_id_placeholder'),
+                searchTooltip: t('search_commands_tooltip'),
             },
             { app: context.app, plugin: context.plugin },
             (value: string) => {

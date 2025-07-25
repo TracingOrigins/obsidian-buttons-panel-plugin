@@ -44,19 +44,15 @@ export class ButtonDeleteModal extends Modal {
         contentEl.addClass('buttons-panel-plugin');
         contentEl.addClass('delete-button-modal');
 
-        contentEl.createEl('h2', { text: t('delete_button', this.plugin) });
+        contentEl.createEl('h2', { text: t('delete_button') });
         contentEl.createEl('p', {
-            text: tWithParams(
-                'confirm_delete_button',
-                { buttonName: this.button.name },
-                this.plugin
-            ),
+            text: tWithParams('delete_button_warning', { name: this.button.name }),
         });
 
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                    .setButtonText(t('delete', this.plugin))
+                    .setButtonText(t('delete'))
                     .setWarning()
                     .setCta()
                     .onClick(() => {
@@ -64,9 +60,7 @@ export class ButtonDeleteModal extends Modal {
                         this.close();
                     })
             )
-            .addButton((btn) =>
-                btn.setButtonText(t('cancel', this.plugin)).onClick(() => this.close())
-            );
+            .addButton((btn) => btn.setButtonText(t('cancel')).onClick(() => this.close()));
     }
 
     /**

@@ -36,10 +36,10 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
 
         // 标签页定义
         const tabs = [
-            { key: 'panel', label: t('panel_config', this.plugin) },
-            { key: 'paths', label: t('path_config', this.plugin) },
-            { key: 'buttons', label: t('button_management', this.plugin) },
-            { key: 'help', label: t('help', this.plugin) },
+            { key: 'panel', label: t('panel_config') },
+            { key: 'paths', label: t('path_config') },
+            { key: 'buttons', label: t('button_management') },
+            { key: 'help', label: t('help') },
         ];
 
         const tabBar = containerEl.createDiv('settings-tab-bar');

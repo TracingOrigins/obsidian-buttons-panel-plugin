@@ -45,14 +45,14 @@ export class IconInput {
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container)
-            .setName(options.name ?? t('button_icon', context.plugin))
-            .setDesc(options.description ?? t('button_icon_desc', context.plugin));
+            .setName(options.name ?? t('button_icon'))
+            .setDesc(options.description ?? t('button_icon_desc'));
 
         // 上传按钮
         this.setting.addButton((btn) => {
             btn.setButtonText('')
                 .setClass('custom-button')
-                .setTooltip(options.uploadTooltip ?? t('upload_svg_icon_tooltip', context.plugin))
+                .setTooltip(options.uploadTooltip ?? t('upload_svg_icon_tooltip'))
                 .setIcon('plus')
                 .onClick(() => {
                     const fileInput = document.createElement('input');
@@ -78,7 +78,7 @@ export class IconInput {
         this.setting.addButton((btn) => {
             btn.setButtonText('')
                 .setClass('custom-button')
-                .setTooltip(options.searchTooltip ?? t('search_icons_tooltip', context.plugin))
+                .setTooltip(options.searchTooltip ?? t('search_icons_tooltip'))
                 .setIcon('search')
                 .onClick(() => {
                     new IconSearchModal(
@@ -97,13 +97,13 @@ export class IconInput {
         // 输入框
         this.setting.addText((text) => {
             this.input = text;
-            text.setPlaceholder(
-                options.placeholder ?? t('button_icon_placeholder', context.plugin)
-            ).onChange((value) => {
-                this.setValue(value);
-                onValueChange?.(value);
-                options.onIconChange?.(value);
-            });
+            text.setPlaceholder(options.placeholder ?? t('button_icon_placeholder')).onChange(
+                (value) => {
+                    this.setValue(value);
+                    onValueChange?.(value);
+                    options.onIconChange?.(value);
+                }
+            );
         });
 
         const iconInputEl = this.setting.controlEl.querySelector('input')!;

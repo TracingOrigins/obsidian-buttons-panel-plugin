@@ -64,10 +64,10 @@ export class CategoryMoveModeRenderer {
         const moveTip = panelEl.createDiv('move-mode-tip');
         const tipContainer = moveTip.createDiv();
         const titleEl = tipContainer.createEl('strong');
-        titleEl.textContent = t('category_move_mode', this.plugin);
+        titleEl.textContent = t('category_move_mode');
         tipContainer.createEl('br');
         const descEl = tipContainer.createEl('span');
-        descEl.textContent = t('category_move_mode_desc', this.plugin);
+        descEl.textContent = t('category_move_mode_desc');
     }
 
     /**

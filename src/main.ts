@@ -68,7 +68,7 @@ export default class ButtonsPanelPlugin extends Plugin {
         // 添加命令：打开按钮面板（右侧边栏）
         this.addCommand({
             id: 'open-buttons-panel',
-            name: t('open_buttons_panel', this),
+            name: t('open_buttons_panel'),
             callback: () => {
                 this.activateView();
             },
@@ -77,14 +77,14 @@ export default class ButtonsPanelPlugin extends Plugin {
         // 添加命令：打开配置面板（主页面新标签页）
         this.addCommand({
             id: 'open-buttons-panel-settings',
-            name: t('open_buttons_panel_settings', this),
+            name: t('open_buttons_panel_settings'),
             callback: () => {
                 this.activateSettingsView();
             },
         });
 
         // 添加左侧ribbon图标，点击可快速打开按钮面板和设置
-        this.addRibbonIcon('mouse', t('open_buttons_panel', this), () => {
+        this.addRibbonIcon('mouse', t('open_buttons_panel'), () => {
             this.activateView();
             this.activateSettingsView();
         });
@@ -299,19 +299,19 @@ async function registerScriptCommands(plugin: any) {
     for (const file of files) {
         plugin.addCommand({
             id: `run-script:${file.name}`,
-            name: tWithParams('script_command', { scriptName: file.name }, this.plugin),
+            name: tWithParams('script_command', { scriptName: file.name }),
             callback: async () => {
                 try {
-                    // new Notice(tWithParams('script_command_run', { scriptName: file.name }, this.plugin));
+                    // new Notice(tWithParams('script_command_run', { scriptName: file.name }));
                     await plugin.ActionDispatcher.scriptService.runScript({
                         type: 'script',
                         parameters: { scriptName: file.name },
                     });
                 } catch (e) {
-                    new Notice(t('script_run_failed', this.plugin) + `：${e.message}`);
+                    new Notice(t('script_run_failed') + `：${e.message}`);
                 }
             },
         });
-        // new Notice(tWithParams('script_command_registered', { scriptName: file.name }, this.plugin));
+        // new Notice(tWithParams('script_command_registered', { scriptName: file.name }));
     }
 }

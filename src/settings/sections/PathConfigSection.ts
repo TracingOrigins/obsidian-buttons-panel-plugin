@@ -22,7 +22,7 @@ export function createPathConfigSection(
     // 模板文件夹路径设置
     const templateWrapper = containerEl.createDiv({ cls: 'path-input-wrapper' });
     const templateInput = new TextComponent(templateWrapper)
-        .setPlaceholder(t('template_folder_placeholder', plugin))
+        .setPlaceholder(t('template_folder_placeholder'))
         .setValue(plugin.settings.pathConfig.templateFolderPath ?? '');
 
     // 初始化时验证路径
@@ -36,13 +36,13 @@ export function createPathConfigSection(
     }
 
     const templateSetting = new Setting(card)
-        .setName(t('template_folder', plugin))
-        .setDesc(t('template_folder_desc', plugin))
+        .setName(t('template_folder'))
+        .setDesc(t('template_folder_desc'))
         .addButton((button) =>
             button
                 .setButtonText('')
                 .setClass('custom-button')
-                .setTooltip(t('search_folders_tooltip', plugin))
+                .setTooltip(t('search_folders_tooltip'))
                 .setIcon('search')
                 .onClick(() => {
                     new FolderSearchModal(app, plugin, (folderPath: string) => {
@@ -81,7 +81,7 @@ export function createPathConfigSection(
     // 脚本文件夹路径设置
     const scriptWrapper = containerEl.createDiv({ cls: 'path-input-wrapper' });
     const scriptInput = new TextComponent(scriptWrapper)
-        .setPlaceholder(t('script_folder_placeholder', plugin))
+        .setPlaceholder(t('script_folder_placeholder'))
         .setValue(plugin.settings.pathConfig.scriptFolderPath ?? '');
 
     // 初始化时验证路径
@@ -95,13 +95,13 @@ export function createPathConfigSection(
     }
 
     const scriptSetting = new Setting(card)
-        .setName(t('script_folder', plugin))
-        .setDesc(t('script_folder_desc', plugin))
+        .setName(t('script_folder'))
+        .setDesc(t('script_folder_desc'))
         .addButton((button) =>
             button
                 .setButtonText('')
                 .setClass('custom-button')
-                .setTooltip(t('search_folders_tooltip', plugin))
+                .setTooltip(t('search_folders_tooltip'))
                 .setIcon('search')
                 .onClick(() => {
                     new FolderSearchModal(app, plugin, (folderPath: string) => {
@@ -139,11 +139,11 @@ export function createPathConfigSection(
 
     // 路径验证和创建按钮
     new Setting(card)
-        .setName(t('create_paths', plugin))
-        .setDesc(t('create_paths_desc', plugin))
+        .setName(t('create_paths'))
+        .setDesc(t('create_paths_desc'))
         .addButton((button) =>
             button
-                .setButtonText(t('create_paths', plugin))
+                .setButtonText(t('create_paths'))
                 .setClass('mod-warning')
                 .onClick(async () => {
                     await createPathsOnly(plugin, app, templateInput, scriptInput);
@@ -174,9 +174,7 @@ async function createPathsOnly(
                 createdFolders.push(cleanTemplatePath);
                 allExist = false;
             } catch (error) {
-                new Notice(
-                    t('create_folder_failed', plugin) + `: ${cleanTemplatePath} - ${error.message}`
-                );
+                new Notice(t('create_folder_failed') + `: ${cleanTemplatePath} - ${error.message}`);
                 return;
             }
         }
@@ -191,17 +189,15 @@ async function createPathsOnly(
                 createdFolders.push(cleanScriptPath);
                 allExist = false;
             } catch (error) {
-                new Notice(
-                    t('create_folder_failed', plugin) + `: ${cleanScriptPath} - ${error.message}`
-                );
+                new Notice(t('create_folder_failed') + `: ${cleanScriptPath} - ${error.message}`);
                 return;
             }
         }
     }
     if (createdFolders.length > 0) {
-        new Notice(t('folders_created_success', plugin) + `: ${createdFolders.join(', ')}`);
+        new Notice(t('folders_created_success') + `: ${createdFolders.join(', ')}`);
     } else {
-        new Notice(t('all_paths_exist', plugin));
+        new Notice(t('all_paths_exist'));
     }
     // 创建成功后刷新输入框状态
     const templateValue = plugin.settings.pathConfig.templateFolderPath;

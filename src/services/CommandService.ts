@@ -49,8 +49,7 @@ export class CommandService {
             console.error('执行命令时出错:', error);
             const commandParams = action.parameters as CommandActionParams;
             new Notice(
-                t('command_execution_failed', this.plugin) +
-                    `: ${commandParams.commandId} - ${error.message}`
+                t('command_execution_failed') + `: ${commandParams.commandId} - ${error.message}`
             );
         }
     }

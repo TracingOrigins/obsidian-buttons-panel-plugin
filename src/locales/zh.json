@@ -29,7 +29,7 @@
     "buttons_panel": "按钮面板",
     "buttons_panel_settings": "按钮面板设置",
     "cancel": "取消",
-    "category_copy_success": "分类 \"{oldName}\" 已复制为 \"{newName}\"",
+    "category_copy_success": "分类复制成功",
     "category_name": "分类名称",
     "category_name_empty": "分类名称不能为空",
     "category_not_found": "未找到要重命名的分类",

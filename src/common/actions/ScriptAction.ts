@@ -27,10 +27,10 @@ export class ScriptAction implements IButtonAction {
         this.scriptInput = new ScriptInput(
             container,
             {
-                name: t('script_file', context.plugin),
-                description: t('script_file_desc', context.plugin),
-                placeholder: t('script_file_placeholder', context.plugin),
-                searchTooltip: t('search_files_tooltip', context.plugin),
+                name: t('script_file'),
+                description: t('script_file_desc'),
+                placeholder: t('script_file_placeholder'),
+                searchTooltip: t('search_files_tooltip'),
                 rootFolder: context.plugin?.settings?.pathConfig?.scriptFolderPath || '',
             },
             { app: context.app, plugin: context.plugin },

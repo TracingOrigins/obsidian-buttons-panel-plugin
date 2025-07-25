@@ -36,7 +36,7 @@ export class FileNameSuggestModal extends Modal {
         // 搜索框区域
         const inputWrapper = contentEl.createDiv({ cls: 'search-input-wrapper' });
         const input = new TextComponent(inputWrapper)
-            .setPlaceholder(t('search_date_variables', this.plugin))
+            .setPlaceholder(t('search_date_variables'))
             .setValue('');
         input.inputEl.classList.add('search-input');
 
@@ -84,7 +84,7 @@ export class FileNameSuggestModal extends Modal {
 
             if (filteredFormats.length === 0) {
                 suggestions.createDiv({
-                    text: t('no_format_match', this.plugin),
+                    text: t('no_format_match'),
                     cls: 'suggestion-item',
                 });
                 return;

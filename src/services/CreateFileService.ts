@@ -33,7 +33,7 @@ export class CreateFileService {
         const createParams = action.parameters as CreateFileActionParams;
 
         if (!createParams.fileName) {
-            new Notice(t('file_name_empty', this.plugin));
+            new Notice(t('file_name_empty'));
             return;
         }
 
@@ -72,7 +72,7 @@ export class CreateFileService {
                     .replace(/^\/+/g, '')
                     .replace(/\/+$/g, '')
                     .replace(/^\//, '')
-                    .replace(/\/$/, '');
+                    .replace(/\//, '');
                 let templatePath = templateFolder
                     ? `${templateFolder}/${templateName}`
                     : templateName;
@@ -81,7 +81,7 @@ export class CreateFileService {
                 if (templateFile && templateFile instanceof TFile) {
                     fileContent = await this.app.vault.read(templateFile);
                 } else {
-                    new Notice(t('template_file_not_found', this.plugin) + `: ${templatePath}`);
+                    new Notice(t('template_file_not_found') + `: ${templatePath}`);
                 }
             }
 
@@ -95,7 +95,7 @@ export class CreateFileService {
             }
         } catch (error) {
             console.error('创建文件时出错:', error);
-            new Notice(t('file_creation_failed', this.plugin) + `: ${error.message}`);
+            new Notice(t('file_creation_failed') + `: ${error.message}`);
         }
     }
 
@@ -107,7 +107,7 @@ export class CreateFileService {
     private resolveDateVariables(filePath: string): string {
         const moment = window.moment;
         if (!moment) {
-            new Notice(t('moment_not_available', this.plugin));
+            new Notice(t('moment_not_available'));
             return filePath;
         }
         return filePath.replace(/{{DATE:(.*?)}}/g, (match, format) => {

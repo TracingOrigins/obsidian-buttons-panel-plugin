@@ -42,21 +42,17 @@ export class CategoryDeleteModal extends Modal {
 
         const buttonCount = this.category.buttons.length;
 
-        contentEl.createEl('h2', { text: t('delete_category', this.plugin) });
+        contentEl.createEl('h2', { text: t('delete_category') });
 
         // 警告消息
         contentEl.createEl('p', {
-            text: tWithParams(
-                'confirm_delete_category',
-                { categoryName: this.category.name },
-                this.plugin
-            ),
+            text: tWithParams('confirm_delete_category', { categoryName: this.category.name }),
             cls: 'delete-message',
         });
 
         if (buttonCount > 0) {
             contentEl.createEl('p', {
-                text: tWithParams('delete_category_warning', { buttonCount }, this.plugin),
+                text: tWithParams('delete_category_warning', { buttonCount }),
                 cls: 'warning-message',
             });
         }
@@ -65,14 +61,12 @@ export class CategoryDeleteModal extends Modal {
         new Setting(contentEl)
             .addButton((button) =>
                 button
-                    .setButtonText(t('delete', this.plugin))
+                    .setButtonText(t('delete'))
                     .setWarning()
                     .setCta()
                     .onClick(() => this.handleDelete())
             )
-            .addButton((button) =>
-                button.setButtonText(t('cancel', this.plugin)).onClick(() => this.close())
-            );
+            .addButton((button) => button.setButtonText(t('cancel')).onClick(() => this.close()));
     }
 
     /**
@@ -99,16 +93,13 @@ export class CategoryDeleteModal extends Modal {
                 const buttonCount = this.category.buttons.length;
                 const message =
                     buttonCount > 0
-                        ? tWithParams(
-                              'delete_category_success',
-                              { categoryName: this.category.name, buttonCount },
-                              this.plugin
-                          )
-                        : tWithParams(
-                              'delete_category_success_empty',
-                              { categoryName: this.category.name },
-                              this.plugin
-                          );
+                        ? tWithParams('delete_category_success', {
+                              categoryName: this.category.name,
+                              buttonCount,
+                          })
+                        : tWithParams('delete_category_success_empty', {
+                              categoryName: this.category.name,
+                          });
                 new Notice(message);
 
                 // 调用回调函数
@@ -117,7 +108,7 @@ export class CategoryDeleteModal extends Modal {
             }
         } catch (error) {
             console.error('删除分类时出错:', error);
-            new Notice(t('delete_category_error', this.plugin));
+            new Notice(t('delete_category_error'));
         }
     }
 
