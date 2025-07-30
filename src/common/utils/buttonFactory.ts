@@ -15,6 +15,6 @@ export function createDefaultButtonConfig(): ButtonConfig {
         order: 0,
         executionMode: 'sequential',
         stopOnError: true,
-        delayBetweenActions: 0,
+        delayBetweenActions: 100,
     };
 }

@@ -47,7 +47,7 @@ export class ActionDispatcher {
         actions: ButtonAction[],
         executionMode: 'sequential' | 'parallel' = 'sequential',
         stopOnError: boolean = true,
-        delayBetweenActions: number = 0
+        delayBetweenActions: number = 100
     ): Promise<void> {
         if (!actions || actions.length === 0) {
             new Notice(t('no_actions_in_sequence'));

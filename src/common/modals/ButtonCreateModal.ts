@@ -44,7 +44,7 @@ export class ButtonCreateModal extends Modal {
             order: 0,
             executionMode: 'sequential',
             stopOnError: true,
-            delayBetweenActions: 0,
+            delayBetweenActions: 100,
         };
         this.actionSequence = new ActionSequence(this.tempButton.actions);
         // 新建时如果没有动作，自动添加一个默认动作
@@ -156,6 +156,7 @@ export class ButtonCreateModal extends Modal {
             });
         if (isParallel) {
             stopSetting.settingEl.addClass('is-disabled');
+            stopSetting.settingEl.addClass('is-hidden');
             stopSetting.setDesc(t('only_sequential_effective'));
         }
         // 动作间延迟
@@ -164,14 +165,15 @@ export class ButtonCreateModal extends Modal {
             .setDesc(t('delay_between_actions_desc'))
             .addText((text) => {
                 text.inputEl.type = 'number';
-                text.setValue(String(this.tempButton.delayBetweenActions ?? 0));
+                text.setValue(String(this.tempButton.delayBetweenActions ?? 100));
                 text.onChange((value) => {
-                    this.tempButton.delayBetweenActions = Number(value) || 0;
+                    this.tempButton.delayBetweenActions = Number(value) || 100;
                 });
                 if (isParallel) text.setDisabled(true);
             });
         if (isParallel) {
             delaySetting.settingEl.addClass('is-disabled');
+            delaySetting.settingEl.addClass('is-hidden');
             delaySetting.setDesc(t('only_sequential_effective'));
         }
         const actionValueContainer = container.createDiv({ cls: 'action-list' });

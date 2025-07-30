@@ -161,7 +161,7 @@ export class ButtonRenderer {
                     button.actions,
                     button.executionMode || 'sequential',
                     button.stopOnError ?? true,
-                    button.delayBetweenActions ?? 0
+                    button.delayBetweenActions ?? 100
                 );
             } finally {
                 (buttonEl as HTMLButtonElement).disabled = false;
