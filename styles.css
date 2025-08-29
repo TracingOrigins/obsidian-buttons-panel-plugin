@@ -6,6 +6,7 @@
     background: var(--background-primary);
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: var(--panel-height, auto); /* 默认为自动，如果设置了面板高度，则进行修改 */
 }
 
 /* 按钮面板：标题样式 */

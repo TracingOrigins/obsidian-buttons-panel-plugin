@@ -260,7 +260,7 @@ export class ButtonsPanelView extends ItemView {
      */
     private applyPanelStyles(panelEl: HTMLElement): void {
         if (this.panelConfig.panelHeight && this.panelConfig.panelHeight !== 'auto') {
-            panelEl.style.height = this.panelConfig.panelHeight;
+            panelEl.style.setProperty("--panel-height", this.panelConfig.panelHeight);
         }
     }
 
