@@ -74,7 +74,7 @@ export class ButtonMoveManager {
      */
     private createMoveIndicator(button: ButtonConfig, panelConfig: any): HTMLElement {
         const indicator = document.createElement('button');
-        indicator.className = 'button-move-indicator';
+        indicator.className = 'buttons-panel-plugin button-move-indicator';
         indicator.setAttribute('data-button-id', button.id);
 
         // 根据面板的全局设置来决定显示样式

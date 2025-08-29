@@ -89,7 +89,7 @@
 }
 
 /* 按钮面板：按钮的图标在左的样式 */
-button.button-move-indicator.icon-left,
+button.buttons-panel-plugin.button-move-indicator.icon-left,
 .buttons-panel-plugin button.icon-left {
     width: 96px;
     height: 40px;
@@ -101,7 +101,7 @@ button.button-move-indicator.icon-left,
     font-size: 14px;
 }
 
-button.button-move-indicator.icon-left .button-icon,
+button.buttons-panel-plugin.button-move-indicator.icon-left .button-icon,
 .buttons-panel-plugin button.icon-left .button-icon {
     display: inline-flex;
     align-items: center;
@@ -112,13 +112,13 @@ button.button-move-indicator.icon-left .button-icon,
     height: 16px;
 }
 
-button.button-move-indicator.icon-left .button-icon svg,
+button.buttons-panel-plugin.button-move-indicator.icon-left .button-icon svg,
 .buttons-panel-plugin button.icon-left .button-icon svg {
     color: var(--text-normal);
     display: block;
 }
 
-button.button-move-indicator.icon-left .button-text,
+button.buttons-panel-plugin.button-move-indicator.icon-left .button-text,
 .buttons-panel-plugin button.icon-left .button-text {
     font-size: 14px;
     text-align: left;
@@ -128,7 +128,7 @@ button.button-move-indicator.icon-left .button-text,
 }
 
 /* 按钮面板：按钮的图标在上的样式 */
-button.button-move-indicator.icon-top,
+button.buttons-panel-plugin.button-move-indicator.icon-top,
 .buttons-panel-plugin button.icon-top {
     flex-direction: column;
     background-color: transparent;
@@ -141,7 +141,7 @@ button.button-move-indicator.icon-top,
     height: 56px;
 }
 
-button.button-move-indicator.icon-top .button-icon,
+button.buttons-panel-plugin.button-move-indicator.icon-top .button-icon,
 .buttons-panel-plugin button.icon-top .button-icon {
     font-size: 24px;
     margin-bottom: 2px;
@@ -149,13 +149,13 @@ button.button-move-indicator.icon-top .button-icon,
     height: 32px;
 }
 
-button.button-move-indicator.icon-top .button-icon svg,
+button.buttons-panel-plugin.button-move-indicator.icon-top .button-icon svg,
 .buttons-panel-plugin button.icon-top .button-icon svg {
     width: 32px;
     height: 32px;
 }
 
-button.button-move-indicator.icon-top .button-text,
+button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
 .buttons-panel-plugin button.icon-top .button-text {
     font-size: 12px;
     text-align: center;
@@ -773,8 +773,8 @@ button.button-move-indicator.icon-top .button-text,
 }
 
 /* 移动指示器样式（这里是在之前已有的样式的基础上追加的样式，非全部样式） */
-button.button-move-indicator.icon-left,
-button.button-move-indicator.icon-top {
+button.buttons-panel-plugin.button-move-indicator.icon-left,
+button.buttons-panel-plugin.button-move-indicator.icon-top {
     position: fixed;
     /* pointer-events: none; */
     z-index: 10000;
@@ -1077,7 +1077,7 @@ body > button > span.button-icon > svg,
 }
 
 /* 添加、编辑按钮模态框：让动作序列中的每个动作底部的移动按钮靠左、删除按钮靠右 */
-.action-btn-setting .setting-item-control {
+.buttons-panel-plugin .action-btn-setting .setting-item-control {
     display: flex;
     width: 100%;
     justify-content: flex-start;
@@ -1086,7 +1086,7 @@ body > button > span.button-icon > svg,
     gap: 0;
 }
 
-.action-delete-btn {
+.buttons-panel-plugin .action-delete-btn {
     margin-left: auto;
 }
 
