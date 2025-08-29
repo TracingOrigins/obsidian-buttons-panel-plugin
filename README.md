@@ -75,7 +75,7 @@
 - If any required field is empty, the corresponding input will be highlighted in red.
 - The red highlight disappears automatically once the field is filled.
 
-### 🎛️ Panel Settings
+### 🎛️ Panel Options
 
 - **Panel Title**: Set a custom title for the panel.
 - **Show Title**: Toggle the display of the panel title.
@@ -88,7 +88,7 @@
 
 > Example: Set the panel height to `400px` and choose "Tabbed View" to group buttons by category.
 
-### 📁 Path Configuration
+### 📁 Path Management
 
 - **Template Folder Path**: Set the folder path for storing template files (e.g., `templates/`). The create file action will use templates from this path.
 - **Script Folder Path**: Set the folder path for storing script files (e.g., `scripts/`). The run script action will load script files from this path.
