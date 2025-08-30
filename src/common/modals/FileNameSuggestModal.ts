@@ -1,4 +1,4 @@
-import { App, Modal, TextComponent } from 'obsidian';
+import { App, Modal, TextComponent, moment } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 
@@ -98,7 +98,7 @@ export class FileNameSuggestModal extends Modal {
                 suggestionEl.createDiv({ text: `{{DATE:${f.format}}}` });
                 // 显示预览
                 suggestionEl.createDiv({
-                    text: window.moment ? window.moment().format(f.format) + '.md' : '',
+                    text: moment().format(f.format) + '.md',
                     cls: 'format-preview',
                 });
 

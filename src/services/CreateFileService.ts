@@ -1,4 +1,4 @@
-import { App, Notice, TFile, normalizePath } from 'obsidian';
+import { App, Notice, TFile, normalizePath, moment } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { FileService } from '@/services/FileService';
@@ -101,11 +101,6 @@ export class CreateFileService {
      * @returns 替换后的路径
      */
     private resolveDateVariables(filePath: string): string {
-        const moment = window.moment;
-        if (!moment) {
-            new Notice(t('moment_not_available'));
-            return filePath;
-        }
         return filePath.replace(/{{DATE:(.*?)}}/g, (match, format) => {
             return moment().format(format);
         });
