@@ -1,4 +1,4 @@
-import { App, ButtonComponent, setIcon, Menu } from 'obsidian';
+import { App, ButtonComponent, setIcon, Menu, Platform } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { ButtonConfig, CategoryConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
@@ -244,11 +244,7 @@ export class ButtonManagementSection {
         });
 
         // 分类长按菜单
-        if (
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-                navigator.userAgent
-            )
-        ) {
+        if (Platform.isMobile) {
             let touchTimer: number | null = null;
             let touchStartX = 0;
             let touchStartY = 0;
@@ -478,11 +474,7 @@ export class ButtonManagementSection {
         });
 
         // 按钮长按菜单
-        if (
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-                navigator.userAgent
-            )
-        ) {
+        if (Platform.isMobile) {
             let touchTimer: number | null = null;
             let touchStartX = 0;
             let touchStartY = 0;
