@@ -46,12 +46,8 @@ export class ScriptService {
             const scriptFileName = action.type === 'script' ? action.parameters.scriptName : '';
             // 获取脚本文件夹路径（从插件设置中读取）
             let scriptFolderPath = this.plugin?.settings?.pathConfig?.scriptFolderPath ?? '';
-            // 清理路径，防止拼接出错
-            scriptFolderPath = scriptFolderPath
-                .replace(/^\/+/g, '')
-                .replace(/\/+$/g, '')
-                .replace(/^\//, '')
-                .replace(/\/$/, '');
+            // 使用 normalizePath 清理路径
+            scriptFolderPath = normalizePath(scriptFolderPath);
             // 拼接完整脚本文件路径
             let scriptFilePath = scriptFolderPath
                 ? `${scriptFolderPath}/${scriptFileName}`

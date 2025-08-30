@@ -1,5 +1,6 @@
 // path.ts
 // 路径处理相关工具函数。
+import { normalizePath } from 'obsidian';
 
 /**
  * 从路径中提取文件夹部分。
@@ -31,16 +32,16 @@ export function getFileNameFromPath(path: string): string {
  * @returns 完整的文件路径
  */
 export function buildFilePath(folder: string, fileName: string): string {
-    // 清理文件名，移除开头和结尾的斜杠
-    fileName = fileName.replace(/^\/+/g, '').replace(/\/+$/g, '');
+    // 使用 normalizePath 清理路径
+    fileName = normalizePath(fileName);
 
     // 确保文件名以 .md 结尾
     const finalFileName = fileName.endsWith('.md') ? fileName : `${fileName}.md`;
 
     let fullPath = '';
     if (folder && folder.trim() !== '' && folder !== '/') {
-        // 清理文件夹路径，移除开头和结尾的斜杠
-        folder = folder.replace(/^\/+/g, '').replace(/\/+$/g, '');
+        // 使用 normalizePath 清理文件夹路径
+        folder = normalizePath(folder);
         fullPath = `${folder}/${finalFileName}`;
     } else {
         fullPath = finalFileName;

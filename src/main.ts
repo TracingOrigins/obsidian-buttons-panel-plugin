@@ -9,7 +9,7 @@
 // - 详细参数、返回值、用途说明
 //
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
-import { Plugin, WorkspaceLeaf, Editor, TFile, Notice } from 'obsidian';
+import { Plugin, WorkspaceLeaf, Editor, TFile, Notice, normalizePath } from 'obsidian';
 import { ButtonsPanelView } from '@/views/ButtonsPanelView';
 import { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
 import { ButtonsPanelSettingTab } from '@/settings/ButtonsPanelSettingTab';
@@ -289,8 +289,8 @@ async function registerScriptCommands(plugin: any) {
     if (!scriptFolder) {
         return;
     }
-    // 统一去掉首尾斜杠
-    scriptFolder = scriptFolder.replace(/^\/+|\/+$/g, '').replace(/^\/|\/$/g, '');
+    // 使用 normalizePath 清理路径
+    scriptFolder = normalizePath(scriptFolder);
     const allFiles = plugin.app.vault.getFiles();
 
     const files = allFiles.filter((f: TFile) => {

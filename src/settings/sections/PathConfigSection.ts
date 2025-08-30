@@ -1,4 +1,4 @@
-import { App, Setting, ButtonComponent, Notice, TextComponent } from 'obsidian';
+import { App, Setting, ButtonComponent, Notice, TextComponent, normalizePath } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { FolderSearchModal } from '@/common/modals/FolderSearchModal';
@@ -231,9 +231,5 @@ async function createPathsOnly(
  */
 function cleanPath(path: string | undefined): string {
     if (!path) return '';
-    let cleanPath = String(path).replace(/^\/+|\/+$/g, '');
-    if (cleanPath.startsWith('.')) {
-        cleanPath = cleanPath.substring(1);
-    }
-    return cleanPath;
+    return normalizePath(String(path));
 }

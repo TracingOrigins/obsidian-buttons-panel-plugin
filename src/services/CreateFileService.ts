@@ -48,8 +48,8 @@ export class CreateFileService {
                 filePath = `${folderPath}/${fileName}`;
             }
 
-            // 清理路径前缀
-            while (filePath.startsWith('/')) filePath = filePath.substring(1);
+            // 使用 normalizePath 清理路径
+            filePath = normalizePath(filePath);
 
             // 检查文件是否已存在，已存在则直接打开
             const existingFile = this.app.vault.getAbstractFileByPath(filePath);
@@ -67,12 +67,8 @@ export class CreateFileService {
             const templateName = createParams.templateName;
             if (templateName) {
                 let templateFolder = this.plugin?.settings?.pathConfig?.templateFolderPath ?? '';
-                // 清理模板文件夹路径【去除开头所有斜杠，去除结尾所有斜杠，再次去除开头单个斜杠（保险），再次去除结尾单个斜杠（保险）】
-                templateFolder = templateFolder
-                    .replace(/^\/+/g, '')
-                    .replace(/\/+$/g, '')
-                    .replace(/^\//, '')
-                    .replace(/\//, '');
+                // 使用 normalizePath 清理模板文件夹路径
+                templateFolder = normalizePath(templateFolder);
                 let templatePath = templateFolder
                     ? `${templateFolder}/${templateName}`
                     : templateName;

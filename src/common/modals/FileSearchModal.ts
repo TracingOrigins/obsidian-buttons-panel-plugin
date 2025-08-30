@@ -1,4 +1,4 @@
-import { App, Modal, TextComponent } from 'obsidian';
+import { App, Modal, TextComponent, normalizePath } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 
@@ -113,7 +113,7 @@ export class FileSearchModal extends Modal {
                 files = files.filter((file) => this.fileExts.includes(file.extension));
             }
             if (this.rootFolder) {
-                const root = this.rootFolder.replace(/^\/+|\/+$/g, '');
+                const root = normalizePath(this.rootFolder);
                 files = files.filter((file) => file.path.startsWith(root + '/'));
             }
             filteredFiles = files.filter(
