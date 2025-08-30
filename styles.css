@@ -531,18 +531,18 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
 }
 
 /* 配置面板：帮助的样式 */
-.help-content .help-title {
+.buttons-panel-plugin .help-content .help-title {
     font-weight: bold;
     color: var(--text-accent);
     font-size: 1.1em;
 }
 
-.help-content .help-list {
+.buttons-panel-plugin .help-content .help-list {
     margin: 0 0 0 1.5em;
     padding: 0;
 }
 
-.help-content .help-sub-list {
+.buttons-panel-plugin .help-content .help-sub-list {
     margin: 0 0 0 1.5em;
     padding: 0;
 }
@@ -1023,7 +1023,7 @@ button.buttons-panel-plugin.button-move-indicator.icon-top {
 }
 
 /* 全局：给指定的某些svg图标设置样式 */
-body > button > span.button-icon > svg,
+body > button.buttons-panel-plugin > span.button-icon > svg,
 .buttons-panel-plugin .button-list-icon svg,
 .buttons-panel-plugin span.icon-svg-preview svg,
 .buttons-panel-plugin .buttons-panel-grid span.button-icon svg {
