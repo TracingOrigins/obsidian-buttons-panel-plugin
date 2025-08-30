@@ -55,8 +55,8 @@ export class ScriptService {
             scriptFilePath = normalizePath(scriptFilePath);
 
             // 查找脚本文件对象
-            const scriptFile = this.app.vault.getAbstractFileByPath(scriptFilePath);
-            if (!scriptFile || !(scriptFile instanceof TFile)) {
+            const scriptFile = this.app.vault.getFileByPath(scriptFilePath);
+            if (!scriptFile) {
                 // 未找到脚本文件，弹出通知
                 new Notice(t('script_file_not_found') + `: ${scriptFilePath}`);
                 return;

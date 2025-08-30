@@ -52,7 +52,7 @@ export class CreateFileService {
             filePath = normalizePath(filePath);
 
             // 检查文件是否已存在，已存在则直接打开
-            const existingFile = this.app.vault.getAbstractFileByPath(filePath);
+            const existingFile = this.app.vault.getFileByPath(filePath);
             const openFileService = new FileService(this.app, this.plugin);
             if (existingFile) {
                 await openFileService.openFile({
@@ -73,8 +73,8 @@ export class CreateFileService {
                     ? `${templateFolder}/${templateName}`
                     : templateName;
                 templatePath = normalizePath(templatePath);
-                const templateFile = this.app.vault.getAbstractFileByPath(templatePath);
-                if (templateFile && templateFile instanceof TFile) {
+                const templateFile = this.app.vault.getFileByPath(templatePath);
+                if (templateFile) {
                     fileContent = await this.app.vault.read(templateFile);
                 } else {
                     new Notice(t('template_file_not_found') + `: ${templatePath}`);

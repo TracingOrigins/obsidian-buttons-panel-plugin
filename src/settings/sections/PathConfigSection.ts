@@ -1,4 +1,4 @@
-import { App, Setting, ButtonComponent, Notice, TextComponent, normalizePath } from 'obsidian';
+import { App, Setting, ButtonComponent, Notice, TextComponent, normalizePath, TFolder } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { FolderSearchModal } from '@/common/modals/FolderSearchModal';
@@ -19,123 +19,87 @@ export function createPathConfigSection(
     // 创建卡片组
     const card = containerEl.createDiv('settings-card-group');
 
-    // 模板文件夹路径设置
-    const templateWrapper = containerEl.createDiv({ cls: 'path-input-wrapper' });
-    const templateInput = new TextComponent(templateWrapper)
-        .setPlaceholder(t('template_folder_placeholder'))
-        .setValue(plugin.settings.pathConfig.templateFolderPath ?? '');
+    // 路径验证函数
+    const validatePath = (path: string): boolean => {
+        const normalizedPath = normalizePath(path);
+        return normalizedPath ? !!app.vault.getFolderByPath(normalizedPath) : true;
+    };
 
-    // 初始化时验证路径
-    const initialTemplatePath = plugin.settings.pathConfig.templateFolderPath ?? '';
-    const cleanInitialTemplatePath = cleanPath(initialTemplatePath);
-    const templateFolder = cleanInitialTemplatePath
-        ? app.vault.getAbstractFileByPath(String(cleanInitialTemplatePath))
-        : null;
-    if (cleanInitialTemplatePath && !templateFolder) {
-        templateInput.inputEl.classList.add('input-error');
-    }
-
-    const templateSetting = new Setting(card)
-        .setName(t('template_folder'))
-        .setDesc(t('template_folder_desc'))
-        .addButton((button) =>
-            button
-                .setButtonText('')
-                .setClass('custom-button')
-                .setTooltip(t('search_folders_tooltip'))
-                .setIcon('search')
-                .onClick(() => {
-                    new FolderSearchModal(app, plugin, (folderPath: string) => {
-                        templateInput.setValue(folderPath);
-                        plugin.settings.pathConfig.templateFolderPath = folderPath;
-                        plugin.saveSettings();
-                        // 实时验证
-                        const folder = cleanPath(folderPath)
-                            ? app.vault.getAbstractFileByPath(cleanPath(folderPath))
-                            : null;
-                        if (cleanPath(folderPath) && !folder) {
-                            templateInput.inputEl.classList.add('input-error');
-                        } else {
-                            templateInput.inputEl.classList.remove('input-error');
-                        }
-                    }).open();
-                })
-        );
-    templateSetting.controlEl.appendChild(templateWrapper);
-
-    templateInput.onChange(async (value) => {
-        // 只保存原始值，允许为空
-        plugin.settings.pathConfig.templateFolderPath = value;
-        await plugin.saveSettings();
-        // 实时验证路径
-        const folder = cleanPath(value)
-            ? app.vault.getAbstractFileByPath(String(cleanPath(value)))
-            : null;
-        if (cleanPath(value) && !folder) {
-            templateInput.inputEl.classList.add('input-error');
+    // 更新输入框错误状态
+    const updateInputErrorState = (input: TextComponent, path: string) => {
+        const normalizedPath = normalizePath(path);
+        if (normalizedPath && !validatePath(path)) {
+            input.inputEl.classList.add('input-error');
         } else {
-            templateInput.inputEl.classList.remove('input-error');
+            input.inputEl.classList.remove('input-error');
         }
-    });
+    };
+
+    // 创建路径输入设置
+    const createPathInput = (
+        name: string,
+        desc: string,
+        placeholder: string,
+        getValue: () => string,
+        setValue: (value: string) => void,
+        onChange: (value: string) => Promise<void>
+    ) => {
+        const wrapper = containerEl.createDiv({ cls: 'path-input-wrapper' });
+        const input = new TextComponent(wrapper)
+            .setPlaceholder(placeholder)
+            .setValue(getValue());
+
+        // 初始化时验证路径
+        updateInputErrorState(input, getValue());
+
+        const setting = new Setting(card)
+            .setName(name)
+            .setDesc(desc)
+            .addButton((button) =>
+                button
+                    .setButtonText('')
+                    .setClass('custom-button')
+                    .setTooltip(t('search_folders_tooltip'))
+                    .setIcon('search')
+                    .onClick(() => {
+                        new FolderSearchModal(app, plugin, (folderPath: string) => {
+                            input.setValue(folderPath);
+                            setValue(folderPath);
+                            plugin.saveSettings();
+                            updateInputErrorState(input, folderPath);
+                        }).open();
+                    })
+            );
+        setting.controlEl.appendChild(wrapper);
+
+        input.onChange(async (value) => {
+            setValue(value);
+            await plugin.saveSettings();
+            updateInputErrorState(input, value);
+        });
+
+        return input;
+    };
+
+    // 模板文件夹路径设置
+    const templateInput = createPathInput(
+        t('template_folder'),
+        t('template_folder_desc'),
+        t('template_folder_placeholder'),
+        () => plugin.settings.pathConfig.templateFolderPath ?? '',
+        (value) => { plugin.settings.pathConfig.templateFolderPath = value; },
+        async (value) => { plugin.settings.pathConfig.templateFolderPath = value; }
+    );
 
     // 脚本文件夹路径设置
-    const scriptWrapper = containerEl.createDiv({ cls: 'path-input-wrapper' });
-    const scriptInput = new TextComponent(scriptWrapper)
-        .setPlaceholder(t('script_folder_placeholder'))
-        .setValue(plugin.settings.pathConfig.scriptFolderPath ?? '');
-
-    // 初始化时验证路径
-    const initialScriptPath = plugin.settings.pathConfig.scriptFolderPath ?? '';
-    const cleanInitialScriptPath = cleanPath(initialScriptPath);
-    const scriptFolder = cleanInitialScriptPath
-        ? app.vault.getAbstractFileByPath(String(cleanInitialScriptPath))
-        : null;
-    if (cleanInitialScriptPath && !scriptFolder) {
-        scriptInput.inputEl.classList.add('input-error');
-    }
-
-    const scriptSetting = new Setting(card)
-        .setName(t('script_folder'))
-        .setDesc(t('script_folder_desc'))
-        .addButton((button) =>
-            button
-                .setButtonText('')
-                .setClass('custom-button')
-                .setTooltip(t('search_folders_tooltip'))
-                .setIcon('search')
-                .onClick(() => {
-                    new FolderSearchModal(app, plugin, (folderPath: string) => {
-                        scriptInput.setValue(folderPath);
-                        plugin.settings.pathConfig.scriptFolderPath = folderPath;
-                        plugin.saveSettings();
-                        // 实时验证
-                        const folder = cleanPath(folderPath)
-                            ? app.vault.getAbstractFileByPath(cleanPath(folderPath))
-                            : null;
-                        if (cleanPath(folderPath) && !folder) {
-                            scriptInput.inputEl.classList.add('input-error');
-                        } else {
-                            scriptInput.inputEl.classList.remove('input-error');
-                        }
-                    }).open();
-                })
-        );
-    scriptSetting.controlEl.appendChild(scriptWrapper);
-
-    scriptInput.onChange(async (value) => {
-        // 只保存原始值，允许为空
-        plugin.settings.pathConfig.scriptFolderPath = value;
-        await plugin.saveSettings();
-        // 实时验证路径
-        const folder = cleanPath(value)
-            ? app.vault.getAbstractFileByPath(String(cleanPath(value)))
-            : null;
-        if (cleanPath(value) && !folder) {
-            scriptInput.inputEl.classList.add('input-error');
-        } else {
-            scriptInput.inputEl.classList.remove('input-error');
-        }
-    });
+    const scriptInput = createPathInput(
+        t('script_folder'),
+        t('script_folder_desc'),
+        t('script_folder_placeholder'),
+        () => plugin.settings.pathConfig.scriptFolderPath ?? '',
+        (value) => { plugin.settings.pathConfig.scriptFolderPath = value; },
+        async (value) => { plugin.settings.pathConfig.scriptFolderPath = value; }
+    );
 
     // 路径验证和创建按钮
     new Setting(card)
@@ -160,76 +124,51 @@ async function createPathsOnly(
     templateInput: TextComponent,
     scriptInput: TextComponent
 ): Promise<void> {
-    const templatePath = plugin.settings.pathConfig.templateFolderPath;
-    const scriptPath = plugin.settings.pathConfig.scriptFolderPath;
+    const paths = [
+        { path: plugin.settings.pathConfig.templateFolderPath, input: templateInput },
+        { path: plugin.settings.pathConfig.scriptFolderPath, input: scriptInput }
+    ];
+
     let createdFolders: string[] = [];
     let allExist = true;
-    // 模板
-    const cleanTemplatePath = cleanPath(templatePath);
-    if (cleanTemplatePath) {
-        const templateFolder = app.vault.getAbstractFileByPath(String(cleanTemplatePath));
-        if (!templateFolder) {
-            try {
-                await app.vault.createFolder(String(cleanTemplatePath));
-                createdFolders.push(cleanTemplatePath);
-                allExist = false;
-            } catch (error) {
-                new Notice(t('create_folder_failed') + `: ${cleanTemplatePath} - ${error.message}`);
-                return;
+
+    // 创建文件夹
+    for (const { path } of paths) {
+        const normalizedPath = normalizePath(path || '');
+        if (normalizedPath) {
+            const folder = app.vault.getFolderByPath(normalizedPath);
+            if (!folder) {
+                try {
+                    await app.vault.createFolder(normalizedPath);
+                    createdFolders.push(normalizedPath);
+                    allExist = false;
+                } catch (error) {
+                    new Notice(t('create_folder_failed') + `: ${normalizedPath} - ${error.message}`);
+                    return;
+                }
             }
         }
     }
-    // 脚本
-    const cleanScriptPath = cleanPath(scriptPath);
-    if (cleanScriptPath) {
-        const scriptFolder = app.vault.getAbstractFileByPath(String(cleanScriptPath));
-        if (!scriptFolder) {
-            try {
-                await app.vault.createFolder(String(cleanScriptPath));
-                createdFolders.push(cleanScriptPath);
-                allExist = false;
-            } catch (error) {
-                new Notice(t('create_folder_failed') + `: ${cleanScriptPath} - ${error.message}`);
-                return;
-            }
-        }
-    }
+
+    // 显示结果通知
     if (createdFolders.length > 0) {
         new Notice(t('folders_created_success') + `: ${createdFolders.join(', ')}`);
     } else {
         new Notice(t('all_paths_exist'));
     }
-    // 创建成功后刷新输入框状态
-    const templateValue = plugin.settings.pathConfig.templateFolderPath;
-    const scriptValue = plugin.settings.pathConfig.scriptFolderPath;
-    if (templateInput && templateInput.inputEl) {
-        const folder = cleanPath(templateValue)
-            ? app.vault.getAbstractFileByPath(cleanPath(templateValue))
-            : null;
-        if (cleanPath(templateValue) && !folder) {
-            templateInput.inputEl.classList.add('input-error');
-        } else {
-            templateInput.inputEl.classList.remove('input-error');
-        }
-    }
-    if (scriptInput && scriptInput.inputEl) {
-        const folder = cleanPath(scriptValue)
-            ? app.vault.getAbstractFileByPath(cleanPath(scriptValue))
-            : null;
-        if (cleanPath(scriptValue) && !folder) {
-            scriptInput.inputEl.classList.add('input-error');
-        } else {
-            scriptInput.inputEl.classList.remove('input-error');
+
+    // 刷新输入框状态
+    for (const { path, input } of paths) {
+        if (input?.inputEl) {
+            const normalizedPath = normalizePath(path || '');
+            const folder = normalizedPath ? app.vault.getFolderByPath(normalizedPath) : null;
+            if (normalizedPath && !folder) {
+                input.inputEl.classList.add('input-error');
+            } else {
+                input.inputEl.classList.remove('input-error');
+            }
         }
     }
 }
 
-/**
- * 清理路径，确保符合 Obsidian 的要求。
- * @param path 原始路径
- * @returns 清理后的路径
- */
-function cleanPath(path: string | undefined): string {
-    if (!path) return '';
-    return normalizePath(String(path));
-}
+
