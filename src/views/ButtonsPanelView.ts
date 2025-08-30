@@ -204,7 +204,6 @@ export class ButtonsPanelView extends ItemView {
      * @returns Promise<void>
      */
     async onClose(): Promise<void> {
-        console.log('onClose');
         this.containerEl.empty();
         // 移除事件监听器
         if (this.handleRefreshEvent) {
