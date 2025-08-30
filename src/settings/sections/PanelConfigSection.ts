@@ -102,8 +102,8 @@ export function createPanelConfigSection(
         );
 
     new Setting(card)
-        .setName(t('enable_edit_mode') || '启用编辑模式')
-        .setDesc(t('enable_edit_mode_desc') || '开启后可在按钮面板进行分类和按钮的编辑、移动等操作')
+        .setName(t('enable_edit_mode'))
+        .setDesc(t('enable_edit_mode_desc'))
         .addToggle((toggle) =>
             toggle
                 .setValue(plugin.settings.panelConfig.enableEditMode ?? false)
@@ -116,8 +116,8 @@ export function createPanelConfigSection(
 
     // 新增：显示顶部导航栏开关
     new Setting(card)
-        .setName('显示顶部导航栏')
-        .setDesc('控制顶部三个功能图标的显示/隐藏')
+        .setName(t('show_top_nav_bar'))
+        .setDesc(t('show_top_nav_bar_desc'))
         .addToggle((toggle) =>
             toggle
                 .setValue(plugin.settings.panelConfig.showTopNavBar ?? true)

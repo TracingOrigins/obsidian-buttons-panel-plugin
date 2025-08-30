@@ -184,5 +184,7 @@
     "please_complete_required_fields": "请完善所有必填项",
     "move_up": "上移",
     "move_down": "下移",
-    "only_sequential_effective": "该选项仅在顺序模式下生效"
+    "only_sequential_effective": "该选项仅在顺序模式下生效",
+    "enable_top_nav_bar": "启用顶部导航栏",
+    "enable_top_nav_bar_desc": "控制顶部功能图标的显示/隐藏"
 }

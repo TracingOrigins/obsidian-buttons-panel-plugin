@@ -184,5 +184,7 @@
     "please_complete_required_fields": "Please complete all required fields",
     "move_up": "Move up",
     "move_down": "Move down",
-    "only_sequential_effective": "This option is only effective in sequential mode"
+    "only_sequential_effective": "This option is only effective in sequential mode",
+    "show_top_nav_bar": "Show top navigation bar",
+    "show_top_nav_bar_desc": "Control the display/hide of top navigation bar"
 }
