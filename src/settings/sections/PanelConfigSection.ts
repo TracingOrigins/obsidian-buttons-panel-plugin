@@ -19,7 +19,21 @@ export function createPanelConfigSection(
     // 新增：卡片包裹，风格与按钮管理一致
     const card = containerEl.createDiv('settings-card-group');
 
+    // 显示标题开关
     new Setting(card)
+        .setName(t('show_title'))
+        .setDesc(t('show_title_desc'))
+        .addToggle((toggle) =>
+            toggle.setValue(plugin.settings.panelConfig.showTitle).onChange(async (value) => {
+                plugin.settings.panelConfig.showTitle = value;
+                await plugin.saveSettings();
+                // 更新面板标题设置的显示状态
+                updatePanelTitleSettingVisibility();
+            })
+        );
+
+    // 面板标题设置
+    const panelTitleSetting = new Setting(card)
         .setName(t('panel_title_setting'))
         .setDesc(t('panel_title_desc'))
         .addText((text) =>
@@ -32,15 +46,20 @@ export function createPanelConfigSection(
                 })
         );
 
-    new Setting(card)
-        .setName(t('show_title'))
-        .setDesc(t('show_title_desc'))
-        .addToggle((toggle) =>
-            toggle.setValue(plugin.settings.panelConfig.showTitle).onChange(async (value) => {
-                plugin.settings.panelConfig.showTitle = value;
-                await plugin.saveSettings();
-            })
-        );
+    // 更新面板标题设置显示状态的函数
+    const updatePanelTitleSettingVisibility = () => {
+        const isTitleHidden = !plugin.settings.panelConfig.showTitle;
+        if (isTitleHidden) {
+            panelTitleSetting.settingEl.addClass('is-disabled');
+            panelTitleSetting.settingEl.addClass('is-hidden');
+        } else {
+            panelTitleSetting.settingEl.removeClass('is-disabled');
+            panelTitleSetting.settingEl.removeClass('is-hidden');
+        }
+    };
+
+    // 初始化显示状态
+    updatePanelTitleSettingVisibility();
 
     new Setting(card)
         .setName(t('panel_height'))
