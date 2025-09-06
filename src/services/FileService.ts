@@ -55,21 +55,14 @@ export class FileService {
     }
 
     /**
-     * 获取所有 WorkspaceLeaf（递归）。
-     * 用于查找所有已打开的标签页。
+     * 获取所有 WorkspaceLeaf。
+     * 使用 Obsidian API 的 iterateAllLeaves 方法，包括主区域、浮动和侧边栏的所有叶子。
      */
     private getAllLeaves(): WorkspaceLeaf[] {
         const leaves: WorkspaceLeaf[] = [];
-        function traverse(node: any) {
-            if (node.children) {
-                for (const child of node.children) {
-                    traverse(child);
-                }
-            } else if (node instanceof WorkspaceLeaf) {
-                leaves.push(node);
-            }
-        }
-        traverse((this.app.workspace as any).rootSplit);
+        this.app.workspace.iterateAllLeaves((leaf) => {
+            leaves.push(leaf);
+        });
         return leaves;
     }
 }
