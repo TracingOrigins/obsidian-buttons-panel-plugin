@@ -20,6 +20,7 @@ export class ButtonManagementSection {
     private app: App; // Obsidian应用实例
     private displayCallback?: () => void; // 刷新回调
     private draggedCategoryIndex: number = -1; // 当前拖拽的分类索引
+    private suppressCategoryMenu: boolean = false; // 抑制分类菜单标志，用于防止按钮长按菜单和分类长按菜单冲突
 
     /**
      * 构造函数，初始化插件、app、回调
@@ -258,9 +259,9 @@ export class ButtonManagementSection {
                     hasMoved = false;
 
                     touchTimer = window.setTimeout(() => {
-                        // 检查全局标记，若为true则不弹出分类菜单
-                        if (window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU) {
-                            window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
+                        // 若被按钮长按逻辑抑制，则不弹出分类菜单
+                        if (this.suppressCategoryMenu) {
+                            this.suppressCategoryMenu = false;
                             return;
                         }
                         if (!hasMoved) {
@@ -303,6 +304,7 @@ export class ButtonManagementSection {
                                         removeDragging,
                                         true
                                     );
+                                    this.suppressCategoryMenu = false;
                                 };
                                 setTimeout(() => {
                                     document.addEventListener('mousedown', removeDragging, true);
@@ -341,7 +343,7 @@ export class ButtonManagementSection {
                         clearTimeout(touchTimer);
                         touchTimer = null;
                     }
-                    window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = false;
+                    this.suppressCategoryMenu = false;
                 },
                 { passive: true }
             );
@@ -489,7 +491,7 @@ export class ButtonManagementSection {
 
                     touchTimer = window.setTimeout(() => {
                         if (!hasMoved) {
-                            window.__BUTTON_PANEL_SUPPRESS_CATEGORY_MENU = true;
+                            this.suppressCategoryMenu = true;
                             if (typeof e.stopPropagation === 'function') e.stopPropagation();
                             const menu = new Menu();
                             const allCategories = this.plugin.settings.categories;
