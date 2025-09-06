@@ -11,7 +11,7 @@
 //
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
 
-import { ItemView, WorkspaceLeaf, Menu } from 'obsidian';
+import { ItemView, WorkspaceLeaf, Menu, debounce } from 'obsidian';
 import { ButtonConfig, ButtonsPanelPlugin, CategoryConfig, PanelConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
 import { ActionDispatcher } from '@/core/ActionDispatcher';
@@ -60,6 +60,8 @@ export class ButtonsPanelView extends ItemView {
     private panelActionsRenderer: PanelActionsRenderer;
     /** 刷新事件处理函数句柄 */
     private handleRefreshEvent: (() => void) | null = null;
+    /** 防抖渲染函数，使用 Obsidian API 的 debounce */
+    private debouncedRender: () => void;
 
     /**
      * 构造函数，初始化视图和所有模块化组件
@@ -80,6 +82,10 @@ export class ButtonsPanelView extends ItemView {
         this.panelConfig = panelConfig;
         // 初始化所有模块化组件
         this.initializeComponents();
+        // 初始化防抖渲染函数，使用 Obsidian API 的 debounce
+        this.debouncedRender = debounce(() => {
+            this.renderPanel();
+        }, 100, true);
         // 添加主容器样式类
         this.containerEl.addClass('buttons-panel-plugin');
     }
@@ -211,19 +217,6 @@ export class ButtonsPanelView extends ItemView {
         }
     }
 
-    /**
-     * 防抖渲染，避免频繁重新渲染
-     */
-    private debouncedRender(): void {
-        const timeout = this.stateManager.getRenderTimeout();
-        if (timeout) {
-            clearTimeout(timeout);
-        }
-        const newTimeout = window.setTimeout(() => {
-            this.renderPanel();
-        }, 100);
-        this.stateManager.setRenderTimeout(newTimeout);
-    }
 
     /**
      * 更新按钮数据并重新渲染

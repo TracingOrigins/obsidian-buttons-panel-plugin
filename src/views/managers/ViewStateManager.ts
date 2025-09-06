@@ -11,7 +11,6 @@ import { ButtonConfig, CategoryConfig } from '@/common/types';
 export class ViewStateManager {
     private plugin: ButtonsPanelPlugin;
     // 渲染状态
-    private renderTimeout: number | null = null;
     private isRendering = false;
     // 按钮移动状态
     private moveState = {
@@ -44,14 +43,6 @@ export class ViewStateManager {
     /** 设置渲染状态 */
     setIsRendering(rendering: boolean): void {
         this.isRendering = rendering;
-    }
-    /** 获取渲染防抖定时器 */
-    getRenderTimeout(): number | null {
-        return this.renderTimeout;
-    }
-    /** 设置渲染防抖定时器 */
-    setRenderTimeout(timeout: number | null): void {
-        this.renderTimeout = timeout;
     }
 
     // 按钮移动状态管理
