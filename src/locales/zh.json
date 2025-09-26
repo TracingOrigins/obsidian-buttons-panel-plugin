@@ -52,6 +52,7 @@
     "delete": "删除",
     "delete_button": "删除按钮",
     "delete_button_tooltip": "删除",
+    "delete_button_warning": "⚠️ 警告：此操作无法撤销。确定要删除按钮 \"{name}\" 吗？",
     "delete_category": "删除分类",
     "delete_category_error": "删除分类时出错",
     "delete_category_success": "已删除分类 \"{categoryName}\" 及其中的 {buttonCount} 个按钮",

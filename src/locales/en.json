@@ -52,6 +52,7 @@
     "delete": "Delete",
     "delete_button": "Delete button",
     "delete_button_tooltip": "Delete",
+    "delete_button_warning": "⚠️ Warning: This action cannot be undone. Are you sure you want to delete button \"{name}\"?",
     "delete_category": "Delete category",
     "delete_category_error": "Error deleting category",
     "delete_category_success": "Deleted category \"{categoryName}\" and its {buttonCount} buttons",
