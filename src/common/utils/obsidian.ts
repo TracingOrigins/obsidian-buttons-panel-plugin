@@ -12,9 +12,16 @@ export function refreshAllSettingsViews(app: App): void {
     const leaves = app.workspace.getLeavesOfType?.('buttons-panel-settings-view');
     if (Array.isArray(leaves)) {
         for (const leaf of leaves) {
-            const view = leaf.view as ButtonsPanelSettingsView | undefined;
-            if (view && typeof view.refreshSettings === 'function') {
-                view.refreshSettings();
+            try {
+                // 安全处理 DeferredView (Obsidian v1.7.2+)
+                if (leaf.view.getViewType && leaf.view.getViewType() === 'buttons-panel-settings-view') {
+                    const view = leaf.view as ButtonsPanelSettingsView;
+                    if (view && typeof view.refreshSettings === 'function') {
+                        view.refreshSettings();
+                    }
+                }
+            } catch (error) {
+                console.warn('刷新设置视图时出错:', error);
             }
         }
     }

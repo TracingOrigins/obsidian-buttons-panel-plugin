@@ -159,14 +159,17 @@ export default class ButtonsPanelPlugin extends Plugin {
         try {
             this.app.workspace.getLeavesOfType(BUTTONS_PANEL_VIEW_TYPE).forEach((leaf) => {
                 try {
-                    const view = leaf.view as ButtonsPanelView;
-                    if (
-                        view &&
-                        typeof view.updateButtons === 'function' &&
-                        typeof view.updatePanelConfig === 'function'
-                    ) {
-                        view.updateButtons(this.getAllButtons());
-                        view.updatePanelConfig(this.settings.panelConfig);
+                    // 安全处理 DeferredView (Obsidian v1.7.2+)
+                    if (leaf.view.getViewType && leaf.view.getViewType() === BUTTONS_PANEL_VIEW_TYPE) {
+                        const view = leaf.view as ButtonsPanelView;
+                        if (
+                            view &&
+                            typeof view.updateButtons === 'function' &&
+                            typeof view.updatePanelConfig === 'function'
+                        ) {
+                            view.updateButtons(this.getAllButtons());
+                            view.updatePanelConfig(this.settings.panelConfig);
+                        }
                     }
                 } catch (error) {
                     console.warn('更新按钮面板视图时出错:', error);
@@ -184,9 +187,12 @@ export default class ButtonsPanelPlugin extends Plugin {
         try {
             this.app.workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE).forEach((leaf) => {
                 try {
-                    const view = leaf.view as ButtonsPanelSettingsView;
-                    if (view && typeof view.refreshSettings === 'function') {
-                        view.refreshSettings();
+                    // 安全处理 DeferredView (Obsidian v1.7.2+)
+                    if (leaf.view.getViewType && leaf.view.getViewType() === BUTTONS_PANEL_SETTINGS_VIEW_TYPE) {
+                        const view = leaf.view as ButtonsPanelSettingsView;
+                        if (view && typeof view.refreshSettings === 'function') {
+                            view.refreshSettings();
+                        }
                     }
                 } catch (error) {
                     console.warn('更新设置页面视图时出错:', error);
@@ -266,10 +272,17 @@ export default class ButtonsPanelPlugin extends Plugin {
     private updateActiveView() {
         const leaves = this.app.workspace.getLeavesOfType(BUTTONS_PANEL_VIEW_TYPE);
         leaves.forEach((leaf) => {
-            const view = leaf.view as ButtonsPanelView;
-            if (view) {
-                view.updateButtons(this.getAllButtons());
-                view.updatePanelConfig(this.settings.panelConfig);
+            try {
+                // 安全处理 DeferredView (Obsidian v1.7.2+)
+                if (leaf.view.getViewType && leaf.view.getViewType() === BUTTONS_PANEL_VIEW_TYPE) {
+                    const view = leaf.view as ButtonsPanelView;
+                    if (view) {
+                        view.updateButtons(this.getAllButtons());
+                        view.updatePanelConfig(this.settings.panelConfig);
+                    }
+                }
+            } catch (error) {
+                console.warn('更新活动视图时出错:', error);
             }
         });
     }
