@@ -19,6 +19,7 @@ import {
     CategoryConfig,
     ButtonConfig,
 } from '@/common/types';
+import type { ButtonsPanelPlugin as ButtonsPanelPluginType } from '@/common/types';
 import { t, tWithParams } from '@/common/utils/i18n';
 import { Script } from 'vm';
 
@@ -284,7 +285,7 @@ export default class ButtonsPanelPlugin extends Plugin {
 }
 
 // 在插件 onload 或初始化时注册脚本命令
-async function registerScriptCommands(plugin: any) {
+async function registerScriptCommands(plugin: ButtonsPanelPluginType) {
     let scriptFolder = plugin.settings.pathConfig?.scriptFolderPath;
     if (!scriptFolder) {
         return;
@@ -303,7 +304,7 @@ async function registerScriptCommands(plugin: any) {
             callback: async () => {
                 try {
                     // new Notice(tWithParams('script_command_run', { scriptName: file.name }));
-                    await plugin.ActionDispatcher.scriptService.runScript({
+                    await plugin.ActionDispatcher?.scriptService?.runScript({
                         type: 'script',
                         parameters: { scriptName: file.name },
                     });

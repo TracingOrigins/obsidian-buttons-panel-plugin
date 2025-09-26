@@ -1,4 +1,5 @@
 import type { App, WorkspaceLeaf } from 'obsidian';
+import type { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
 // obsidian.ts
 // Obsidian 相关工具函数。
 
@@ -11,11 +12,9 @@ export function refreshAllSettingsViews(app: App): void {
     const leaves = app.workspace.getLeavesOfType?.('buttons-panel-settings-view');
     if (Array.isArray(leaves)) {
         for (const leaf of leaves) {
-            const view = leaf.view as any;
+            const view = leaf.view as ButtonsPanelSettingsView | undefined;
             if (view && typeof view.refreshSettings === 'function') {
                 view.refreshSettings();
-            } else if (view && typeof view.display === 'function') {
-                view.display();
             }
         }
     }
