@@ -60,6 +60,8 @@ export class ButtonsPanelView extends ItemView {
     private panelActionsRenderer: PanelActionsRenderer;
     /** 刷新事件处理函数句柄 */
     private handleRefreshEvent: (() => void) | null = null;
+    /** 键盘事件是否已注册 */
+    private keyboardEventsRegistered: boolean = false;
     /** 防抖渲染函数，使用 Obsidian API 的 debounce */
     private debouncedRender: () => void;
 
@@ -166,6 +168,15 @@ export class ButtonsPanelView extends ItemView {
         this.handleRefreshEvent = () => {
             this.debouncedRender();
         };
+        // 使用插件的事件注册系统，确保在插件禁用时正确清理
+        // 对于自定义事件，我们需要手动管理，但通过插件实例注册
+        this.plugin.registerEvent({
+            unload: () => {
+                if (this.handleRefreshEvent) {
+                    document.removeEventListener('buttons-panel-refresh', this.handleRefreshEvent);
+                }
+            }
+        });
         document.addEventListener('buttons-panel-refresh', this.handleRefreshEvent);
     }
 
@@ -211,10 +222,7 @@ export class ButtonsPanelView extends ItemView {
      */
     async onClose(): Promise<void> {
         this.containerEl.empty();
-        // 移除事件监听器
-        if (this.handleRefreshEvent) {
-            document.removeEventListener('buttons-panel-refresh', this.handleRefreshEvent);
-        }
+        // 事件监听器现在通过插件的事件注册系统自动清理
     }
 
 
@@ -302,7 +310,7 @@ export class ButtonsPanelView extends ItemView {
     private handleMoveStart(button: ButtonConfig, buttonEl: HTMLElement): void {
         this.moveManager.startMoveMode(button, buttonEl, this.panelConfig);
         this.moveModeRenderer.renderMoveModePanel(this.contentEl, this.panelConfig);
-        document.addEventListener('keydown', this.handleMoveEscKey);
+        this.addKeyboardEventListener();
     }
 
     /**
@@ -326,7 +334,7 @@ export class ButtonsPanelView extends ItemView {
         ) {
             this.categoryMoveManager.endCategoryMoveMode();
         }
-        document.removeEventListener('keydown', this.handleMoveEscKey);
+        this.removeKeyboardEventListener();
         this.renderPanel();
     }
 
@@ -337,13 +345,39 @@ export class ButtonsPanelView extends ItemView {
     private handleCategoryMoveStart(category: CategoryConfig): void {
         this.categoryMoveManager.startCategoryMoveMode(category);
         this.categoryMoveModeRenderer.renderCategoryMoveModePanel(this.contentEl);
-        document.addEventListener('keydown', this.handleMoveEscKey);
+        this.addKeyboardEventListener();
     }
 
     /**
      * 进入分类移动模式，绑定 ESC 监听
      */
     public enterCategoryMoveMode(): void {
-        document.addEventListener('keydown', this.handleMoveEscKey);
+        this.addKeyboardEventListener();
+    }
+
+    /**
+     * 添加键盘事件监听器，使用插件的事件注册系统
+     */
+    private addKeyboardEventListener(): void {
+        if (!this.keyboardEventsRegistered) {
+            // 使用插件的事件注册系统，确保在插件禁用时正确清理
+            this.plugin.registerEvent({
+                unload: () => {
+                    document.removeEventListener('keydown', this.handleMoveEscKey);
+                }
+            });
+            document.addEventListener('keydown', this.handleMoveEscKey);
+            this.keyboardEventsRegistered = true;
+        }
+    }
+
+    /**
+     * 移除键盘事件监听器
+     */
+    private removeKeyboardEventListener(): void {
+        if (this.keyboardEventsRegistered) {
+            document.removeEventListener('keydown', this.handleMoveEscKey);
+            this.keyboardEventsRegistered = false;
+        }
     }
 }

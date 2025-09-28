@@ -14,6 +14,8 @@ import { refreshAllSettingsViews } from '@/common/utils/obsidian';
 export class ButtonMoveManager {
     private plugin: ButtonsPanelPlugin;
     private stateManager: ViewStateManager;
+    /** 移动事件是否已注册 */
+    private moveEventsRegistered: boolean = false;
 
     /**
      * 构造函数，初始化插件和状态管理器。
@@ -105,19 +107,32 @@ export class ButtonMoveManager {
     }
 
     /**
-     * 添加全局移动事件监听器。
+     * 添加全局移动事件监听器，使用插件的事件注册系统。
      */
     private addMoveEventListeners(): void {
-        document.addEventListener('mousemove', this.handleMoveMouseMove);
-        document.addEventListener('keydown', this.handleMoveKeyDown);
+        if (!this.moveEventsRegistered) {
+            // 使用插件的事件注册系统，确保在插件禁用时正确清理
+            this.plugin.registerEvent({
+                unload: () => {
+                    document.removeEventListener('mousemove', this.handleMoveMouseMove);
+                    document.removeEventListener('keydown', this.handleMoveKeyDown);
+                }
+            });
+            document.addEventListener('mousemove', this.handleMoveMouseMove);
+            document.addEventListener('keydown', this.handleMoveKeyDown);
+            this.moveEventsRegistered = true;
+        }
     }
 
     /**
      * 移除全局移动事件监听器。
      */
     private removeMoveEventListeners(): void {
-        document.removeEventListener('mousemove', this.handleMoveMouseMove);
-        document.removeEventListener('keydown', this.handleMoveKeyDown);
+        if (this.moveEventsRegistered) {
+            document.removeEventListener('mousemove', this.handleMoveMouseMove);
+            document.removeEventListener('keydown', this.handleMoveKeyDown);
+            this.moveEventsRegistered = false;
+        }
     }
 
     /**
