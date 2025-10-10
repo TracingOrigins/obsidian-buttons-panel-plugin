@@ -94,7 +94,7 @@
     "help_title": "使用说明",
     "icon_text_same_line": "图标和文本同行",
     "icon_top_text_bottom": "图标在上，文本在下",
-    "icons_data_empty": "图标数据为空，请检查icons.json文件",
+    "icons_data_empty": "图标数据为空",
     "list_view": "列表视图",
     "moment_not_available": "Moment.js 不可用",
     "move": "移动",

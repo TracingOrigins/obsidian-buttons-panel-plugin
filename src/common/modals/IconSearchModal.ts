@@ -1,5 +1,4 @@
-import { Modal, TextComponent } from 'obsidian';
-import icons from '@/assets/icons.json';
+import { Modal, TextComponent, getIconIds, getIcon, setIcon } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { safeSetSVG } from '@/common/utils/dom';
@@ -46,18 +45,22 @@ export class IconSearchModal extends Modal {
             .setValue('');
         input.inputEl.classList.add('search-input');
 
-        // 图标列表容器
+		// 图标列表容器
         const iconList = contentEl.createDiv({ cls: 'icon-list' });
-        let filteredIcons: any[] = [];
+		let filteredIcons: any[] = [];
         let selectedSuggestionIndex = 0;
         let page = 1;
         const PAGE_SIZE = 100;
 
-        // 确保图标数据正确加载
-        if (!icons || icons.length === 0) {
-            console.warn(t('icons_data_empty'));
-            return;
-        }
+		// 从 Obsidian 获取内置图标列表
+		const allIconIds = getIconIds?.() ?? [];
+		const allIcons = allIconIds.map((id) => ({ name: id }));
+
+		// 确保图标数据正确加载
+		if (!allIcons || allIcons.length === 0) {
+			console.warn(t('icons_data_empty'));
+			return;
+		}
 
         /**
          * 滚动到当前选中的图标项。
@@ -90,20 +93,18 @@ export class IconSearchModal extends Modal {
                 });
                 return;
             }
-            toShow.forEach((icon, idx) => {
+			toShow.forEach((icon, idx) => {
                 const item = iconList.createDiv({
                     cls:
                         'icon-item' +
                         (idx + startIndex === selectedSuggestionIndex ? ' is-active' : ''),
                 });
-                if (icon.svg) {
-                    safeSetSVG(item, icon.svg);
-                } else {
-                    item.textContent = icon.name || t('unknown_icon');
-                }
+				// 使用 Obsidian 提供的 setIcon 渲染内置图标
+				if (icon.name) setIcon(item, icon.name);
+				else item.textContent = t('unknown_icon');
                 item.setAttr('aria-label', icon.name);
                 item.onclick = () => {
-                    this.onSelect(icon);
+					this.onSelect({ name: icon.name, svg: getIcon?.(icon.name)?.outerHTML ?? '' });
                     this.close();
                 };
             });
@@ -132,22 +133,22 @@ export class IconSearchModal extends Modal {
         /**
          * 根据输入内容过滤图标列表。
          */
-        const updateFilter = () => {
-            const query = input.getValue().trim().toLowerCase();
-            filteredIcons = icons.filter(
-                (icon) => icon.name && icon.name.toLowerCase().includes(query)
-            );
-            page = 1;
-            selectedSuggestionIndex = 0;
-            renderIcons(false); // 重置模式
-        };
+		const updateFilter = () => {
+			const query = input.getValue().trim().toLowerCase();
+			filteredIcons = allIcons.filter(
+				(icon) => icon.name && icon.name.toLowerCase().includes(query)
+			);
+			page = 1;
+			selectedSuggestionIndex = 0;
+			renderIcons(false); // 重置模式
+		};
 
         // 输入时实时过滤
         input.inputEl.addEventListener('input', updateFilter);
 
         // 键盘导航与选择
-        input.inputEl.addEventListener('keydown', (e: KeyboardEvent) => {
-            const total = Math.min(icons.length, PAGE_SIZE * page);
+		input.inputEl.addEventListener('keydown', (e: KeyboardEvent) => {
+			const total = Math.min(allIcons.length, PAGE_SIZE * page);
             if (total === 0) return;
             switch (e.key) {
                 case 'ArrowDown':
@@ -163,7 +164,7 @@ export class IconSearchModal extends Modal {
                 case 'Enter':
                     e.preventDefault();
                     if (selectedSuggestionIndex > -1) {
-                        const icon = icons[selectedSuggestionIndex];
+						const icon = filteredIcons[selectedSuggestionIndex] ?? allIcons[selectedSuggestionIndex];
                         this.onSelect(icon);
                         this.close();
                     }
@@ -175,7 +176,7 @@ export class IconSearchModal extends Modal {
         });
 
         // 初始化显示
-        filteredIcons = icons;
+		filteredIcons = allIcons;
         renderIcons(false); // 初始加载
     }
 

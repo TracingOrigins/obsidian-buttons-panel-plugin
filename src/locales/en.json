@@ -94,7 +94,7 @@
     "help_title": "Usage instructions",
     "icon_text_same_line": "Icon and text same line",
     "icon_top_text_bottom": "Icon top, text bottom",
-    "icons_data_empty": "Icons data is empty, please check icons.json file",
+    "icons_data_empty": "Icons data is empty",
     "list_view": "List view",
     "moment_not_available": "Moment.js is not available",
     "move": "Move",
