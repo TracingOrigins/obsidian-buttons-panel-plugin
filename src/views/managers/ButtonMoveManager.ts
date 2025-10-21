@@ -3,6 +3,7 @@
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { ButtonConfig } from '@/common/types';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
+import type { ButtonsPanelView } from '@/views/ButtonsPanelView';
 import { safeSetSVG } from '@/common/utils/dom';
 import { refreshAllSettingsViews } from '@/common/utils/obsidian';
 
@@ -14,6 +15,7 @@ import { refreshAllSettingsViews } from '@/common/utils/obsidian';
 export class ButtonMoveManager {
     private plugin: ButtonsPanelPlugin;
     private stateManager: ViewStateManager;
+    private view: ButtonsPanelView;
     /** 移动事件是否已注册 */
     private moveEventsRegistered: boolean = false;
 
@@ -22,9 +24,10 @@ export class ButtonMoveManager {
      * @param plugin 插件主类实例
      * @param stateManager 视图状态管理器
      */
-    constructor(plugin: ButtonsPanelPlugin, stateManager: ViewStateManager) {
+    constructor(plugin: ButtonsPanelPlugin, stateManager: ViewStateManager, view: ButtonsPanelView) {
         this.plugin = plugin;
         this.stateManager = stateManager;
+        this.view = view;
     }
 
     /**
@@ -107,19 +110,32 @@ export class ButtonMoveManager {
     }
 
     /**
-     * 添加全局移动事件监听器，使用插件的事件注册系统。
+     * 添加全局移动事件监听器，优先使用 Keymap Scope，不可用时回退到 DOM 事件
      */
     private addMoveEventListeners(): void {
         if (!this.moveEventsRegistered) {
-            // 使用插件的事件注册系统，确保在插件禁用时正确清理
-            this.plugin.registerEvent({
-                unload: () => {
-                    document.removeEventListener('mousemove', this.handleMoveMouseMove);
-                    document.removeEventListener('keydown', this.handleMoveKeyDown);
-                }
-            });
-            document.addEventListener('mousemove', this.handleMoveMouseMove);
-            document.addEventListener('keydown', this.handleMoveKeyDown);
+            // 鼠标移动依然用 DOM 事件（非键盘）
+            this.view.registerDomEvent(document, 'mousemove', this.handleMoveMouseMove as any);
+            
+            // 优先使用 Keymap Scope，如果不可用则使用 DOM 事件
+            if (this.view.scope) {
+                // 键盘 ESC 使用视图的 keymap scope
+                this.view.scope.register([], 'Escape', (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    this.handleMoveKeyDown({ key: 'Escape' } as KeyboardEvent);
+                    return false;
+                });
+            } else {
+                // 备选方案：使用 DOM 事件监听 ESC 键
+                this.view.registerDomEvent(document, 'keydown', (evt: KeyboardEvent) => {
+                    if (evt.key === 'Escape') {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        this.handleMoveKeyDown(evt);
+                    }
+                });
+            }
             this.moveEventsRegistered = true;
         }
     }
@@ -129,8 +145,7 @@ export class ButtonMoveManager {
      */
     private removeMoveEventListeners(): void {
         if (this.moveEventsRegistered) {
-            document.removeEventListener('mousemove', this.handleMoveMouseMove);
-            document.removeEventListener('keydown', this.handleMoveKeyDown);
+            // 事件由 registerDomEvent 管理，无需手动移除
             this.moveEventsRegistered = false;
         }
     }

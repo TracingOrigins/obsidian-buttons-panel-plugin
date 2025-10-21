@@ -90,6 +90,8 @@ export class ButtonsPanelView extends ItemView {
         }, 100, true);
         // 添加主容器样式类
         this.containerEl.addClass('buttons-panel-plugin');
+        // 确保容器可以接收焦点
+        this.containerEl.setAttribute('tabindex', '-1');
     }
 
     /**
@@ -100,7 +102,7 @@ export class ButtonsPanelView extends ItemView {
         this.stateManager = new ViewStateManager(this.plugin);
 
         // 初始化移动管理器
-        this.moveManager = new ButtonMoveManager(this.plugin, this.stateManager);
+        this.moveManager = new ButtonMoveManager(this.plugin, this.stateManager, this);
 
         // 初始化分类移动管理器
         this.categoryMoveManager = new CategoryMoveManager(this.plugin, this.stateManager);
@@ -168,16 +170,8 @@ export class ButtonsPanelView extends ItemView {
         this.handleRefreshEvent = () => {
             this.debouncedRender();
         };
-        // 使用插件的事件注册系统，确保在插件禁用时正确清理
-        // 对于自定义事件，我们需要手动管理，但通过插件实例注册
-        this.plugin.registerEvent({
-            unload: () => {
-                if (this.handleRefreshEvent) {
-                    document.removeEventListener('buttons-panel-refresh', this.handleRefreshEvent);
-                }
-            }
-        });
-        document.addEventListener('buttons-panel-refresh', this.handleRefreshEvent);
+        // 使用视图的 registerDomEvent 注册自定义 DOM 事件
+        this.registerDomEvent(document, 'buttons-panel-refresh', this.handleRefreshEvent);
     }
 
     /**
@@ -311,16 +305,17 @@ export class ButtonsPanelView extends ItemView {
         this.moveManager.startMoveMode(button, buttonEl, this.panelConfig);
         this.moveModeRenderer.renderMoveModePanel(this.contentEl, this.panelConfig);
         this.addKeyboardEventListener();
+        
+        // 确保视图获得焦点，以便 scope 能够接收键盘事件
+        this.containerEl.focus();
     }
 
     /**
      * 处理移动模式下的 ESC 键退出逻辑
      * @param e 键盘事件
      */
-    private handleMoveEscKey = (e: KeyboardEvent): void => {
-        if (e.key === 'Escape') {
-            this.exitMoveMode();
-        }
+    private handleMoveEscKeyBinding = (): void => {
+        this.exitMoveMode();
     };
 
     /**
@@ -356,18 +351,31 @@ export class ButtonsPanelView extends ItemView {
     }
 
     /**
-     * 添加键盘事件监听器，使用插件的事件注册系统
+     * 添加键盘事件监听器，优先使用 Keymap Scope，不可用时回退到 DOM 事件
      */
     private addKeyboardEventListener(): void {
         if (!this.keyboardEventsRegistered) {
-            // 使用插件的事件注册系统，确保在插件禁用时正确清理
-            this.plugin.registerEvent({
-                unload: () => {
-                    document.removeEventListener('keydown', this.handleMoveEscKey);
-                }
-            });
-            document.addEventListener('keydown', this.handleMoveEscKey);
-            this.keyboardEventsRegistered = true;
+            // 优先使用 Keymap Scope，如果不可用则使用 DOM 事件
+            if (this.scope) {
+                // 使用 Keymap Scope 注册 ESC 键
+                this.scope.register([], 'Escape', (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    this.handleMoveEscKeyBinding();
+                    return false;
+                });
+                this.keyboardEventsRegistered = true;
+            } else {
+                // 备选方案：使用 DOM 事件监听 ESC 键
+                this.registerDomEvent(document, 'keydown', (evt: KeyboardEvent) => {
+                    if (evt.key === 'Escape') {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        this.handleMoveEscKeyBinding();
+                    }
+                });
+                this.keyboardEventsRegistered = true;
+            }
         }
     }
 
@@ -376,7 +384,7 @@ export class ButtonsPanelView extends ItemView {
      */
     private removeKeyboardEventListener(): void {
         if (this.keyboardEventsRegistered) {
-            document.removeEventListener('keydown', this.handleMoveEscKey);
+            // scope.register 的绑定在视图卸载时会被框架清理
             this.keyboardEventsRegistered = false;
         }
     }
