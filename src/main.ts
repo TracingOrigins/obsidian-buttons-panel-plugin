@@ -103,8 +103,7 @@ export default class ButtonsPanelPlugin extends Plugin {
             if (
                 leaf &&
                 leaf.view &&
-                leaf.view.getViewType &&
-                leaf.view.getViewType() !== BUTTONS_PANEL_VIEW_TYPE // 排除按钮面板
+                !(leaf.view instanceof ButtonsPanelView) // 排除按钮面板
             ) {
                 this.lastActiveContentLeaf = leaf;
             }
@@ -160,7 +159,7 @@ export default class ButtonsPanelPlugin extends Plugin {
             this.app.workspace.getLeavesOfType(BUTTONS_PANEL_VIEW_TYPE).forEach((leaf) => {
                 try {
                     // 安全处理 DeferredView (Obsidian v1.7.2+)
-                    if (leaf.view.getViewType && leaf.view.getViewType() === BUTTONS_PANEL_VIEW_TYPE) {
+                    if (leaf.view instanceof ButtonsPanelView) {
                         const view = leaf.view as ButtonsPanelView;
                         if (
                             view &&
@@ -188,7 +187,7 @@ export default class ButtonsPanelPlugin extends Plugin {
             this.app.workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE).forEach((leaf) => {
                 try {
                     // 安全处理 DeferredView (Obsidian v1.7.2+)
-                    if (leaf.view.getViewType && leaf.view.getViewType() === BUTTONS_PANEL_SETTINGS_VIEW_TYPE) {
+                    if (leaf.view instanceof ButtonsPanelSettingsView) {
                         const view = leaf.view as ButtonsPanelSettingsView;
                         if (view && typeof view.refreshSettings === 'function') {
                             view.refreshSettings();
@@ -274,7 +273,7 @@ export default class ButtonsPanelPlugin extends Plugin {
         leaves.forEach((leaf) => {
             try {
                 // 安全处理 DeferredView (Obsidian v1.7.2+)
-                if (leaf.view.getViewType && leaf.view.getViewType() === BUTTONS_PANEL_VIEW_TYPE) {
+                if (leaf.view instanceof ButtonsPanelView) {
                     const view = leaf.view as ButtonsPanelView;
                     if (view) {
                         view.updateButtons(this.getAllButtons());

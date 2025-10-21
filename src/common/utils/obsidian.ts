@@ -1,5 +1,6 @@
 import type { App, WorkspaceLeaf } from 'obsidian';
-import type { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
+import { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
+import { ButtonsPanelView } from '@/views/ButtonsPanelView';
 // obsidian.ts
 // Obsidian 相关工具函数。
 
@@ -14,7 +15,7 @@ export function refreshAllSettingsViews(app: App): void {
         for (const leaf of leaves) {
             try {
                 // 安全处理 DeferredView (Obsidian v1.7.2+)
-                if (leaf.view.getViewType && leaf.view.getViewType() === 'buttons-panel-settings-view') {
+                if (leaf.view instanceof ButtonsPanelSettingsView) {
                     const view = leaf.view as ButtonsPanelSettingsView;
                     if (view && typeof view.refreshSettings === 'function') {
                         view.refreshSettings();
