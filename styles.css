@@ -694,6 +694,12 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
     align-items: center;
 }
 
+/* SVG图标 */
+.buttons-panel-plugin .icon-svg-preview svg {
+    height: 24px;
+    width: 24px;
+}
+
 /* 图标删除按钮 */
 .buttons-panel-plugin .setting-item-control button.icon-delete-btn {
     position: absolute;
