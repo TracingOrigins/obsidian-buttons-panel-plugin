@@ -125,10 +125,10 @@ export class ButtonEditModal extends Modal {
      */
     createActionSettings(container: HTMLElement): void {
         container.empty();
-        container.createEl('h3', { text: t('action_settings') });
+        container.createEl('h3', { text: t('action_sequence') });
         // 新增：基本设置小标题和容器
-        const basicActionSettings = container.createDiv('basic-action-settings');
-        basicActionSettings.createEl('h4', { text: t('basic_settings') });
+        const basicActionSettings = container.createDiv('basic-action-options');
+        basicActionSettings.createEl('h4', { text: t('basic_options') });
         // 执行模式
         new Setting(basicActionSettings)
             .setName(t('execution_mode'))

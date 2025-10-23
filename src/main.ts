@@ -77,8 +77,8 @@ export default class ButtonsPanelPlugin extends Plugin {
 
         // 添加命令：打开配置面板（主页面新标签页）
         this.addCommand({
-            id: 'open-buttons-panel-settings',
-            name: t('open_buttons_panel_settings'),
+            id: 'open-buttons-panel-options',
+            name: t('open_buttons_panel_options'),
             callback: () => {
                 this.activateSettingsView();
             },

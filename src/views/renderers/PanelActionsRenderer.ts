@@ -144,7 +144,7 @@ export class PanelActionsRenderer {
     private createSettingsButton(actionsGroup: HTMLElement): void {
         const settingsBtn = document.createElement('div');
         settingsBtn.className = 'panel-action-btn settings-btn clickable-icon nav-action-button';
-        settingsBtn.setAttr('aria-label', t('buttons_panel_settings'));
+        settingsBtn.setAttr('aria-label', t('buttons_panel_options'));
         setIcon(settingsBtn, 'settings');
         settingsBtn.onclick = () => {
             // @ts-ignore
