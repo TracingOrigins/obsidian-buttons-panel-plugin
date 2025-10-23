@@ -70,10 +70,8 @@ export class ButtonManagementSection {
             collapseIcon.setAttr('tabindex', '0');
             collapseIcon.setAttr('role', 'button');
             collapseIcon.setAttr('aria-label', t('toggle_collapse'));
-            safeSetSVG(
-                collapseIcon,
-                `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 4.5L12 9L6 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-            );
+            // 使用 Obsidian 官方的折叠图标
+            setIcon(collapseIcon, 'chevron-right');
 
             // 4. 图标点击时触发summary的点击事件
             if (collapseIcon) {
