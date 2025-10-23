@@ -99,15 +99,17 @@ export default class ButtonsPanelPlugin extends Plugin {
         });
 
         // 监听标签页切换，记录最后激活的标签页（排除按钮面板）
-        this.app.workspace.on('active-leaf-change', (leaf: WorkspaceLeaf | null) => {
-            if (
-                leaf &&
-                leaf.view &&
-                !(leaf.view instanceof ButtonsPanelView) // 排除按钮面板
-            ) {
-                this.lastActiveContentLeaf = leaf;
-            }
-        });
+        this.registerEvent(
+            this.app.workspace.on('active-leaf-change', (leaf: WorkspaceLeaf | null) => {
+                if (
+                    leaf &&
+                    leaf.view &&
+                    !(leaf.view instanceof ButtonsPanelView) // 排除按钮面板
+                ) {
+                    this.lastActiveContentLeaf = leaf;
+                }
+            })
+        );
     }
 
     /**
