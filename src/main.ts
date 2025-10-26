@@ -249,8 +249,12 @@ export default class ButtonsPanelPlugin extends Plugin {
         const { workspace } = this.app;
         let leaf: WorkspaceLeaf | null = null;
         const leaves = workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE);
+        
         if (leaves.length > 0) {
             leaf = leaves[0];
+            // 如果标签已存在，直接激活而不使用 revealLeaf 避免闪烁
+            // 使用 workspace.setActiveLeaf 来避免标签页闪烁
+            workspace.setActiveLeaf(leaf, { focus: false });
         } else {
             // 创建新的配置面板在主页面新标签页
             leaf = workspace.getLeaf('tab');
@@ -259,10 +263,9 @@ export default class ButtonsPanelPlugin extends Plugin {
                     type: BUTTONS_PANEL_SETTINGS_VIEW_TYPE,
                     active: true,
                 });
+                // 确保标签页被正确激活
+                workspace.setActiveLeaf(leaf, { focus: false });
             }
-        }
-        if (leaf) {
-            workspace.revealLeaf(leaf);
         }
     }
 
