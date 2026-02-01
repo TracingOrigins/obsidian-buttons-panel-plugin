@@ -84,10 +84,9 @@ export default class ButtonsPanelPlugin extends Plugin {
             },
         });
 
-        // 添加左侧ribbon图标，点击可快速打开按钮面板和设置
+        // 添加左侧ribbon图标，点击可快速打开按钮面板
         this.addRibbonIcon('mouse', t('open_buttons_panel'), () => {
             this.activateView();
-            this.activateSettingsView();
         });
 
         // 添加设置标签页（Obsidian设置页）
