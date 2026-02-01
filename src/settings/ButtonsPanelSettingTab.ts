@@ -13,6 +13,8 @@ import { t } from '@/common/utils/i18n';
 export class ButtonsPanelSettingTab extends PluginSettingTab {
     /** 插件主类实例 */
     plugin: ButtonsPanelPlugin;
+    /** 设置页签图标 */
+    icon: string = 'mouse';
     /** 当前选中的tab（不持久化） */
     private currentActiveTab: string = 'panel';
 
