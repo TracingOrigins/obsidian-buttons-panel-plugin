@@ -73,8 +73,11 @@ export class TabsRenderer {
     ): void {
         const tabsContainer = container.createDiv('buttons-panel-tab-bar-container');
 
-        // 创建标签栏
+        // 创建标签栏，根据配置添加换行类
         const tabBar = tabsContainer.createDiv('buttons-panel-tab-bar');
+        if (panelConfig.tabsWrap) {
+            tabBar.addClass('tabs-wrap');
+        }
 
         // 设置默认激活标签
         this.setDefaultActiveTab(sortedCategories);

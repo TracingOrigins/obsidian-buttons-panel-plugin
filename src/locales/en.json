@@ -186,5 +186,7 @@
     "move_down": "Move down",
     "only_sequential_effective": "This option is only effective in sequential mode",
     "show_top_nav_bar": "Show top navigation bar",
-    "show_top_nav_bar_desc": "Control the display/hide of top navigation bar"
+    "show_top_nav_bar_desc": "Control the display/hide of top navigation bar",
+    "tabs_wrap": "Tabs auto wrap",
+    "tabs_wrap_desc": "When enabled, tabs will automatically wrap to the next line based on page width instead of horizontal scrolling"
 }

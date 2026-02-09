@@ -89,9 +89,40 @@ export function createPanelConfigSection(
                 .onChange(async (value: 'list' | 'tabs') => {
                     plugin.settings.panelConfig.panelViewType = value;
                     await plugin.saveSettings();
+                    // 更新标签页自动换行选项的显示状态
+                    updateTabsWrapSettingVisibility();
                     onDisplayRefresh?.();
                 });
         });
+
+    // 标签页自动换行设置
+    const tabsWrapSetting = new Setting(card)
+        .setName(t('tabs_wrap'))
+        .setDesc(t('tabs_wrap_desc'))
+        .addToggle((toggle) =>
+            toggle
+                .setValue(plugin.settings.panelConfig.tabsWrap ?? false)
+                .onChange(async (value) => {
+                    plugin.settings.panelConfig.tabsWrap = value;
+                    await plugin.saveSettings();
+                    onDisplayRefresh?.();
+                })
+        );
+
+    // 更新标签页自动换行选项显示状态的函数
+    const updateTabsWrapSettingVisibility = () => {
+        const isTabsView = plugin.settings.panelConfig.panelViewType === 'tabs';
+        if (!isTabsView) {
+            tabsWrapSetting.settingEl.addClass('is-disabled');
+            tabsWrapSetting.settingEl.addClass('is-hidden');
+        } else {
+            tabsWrapSetting.settingEl.removeClass('is-disabled');
+            tabsWrapSetting.settingEl.removeClass('is-hidden');
+        }
+    };
+
+    // 初始化显示状态
+    updateTabsWrapSettingVisibility();
 
     new Setting(card)
         .setName(t('button_display_style'))

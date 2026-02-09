@@ -63,6 +63,8 @@ export interface PanelConfig {
     enableEditMode?: boolean;
     /** 是否显示顶部导航栏 */
     showTopNavBar?: boolean;
+    /** 标签页是否自动换行 */
+    tabsWrap?: boolean;
 }
 
 /**
@@ -104,6 +106,7 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
         enableAnimation: true,
         enableEditMode: false,
         showTopNavBar: true,
+        tabsWrap: false,
     },
     pathConfig: {
         templateFolderPath: 'templates/',

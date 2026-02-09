@@ -192,6 +192,13 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
     scrollbar-width: none;
 }
 
+/* 按钮面板：标签栏自动换行样式 */
+.buttons-panel-plugin .buttons-panel-tab-bar.tabs-wrap {
+    flex-wrap: wrap;
+    white-space: normal;
+    overflow-x: visible;
+}
+
 /* 按钮面板：标签页的样式 */
 .buttons-panel-plugin .buttons-panel-tab {
     display: flex;

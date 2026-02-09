@@ -186,5 +186,7 @@
     "move_down": "下移",
     "only_sequential_effective": "该选项仅在顺序模式下生效",
     "show_top_nav_bar": "显示顶部导航栏",
-    "show_top_nav_bar_desc": "控制顶部功能图标的显示/隐藏"
+    "show_top_nav_bar_desc": "控制顶部功能图标的显示/隐藏",
+    "tabs_wrap": "标签页自动换行",
+    "tabs_wrap_desc": "启用后标签页会根据页面宽度自动换行，而不是横向滚动"
 }
