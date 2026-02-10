@@ -91,7 +91,7 @@ export class ButtonEditModal extends Modal {
             },
             onEnter: () => {
                 // 回车时保存按钮
-                this.saveButton();
+                void this.saveButton();
             },
             onValidationError: (error: string) => {
                 console.warn('Name validation error:', error);

@@ -1,5 +1,4 @@
 import { IButtonAction } from '@/common/actions/IButtonAction';
-import { Setting } from 'obsidian';
 import { t } from '@/common/utils/i18n';
 import { CommandInput } from '@/common/components';
 

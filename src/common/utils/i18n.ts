@@ -2,7 +2,6 @@
 // 多语言国际化工具函数，支持中英文翻译。
 import zh from '@/locales/zh.json';
 import en from '@/locales/en.json';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { getLanguage } from 'obsidian';
 
 /**
@@ -27,7 +26,7 @@ function getCurrentLang(): string {
             return 'zh';
         }
     } catch (error) {
-        console.log('获取Obsidian语言设置失败:', error);
+        console.warn('获取Obsidian语言设置失败:', error);
     }
     return 'en';
 }

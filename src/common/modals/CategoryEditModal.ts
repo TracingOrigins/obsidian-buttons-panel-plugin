@@ -107,7 +107,7 @@ export class CategoryEditModal extends Modal {
         const category = this.plugin.settings.categories.find((c) => c.id === this.categoryId);
         if (category) {
             category.name = this.newName.trim();
-            this.plugin.saveSettings();
+            void this.plugin.saveSettings();
             this.onRename();
             this.close();
         } else {

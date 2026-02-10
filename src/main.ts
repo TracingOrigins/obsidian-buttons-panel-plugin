@@ -9,19 +9,17 @@
 // - 详细参数、返回值、用途说明
 //
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
-import { Plugin, WorkspaceLeaf, Editor, TFile, Notice, normalizePath } from 'obsidian';
+import { Plugin, WorkspaceLeaf, TFile, Notice, normalizePath } from 'obsidian';
 import { ButtonsPanelView } from '@/views/ButtonsPanelView';
 import { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
 import { ButtonsPanelSettingTab } from '@/settings/ButtonsPanelSettingTab';
 import {
     DEFAULT_SETTINGS,
     ButtonsPanelPluginSettings,
-    CategoryConfig,
     ButtonConfig,
 } from '@/common/types';
 import type { ButtonsPanelPlugin as ButtonsPanelPluginType } from '@/common/types';
 import { t, tWithParams } from '@/common/utils/i18n';
-import { Script } from 'vm';
 
 // 视图类型常量
 export const BUTTONS_PANEL_VIEW_TYPE = 'buttons-panel-view';
@@ -68,25 +66,25 @@ export default class ButtonsPanelPlugin extends Plugin {
 
         // 添加命令：打开按钮面板（右侧边栏）
         this.addCommand({
-            id: 'open-buttons-panel',
+            id: 'open-panel',
             name: t('open_buttons_panel'),
             callback: () => {
-                this.activateView();
+                void this.activateView();
             },
         });
 
         // 添加命令：打开配置面板（主页面新标签页）
         this.addCommand({
-            id: 'open-buttons-panel-options',
+            id: 'open-options',
             name: t('open_buttons_panel_options'),
             callback: () => {
-                this.activateSettingsView();
+                void this.activateSettingsView();
             },
         });
 
         // 添加左侧ribbon图标，点击可快速打开按钮面板
         this.addRibbonIcon('mouse', t('open_buttons_panel'), () => {
-            this.activateView();
+            void this.activateView();
         });
 
         // 添加设置标签页（Obsidian设置页）
@@ -94,7 +92,7 @@ export default class ButtonsPanelPlugin extends Plugin {
         this.addSettingTab(this.settingTab);
 
         this.app.workspace.onLayoutReady(() => {
-            registerScriptCommands(this);
+            void registerScriptCommands(this);
         });
 
         // 监听标签页切换，记录最后激活的标签页（排除按钮面板）

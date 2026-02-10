@@ -1,4 +1,4 @@
-import { App, Modal, Setting, Notice } from 'obsidian';
+import { App, Modal, Setting } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { CategoryConfig, ButtonConfig } from '@/common/types';
 import { t, tWithParams } from '@/common/utils/i18n';

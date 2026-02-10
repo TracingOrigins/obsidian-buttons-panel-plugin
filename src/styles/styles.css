@@ -2,10 +2,10 @@
 
 /* 按钮面板：外围样式 */
 .buttons-panel-plugin .buttons-panel-container {
-    padding: 20px;
-    background: var(--background-primary);
+    padding: 10px;
+    /* background: var(--background-primary); */
     border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
     height: var(--panel-height, auto); /* 默认为自动，如果设置了面板高度，则进行修改 */
 }
 
@@ -94,7 +94,8 @@ button.buttons-panel-plugin.button-move-indicator.icon-left,
 .buttons-panel-plugin button.icon-left {
     width: 96px;
     height: 40px;
-    background-color: transparent;
+    /* background-color: transparent; */
+    background-color: unset !important;
     box-shadow: none;
     padding: 20px 8px;
     gap: 4px;
@@ -132,7 +133,8 @@ button.buttons-panel-plugin.button-move-indicator.icon-left .button-text,
 button.buttons-panel-plugin.button-move-indicator.icon-top,
 .buttons-panel-plugin button.icon-top {
     flex-direction: column;
-    background-color: transparent;
+    /* background-color: transparent; */
+    background-color: unset !important;
     box-shadow: none;
     border: none;
     padding: 0;

@@ -8,9 +8,10 @@
 # npm
 node_modules
 
-# Don't include the compiled main.js file in the repo.
-# They should be uploaded to GitHub releases instead.
-main.js
+# Build output directory
+# Contains compiled plugin files (main.js, styles.css, manifest.json).
+# These files should be uploaded to GitHub releases, not committed to the repository.
+dist
 
 # Exclude sourcemaps
 *.map
