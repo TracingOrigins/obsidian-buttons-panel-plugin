@@ -100,7 +100,7 @@ export class PanelActionsRenderer {
         viewBtn.onclick = () => {
             this.panelConfig.panelViewType =
                 this.panelConfig.panelViewType === 'tabs' ? 'list' : 'tabs';
-            this.plugin.saveSettings();
+            void this.plugin.saveSettings();
             // 触发视图刷新
             document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
 
@@ -127,7 +127,7 @@ export class PanelActionsRenderer {
         styleBtn.onclick = () => {
             this.panelConfig.displayStyle =
                 this.panelConfig.displayStyle === 'icon_top' ? 'default' : 'icon_top';
-            this.plugin.saveSettings();
+            void this.plugin.saveSettings();
             // 触发视图刷新
             document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
 
@@ -147,11 +147,10 @@ export class PanelActionsRenderer {
         settingsBtn.setAttr('aria-label', t('buttons_panel_options'));
         setIcon(settingsBtn, 'settings');
         settingsBtn.onclick = () => {
-            // @ts-ignore
-            if (typeof this.plugin.activateSettingsView === 'function') {
-                // @ts-ignore
-                this.plugin.activateSettingsView();
-            }
+            const pluginWithSettings = this.plugin as unknown as {
+                activateSettingsView?: () => void;
+            };
+            pluginWithSettings.activateSettingsView?.();
         };
         actionsGroup.appendChild(settingsBtn);
     }
@@ -176,7 +175,7 @@ export class PanelActionsRenderer {
         }
         editBtn.onclick = () => {
             this.panelConfig.enableEditMode = !this.panelConfig.enableEditMode;
-            this.plugin.saveSettings();
+            void this.plugin.saveSettings();
             // 触发视图刷新
             document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
 

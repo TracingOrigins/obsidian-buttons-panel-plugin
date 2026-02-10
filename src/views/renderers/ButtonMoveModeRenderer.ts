@@ -1,7 +1,7 @@
 // ButtonMoveModeRenderer.ts
 // 按钮移动模式渲染器，专门处理按钮移动模式下的界面渲染。
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { ButtonConfig, CategoryConfig, PanelConfig } from '@/common/types';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import { ButtonMoveManager } from '@/views/managers/ButtonMoveManager';
 import { ButtonRenderer } from '@/views/renderers/ButtonRenderer';
@@ -42,7 +42,7 @@ export class ButtonMoveModeRenderer {
      * @param container 容器元素
      * @param panelConfig 面板配置
      */
-    renderMoveModePanel(container: HTMLElement, panelConfig: any): void {
+    renderMoveModePanel(container: HTMLElement, panelConfig: PanelConfig): void {
         try {
             container.empty();
             const panelEl = container.createDiv('buttons-panel-container button-move-mode');
@@ -85,7 +85,7 @@ export class ButtonMoveModeRenderer {
     private renderCategoryInMoveMode(
         panelEl: HTMLElement,
         category: CategoryConfig,
-        panelConfig: any
+        panelConfig: PanelConfig
     ): void {
         const categoryContainer = panelEl.createDiv('buttons-panel-category move-mode-category');
         categoryContainer.setAttribute('data-category-id', category.id);
@@ -116,7 +116,7 @@ export class ButtonMoveModeRenderer {
             e.stopPropagation();
             const moveState = this.stateManager.getMoveState();
             if (!moveState.isMoving || !moveState.movingButton) return;
-            this.moveManager.updateButtonPosition(
+            void this.moveManager.updateButtonPosition(
                 moveState.movingButton,
                 category.id,
                 category.buttons.length
@@ -136,7 +136,7 @@ export class ButtonMoveModeRenderer {
     private renderCategoryButtons(
         categoryContainer: HTMLElement,
         category: CategoryConfig,
-        panelConfig: any
+        panelConfig: PanelConfig
     ): void {
         const buttonsContainer = categoryContainer.createDiv('buttons-panel-grid');
         if (panelConfig.displayStyle === 'icon_top') {
@@ -170,7 +170,7 @@ export class ButtonMoveModeRenderer {
         button: ButtonConfig,
         category: CategoryConfig,
         index: number,
-        panelConfig: any
+        panelConfig: PanelConfig
     ): void {
         const btnEl = this.buttonRenderer.renderButton(buttonsContainer, button, panelConfig);
         const newBtnEl = btnEl.cloneNode(true) as HTMLElement;
@@ -187,7 +187,11 @@ export class ButtonMoveModeRenderer {
             e.stopPropagation();
             const moveState = this.stateManager.getMoveState();
             if (!moveState.isMoving || !moveState.movingButton) return;
-            this.moveManager.updateButtonPosition(moveState.movingButton, category.id, index);
+            void this.moveManager.updateButtonPosition(
+                moveState.movingButton,
+                category.id,
+                index
+            );
             this.moveManager.endMoveMode();
             document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
         });
@@ -221,7 +225,11 @@ export class ButtonMoveModeRenderer {
                 e.stopPropagation();
                 const moveState = this.stateManager.getMoveState();
                 if (!moveState.isMoving || !moveState.movingButton) return;
-                this.moveManager.updateButtonPosition(moveState.movingButton, category.id, 0);
+                void this.moveManager.updateButtonPosition(
+                    moveState.movingButton,
+                    category.id,
+                    0
+                );
                 this.moveManager.endMoveMode();
                 // 触发视图刷新
                 document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
@@ -259,7 +267,7 @@ export class ButtonMoveModeRenderer {
                 e.stopPropagation();
                 const moveState = this.stateManager.getMoveState();
                 if (!moveState.isMoving || !moveState.movingButton) return;
-                this.moveManager.updateButtonPosition(
+                void this.moveManager.updateButtonPosition(
                     moveState.movingButton,
                     category.id,
                     category.buttons.length
@@ -286,7 +294,7 @@ export class ButtonMoveModeRenderer {
                 e.stopPropagation();
                 const moveState = this.stateManager.getMoveState();
                 if (!moveState.isMoving || !moveState.movingButton) return;
-                this.moveManager.updateButtonPosition(
+                void this.moveManager.updateButtonPosition(
                     moveState.movingButton,
                     category.id,
                     category.buttons.length

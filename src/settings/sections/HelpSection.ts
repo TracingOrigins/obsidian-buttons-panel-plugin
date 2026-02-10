@@ -7,7 +7,7 @@ import { t } from '@/common/utils/i18n';
  * @param containerEl 帮助内容容器
  * @param plugin 插件实例
  */
-export function createHelpSection(containerEl: HTMLElement, plugin: ButtonsPanelPlugin): void {
+export function createHelpSection(containerEl: HTMLElement, _plugin: ButtonsPanelPlugin): void {
     const card = containerEl.createDiv('settings-card-group');
     const helpDiv = card.createDiv({ cls: 'help-content' });
 

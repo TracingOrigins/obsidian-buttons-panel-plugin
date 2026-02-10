@@ -20,7 +20,8 @@ export class ButtonActionFactory {
 			throw new Error('Unknown action type: ' + type);
         }
 		const parameters = (raw as { parameters?: unknown }).parameters;
-		return new ActionClass(parameters);
+		// 这里 parameters 的具体结构由各 Action 自行校验和处理
+		return new ActionClass(parameters as never);
     }
 
     /**
@@ -33,7 +34,8 @@ export class ButtonActionFactory {
         if (!ActionClass) {
             throw new Error('Unknown action type: ' + type);
         }
-        return new ActionClass(parameters);
+        // 这里 parameters 的具体结构由各 Action 自行校验和处理
+        return new ActionClass(parameters as never);
     }
 
     /**

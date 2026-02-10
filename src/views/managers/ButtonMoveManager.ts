@@ -31,6 +31,13 @@ export class ButtonMoveManager {
     }
 
     /**
+     * 对外暴露当前移动状态，供渲染器读取（只读访问）。
+     */
+    public getMoveState() {
+        return this.stateManager.getMoveState();
+    }
+
+    /**
      * 开始按钮移动模式，创建指示器并添加事件监听。
      * @param button 当前移动的按钮对象
      * @param buttonEl 按钮对应的DOM元素
@@ -99,8 +106,8 @@ export class ButtonMoveManager {
             }
         }
 
-        // 添加按钮文字
-        const textEl = indicator.createEl('span', {
+        // 添加按钮文字（仅用于展示，不需要单独引用变量）
+        indicator.createEl('span', {
             text: button.name,
             cls: 'button-text',
         });
@@ -115,7 +122,9 @@ export class ButtonMoveManager {
     private addMoveEventListeners(): void {
         if (!this.moveEventsRegistered) {
             // 鼠标移动依然用 DOM 事件（非键盘）
-            this.view.registerDomEvent(document, 'mousemove', this.handleMoveMouseMove as any);
+            this.view.registerDomEvent(document, 'mousemove', (evt: MouseEvent) =>
+                this.handleMoveMouseMove(evt)
+            );
             
             // 优先使用 Keymap Scope，如果不可用则使用 DOM 事件
             if (this.view.scope) {
@@ -227,7 +236,7 @@ export class ButtonMoveManager {
         const moveState = this.stateManager.getMoveState();
         if (!moveState.movingButton) return;
 
-        this.updateButtonPosition(moveState.movingButton, categoryId, 0);
+        void this.updateButtonPosition(moveState.movingButton, categoryId, 0);
         this.endMoveMode();
     }
 
@@ -255,7 +264,11 @@ export class ButtonMoveManager {
         const targetIndex = this.getButtonIndex(buttonEl);
 
         if (targetCategoryId && targetIndex !== -1) {
-            this.updateButtonPosition(moveState.movingButton, targetCategoryId, targetIndex);
+            void this.updateButtonPosition(
+                moveState.movingButton,
+                targetCategoryId,
+                targetIndex
+            );
         }
 
         this.endMoveMode();

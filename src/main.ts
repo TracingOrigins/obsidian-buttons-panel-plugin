@@ -124,8 +124,15 @@ export default class ButtonsPanelPlugin extends Plugin {
      * 加载插件设置（异步），合并默认设置和已保存设置。
      */
     async loadSettings() {
-		const data = await this.loadData<ButtonsPanelPluginSettings>();
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, data ?? {});
+        const rawData = (await this.loadData()) as unknown;
+        const merged: ButtonsPanelPluginSettings =
+            rawData && typeof rawData === 'object'
+                ? ({
+                      ...DEFAULT_SETTINGS,
+                      ...(rawData as Partial<ButtonsPanelPluginSettings>),
+                  } as ButtonsPanelPluginSettings)
+                : DEFAULT_SETTINGS;
+        this.settings = merged;
         // 只在初始化时重置运行时状态，避免重复调用时丢失状态
         if (Object.keys(this.categoryOpenState).length === 0) {
             this.categoryOpenState = {};
@@ -159,7 +166,7 @@ export default class ButtonsPanelPlugin extends Plugin {
                 try {
                     // 安全处理 DeferredView (Obsidian v1.7.2+)
                     if (leaf.view instanceof ButtonsPanelView) {
-                        const view = leaf.view as ButtonsPanelView;
+                        const view = leaf.view;
                         if (
                             view &&
                             typeof view.updateButtons === 'function' &&
@@ -170,11 +177,14 @@ export default class ButtonsPanelPlugin extends Plugin {
                         }
                     }
                 } catch (error) {
-                    console.warn('更新按钮面板视图时出错:', error);
+                    const errorMessage =
+                        error instanceof Error ? error.message : String(error);
+                    console.warn('更新按钮面板视图时出错:', errorMessage);
                 }
             });
         } catch (error) {
-            console.warn('更新按钮面板时出错:', error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.warn('更新按钮面板时出错:', errorMessage);
         }
     }
 
@@ -183,21 +193,26 @@ export default class ButtonsPanelPlugin extends Plugin {
      */
     updateSettingsViews() {
         try {
-            this.app.workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE).forEach((leaf) => {
-                try {
-                    // 安全处理 DeferredView (Obsidian v1.7.2+)
-                    if (leaf.view instanceof ButtonsPanelSettingsView) {
-                        const view = leaf.view as ButtonsPanelSettingsView;
-                        if (view && typeof view.refreshSettings === 'function') {
-                            view.refreshSettings();
+            this.app.workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE).forEach(
+                (leaf) => {
+                    try {
+                        // 安全处理 DeferredView (Obsidian v1.7.2+)
+                        if (leaf.view instanceof ButtonsPanelSettingsView) {
+                            const view = leaf.view;
+                            if (view && typeof view.refreshSettings === 'function') {
+                                view.refreshSettings();
+                            }
                         }
+                    } catch (error) {
+                        const errorMessage =
+                            error instanceof Error ? error.message : String(error);
+                        console.warn('更新设置页面视图时出错:', errorMessage);
                     }
-                } catch (error) {
-                    console.warn('更新设置页面视图时出错:', error);
                 }
-            });
+            );
         } catch (error) {
-            console.warn('更新设置页面时出错:', error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.warn('更新设置页面时出错:', errorMessage);
         }
     }
 
@@ -234,7 +249,8 @@ export default class ButtonsPanelPlugin extends Plugin {
         }
 
         if (leaf) {
-            workspace.revealLeaf(leaf);
+            // 显式忽略 Promise，避免阻塞调用方
+            void workspace.revealLeaf(leaf);
         }
     }
 
@@ -276,14 +292,16 @@ export default class ButtonsPanelPlugin extends Plugin {
             try {
                 // 安全处理 DeferredView (Obsidian v1.7.2+)
                 if (leaf.view instanceof ButtonsPanelView) {
-                    const view = leaf.view as ButtonsPanelView;
+                    const view = leaf.view;
                     if (view) {
                         view.updateButtons(this.getAllButtons());
                         view.updatePanelConfig(this.settings.panelConfig);
                     }
                 }
             } catch (error) {
-                console.warn('更新活动视图时出错:', error);
+                const errorMessage =
+                    error instanceof Error ? error.message : String(error);
+                console.warn('更新活动视图时出错:', errorMessage);
             }
         });
     }
@@ -318,12 +336,16 @@ async function registerScriptCommands(plugin: ButtonsPanelPluginType) {
             callback: async () => {
                 try {
                     // new Notice(tWithParams('script_command_run', { scriptName: file.name }));
-                    await plugin.ActionDispatcher?.scriptService?.runScript({
+                    const dispatcher = plugin.ActionDispatcher as {
+                        scriptService?: { runScript: (action: unknown) => Promise<void> };
+                    } | undefined;
+                    await dispatcher?.scriptService?.runScript({
                         type: 'script',
                         parameters: { scriptName: file.name },
                     });
                 } catch (e) {
-                    new Notice(t('script_run_failed') + `：${e.message}`);
+                    const errorMessage = e instanceof Error ? e.message : String(e);
+                    new Notice(t('script_run_failed') + `：${errorMessage}`);
                 }
             },
         });

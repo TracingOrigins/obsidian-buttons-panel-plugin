@@ -79,7 +79,7 @@ export class PanelRenderer {
      * @param panelEl 面板元素
      * @param panelConfig 面板配置
      */
-    private renderPanelTitle(panelEl: HTMLElement, panelConfig: any): void {
+    private renderPanelTitle(panelEl: HTMLElement, panelConfig: PanelConfig): void {
         if (panelConfig.showTitle) {
             const titleEl = panelEl.createEl('h2', { text: panelConfig.title });
             titleEl.addClass('buttons-panel-title');
@@ -137,7 +137,7 @@ export class PanelRenderer {
         setIcon(viewBtn, 'view');
         viewBtn.onclick = () => {
             panelConfig.panelViewType = panelConfig.panelViewType === 'tabs' ? 'list' : 'tabs';
-            this.plugin.saveSettings();
+            void this.plugin.saveSettings();
             // 触发重新渲染 - 通过事件通知
             document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
         };
@@ -162,7 +162,7 @@ export class PanelRenderer {
         styleBtn.onclick = () => {
             panelConfig.displayStyle =
                 panelConfig.displayStyle === 'icon_top' ? 'default' : 'icon_top';
-            this.plugin.saveSettings();
+            void this.plugin.saveSettings();
             // 触发重新渲染 - 通过事件通知
             document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
         };
@@ -179,11 +179,10 @@ export class PanelRenderer {
         settingsBtn.setAttr('aria-label', t('buttons_panel_options'));
         setIcon(settingsBtn, 'settings');
         settingsBtn.onclick = () => {
-            // @ts-ignore
-            if (typeof this.plugin.activateSettingsView === 'function') {
-                // @ts-ignore
-                this.plugin.activateSettingsView();
-            }
+            const pluginWithSettings = this.plugin as unknown as {
+                activateSettingsView?: () => void;
+            };
+            pluginWithSettings.activateSettingsView?.();
         };
         actionsGroup.appendChild(settingsBtn);
     }

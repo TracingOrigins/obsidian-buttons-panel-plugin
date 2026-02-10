@@ -1,5 +1,5 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
-import { ButtonsPanelPlugin, ButtonsPanelPluginSettings } from '@/common/types';
+import { App, PluginSettingTab } from 'obsidian';
+import { ButtonsPanelPlugin } from '@/common/types';
 import { createPanelConfigSection } from '@/settings/sections/PanelConfigSection';
 import { createHelpSection } from '@/settings/sections/HelpSection';
 import { createPathConfigSection } from '@/settings/sections/PathConfigSection';

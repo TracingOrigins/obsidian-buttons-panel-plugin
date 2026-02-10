@@ -43,7 +43,7 @@ export class CommandSearchModal extends Modal {
 
 		// 建议列表容器
         const suggestions = contentEl.createDiv({ cls: 'command-suggestions-container' });
-		let filteredCommands: Array<Command & { id: string }> = [];
+		let filteredCommands: Command[] = [];
         let selectedSuggestionIndex = 0;
 
         /**
@@ -95,16 +95,14 @@ export class CommandSearchModal extends Modal {
          */
         const updateFilter = () => {
             const query = input.getValue().trim().toLowerCase();
-            // 获取所有命令对象
-			const allCommands = this.app.commands?.commands ?? {};
-			const commandList: Array<Command & { id: string }> = Object.entries(allCommands).map(
-				([id, cmd]) => ({
-					id,
-					...(cmd as Command),
-				})
-			);
 
-            filteredCommands = commandList.filter(
+            // 通过 Obsidian API 获取命令数组，避免直接访问 error-typed 的内部字段
+            const commandsApi = (this.app as unknown as { commands?: unknown }).commands;
+            const listCommands = (commandsApi as { listCommands?: () => Command[] }).listCommands;
+            const allCommands: Command[] =
+                typeof listCommands === 'function' ? (listCommands() ?? []) : [];
+
+            filteredCommands = allCommands.filter(
                 (cmd) =>
                     cmd.name?.toLowerCase().includes(query) || cmd.id.toLowerCase().includes(query)
             );

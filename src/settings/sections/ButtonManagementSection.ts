@@ -55,7 +55,7 @@ export class ButtonManagementSection {
             const summary = details.createEl('summary', {
                 cls: 'button-category-summary',
             });
-            summary.addEventListener('click', (e) => {
+            summary.addEventListener('click', (_e) => {
                 setTimeout(() => {
                     this.plugin.categoryOpenState[category.id] = details.open;
                     updateCollapseIcon();
@@ -126,10 +126,10 @@ export class ButtonManagementSection {
                 .setIcon('copy')
                 .setTooltip(t('copy_category'))
                 .setClass('copy-category-button')
-                .onClick(async (e) => {
+                .onClick((e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    await this.handleCopyCategory(category);
+                    void this.handleCopyCategory(category);
                 });
             new ButtonComponent(rightContainer)
                 .setIcon('trash')
@@ -172,7 +172,7 @@ export class ButtonManagementSection {
             .setTooltip(t('add_category'))
             .setCta()
             .onClick(() => {
-                new CategoryCreateModal(this.app, this.plugin, async (value: string) => {
+                new CategoryCreateModal(this.app, this.plugin, (value: string) => {
                     const newCategory: CategoryConfig = {
                         id: Date.now().toString(),
                         name: value,
@@ -180,7 +180,7 @@ export class ButtonManagementSection {
                         buttons: [],
                     };
                     this.plugin.settings.categories.push(newCategory);
-                    await this.plugin.saveSettings();
+                    void this.plugin.saveSettings();
                     this.displayCallback?.();
                 }).open();
             });
@@ -224,22 +224,24 @@ export class ButtonManagementSection {
             details.removeClass('drag-over-category');
         });
 
-        details.addEventListener('drop', async (e) => {
+        details.addEventListener('drop', (e) => {
             e.preventDefault();
             details.removeClass('drag-over-category');
             if (this.draggedCategoryIndex === -1 || this.draggedCategoryIndex === index) {
                 return;
             }
-            // 重新排序分类
-            const newOrder = [...this.plugin.settings.categories];
-            const [draggedItem] = newOrder.splice(this.draggedCategoryIndex, 1);
-            newOrder.splice(index, 0, draggedItem);
-            this.plugin.settings.categories = newOrder;
-            this.plugin.settings.categories.forEach((cat: CategoryConfig, i: number) => {
-                cat.order = i;
-            });
-            await this.plugin.saveSettings();
-            this.displayCallback?.();
+            void (async () => {
+                // 重新排序分类
+                const newOrder = [...this.plugin.settings.categories];
+                const [draggedItem] = newOrder.splice(this.draggedCategoryIndex, 1);
+                newOrder.splice(index, 0, draggedItem);
+                this.plugin.settings.categories = newOrder;
+                this.plugin.settings.categories.forEach((cat: CategoryConfig, i: number) => {
+                    cat.order = i;
+                });
+                await this.plugin.saveSettings();
+                this.displayCallback?.();
+            })();
         });
 
         // 分类长按菜单
@@ -266,25 +268,31 @@ export class ButtonManagementSection {
                             details.addClass('is-dragging');
                             const menu = new Menu();
                             const currentCategory = sortedCategories[index];
-                            sortedCategories.forEach((cat, idx) => {
+                            sortedCategories.forEach((cat) => {
                                 if (cat.id === currentCategory.id) return;
                                 menu.addItem((item) => {
                                     item.setTitle(`${t('move_to')}: ${cat.name}`)
                                         .setIcon('arrow-right')
-                                        .onClick(async () => {
-                                            const categories = [...this.plugin.settings.categories];
-                                            const from = categories.findIndex(
-                                                (c) => c.id === currentCategory.id
-                                            );
-                                            const to = categories.findIndex((c) => c.id === cat.id);
-                                            if (from === -1 || to === -1 || from === to) return;
-                                            const [moved] = categories.splice(from, 1);
-                                            categories.splice(to, 0, moved);
-                                            categories.forEach((c, i) => (c.order = i));
-                                            this.plugin.settings.categories = categories;
-                                            await this.plugin.saveSettings();
-                                            this.displayCallback?.();
-                                            details.removeClass('is-dragging');
+                                        .onClick(() => {
+                                            void (async () => {
+                                                const categories = [
+                                                    ...this.plugin.settings.categories,
+                                                ];
+                                                const from = categories.findIndex(
+                                                    (c) => c.id === currentCategory.id
+                                                );
+                                                const to = categories.findIndex(
+                                                    (c) => c.id === cat.id
+                                                );
+                                                if (from === -1 || to === -1 || from === to) return;
+                                                const [moved] = categories.splice(from, 1);
+                                                categories.splice(to, 0, moved);
+                                                categories.forEach((c, i) => (c.order = i));
+                                                this.plugin.settings.categories = categories;
+                                                await this.plugin.saveSettings();
+                                                this.displayCallback?.();
+                                                details.removeClass('is-dragging');
+                                            })();
                                         });
                                 });
                             });
@@ -397,80 +405,92 @@ export class ButtonManagementSection {
         });
 
         // 放置：处理排序
-        itemEl.addEventListener('drop', async (e) => {
+        itemEl.addEventListener('drop', (e) => {
             e.preventDefault();
             itemEl.removeClass('drag-over');
 
             const draggedButtonId = e.dataTransfer?.getData('text/plain');
             if (!draggedButtonId || draggedButtonId === button.id) return;
 
-            // 获取拖拽按钮的源分类信息
-            const dragData = e.dataTransfer?.getData('application/json');
-            let sourceCategoryId = '';
-            if (dragData) {
-                try {
-                    const parsedData = JSON.parse(dragData);
-                    sourceCategoryId = parsedData.sourceCategoryId;
-                } catch (e) {
-                    console.error('解析拖拽数据失败:', e);
+            void (async () => {
+                // 获取拖拽按钮的源分类信息
+                const dragData = e.dataTransfer?.getData('application/json');
+                let sourceCategoryId = '';
+                if (dragData) {
+                    try {
+                        const parsedData = JSON.parse(dragData) as {
+                            sourceCategoryId?: string;
+                        };
+                        if (typeof parsedData.sourceCategoryId === 'string') {
+                            sourceCategoryId = parsedData.sourceCategoryId;
+                        }
+                    } catch (error) {
+                        console.error('解析拖拽数据失败:', error);
+                    }
                 }
-            }
 
-            // 判断是否为跨分类拖动
-            const isCrossCategory = sourceCategoryId && sourceCategoryId !== category.id;
+                // 判断是否为跨分类拖动
+                const isCrossCategory = sourceCategoryId && sourceCategoryId !== category.id;
 
-            if (isCrossCategory) {
-                // 跨分类拖动：先移动到目标分类末尾，再排序到目标位置
-                const { sourceCategory, buttonToMove } =
-                    this.findButtonAndCategory(draggedButtonId);
-                if (!sourceCategory || !buttonToMove) return;
+                if (isCrossCategory) {
+                    // 跨分类拖动：先移动到目标分类末尾，再排序到目标位置
+                    const { sourceCategory, buttonToMove } =
+                        this.findButtonAndCategory(draggedButtonId);
+                    if (!sourceCategory || !buttonToMove) return;
 
-                // 1. 从源分类中移除按钮
-                this.removeButtonFromCategory(sourceCategory, draggedButtonId);
+                    // 1. 从源分类中移除按钮
+                    this.removeButtonFromCategory(sourceCategory, draggedButtonId);
 
-                // 2. 添加到目标分类的末尾
-                this.insertButtonToCategory(category, buttonToMove, category.buttons.length);
+                    // 2. 添加到目标分类的末尾
+                    this.insertButtonToCategory(category, buttonToMove, category.buttons.length);
 
-                // 3. 在目标分类内排序：从末尾移动到目标按钮位置
-                const buttonsInCategory = [...category.buttons].sort((a, b) => a.order - b.order);
-                const targetIdx = buttonsInCategory.findIndex((b) => b.id === button.id);
-                const draggedIdx = buttonsInCategory.findIndex((b) => b.id === draggedButtonId);
+                    // 3. 在目标分类内排序：从末尾移动到目标按钮位置
+                    const buttonsInCategory = [...category.buttons].sort(
+                        (a, b) => a.order - b.order
+                    );
+                    const targetIdx = buttonsInCategory.findIndex((b) => b.id === button.id);
+                    const draggedIdx = buttonsInCategory.findIndex(
+                        (b) => b.id === draggedButtonId
+                    );
 
-                if (targetIdx !== -1 && draggedIdx !== -1 && draggedIdx !== targetIdx) {
-                    // 从当前位置移除，插入到目标位置
-                    const [movedItem] = buttonsInCategory.splice(draggedIdx, 1);
-                    buttonsInCategory.splice(targetIdx, 0, movedItem);
+                    if (targetIdx !== -1 && draggedIdx !== -1 && draggedIdx !== targetIdx) {
+                        // 从当前位置移除，插入到目标位置
+                        const [movedItem] = buttonsInCategory.splice(draggedIdx, 1);
+                        buttonsInCategory.splice(targetIdx, 0, movedItem);
+
+                        // 更新分类内按钮的 order，从0开始排序
+                        buttonsInCategory.forEach((b, i) => (b.order = i));
+
+                        // 更新分类中的按钮数组
+                        category.buttons = buttonsInCategory;
+                    }
+
+                    await this.plugin.saveSettings();
+                    this.displayCallback?.();
+                } else {
+                    // 同分类内排序
+                    const buttonsInSameCategory = [...category.buttons].sort(
+                        (a, b) => a.order - b.order
+                    );
+
+                    const draggedIdx = buttonsInSameCategory.findIndex(
+                        (b) => b.id === draggedButtonId
+                    );
+                    const targetIdx = buttonsInSameCategory.findIndex((b) => b.id === button.id);
+                    if (draggedIdx === -1 || targetIdx === -1 || draggedIdx === targetIdx) return;
+
+                    const [draggedItem] = buttonsInSameCategory.splice(draggedIdx, 1);
+                    buttonsInSameCategory.splice(targetIdx, 0, draggedItem);
 
                     // 更新分类内按钮的 order，从0开始排序
-                    buttonsInCategory.forEach((b, i) => (b.order = i));
+                    buttonsInSameCategory.forEach((b, i) => (b.order = i));
 
                     // 更新分类中的按钮数组
-                    category.buttons = buttonsInCategory;
+                    category.buttons = buttonsInSameCategory;
+                    await this.plugin.saveSettings();
+                    this.displayCallback?.();
                 }
-
-                await this.plugin.saveSettings();
-                this.displayCallback?.();
-            } else {
-                // 同分类内排序
-                const buttonsInSameCategory = [...category.buttons].sort(
-                    (a, b) => a.order - b.order
-                );
-
-                const draggedIdx = buttonsInSameCategory.findIndex((b) => b.id === draggedButtonId);
-                const targetIdx = buttonsInSameCategory.findIndex((b) => b.id === button.id);
-                if (draggedIdx === -1 || targetIdx === -1 || draggedIdx === targetIdx) return;
-
-                const [draggedItem] = buttonsInSameCategory.splice(draggedIdx, 1);
-                buttonsInSameCategory.splice(targetIdx, 0, draggedItem);
-
-                // 更新分类内按钮的 order，从0开始排序
-                buttonsInSameCategory.forEach((b, i) => (b.order = i));
-
-                // 更新分类中的按钮数组
-                category.buttons = buttonsInSameCategory;
-                await this.plugin.saveSettings();
-                this.displayCallback?.();
-            }
+            })();
         });
 
         // 按钮长按菜单
@@ -521,24 +541,26 @@ export class ButtonManagementSection {
                                         btn.id === currentButton.id
                                     )
                                         return;
-									menu.addItem((item) => {
-										item.setIcon('arrow-right')
-											.setTitle(btn.name)
-											.onClick(async () => {
-                                                this.removeButtonFromCategory(
-                                                    currentCategory,
-                                                    currentButton.id
-                                                );
-                                                this.insertButtonToCategory(
-                                                    cat,
-                                                    currentButton,
-                                                    idx
-                                                );
-												await this.plugin.saveSettings();
-												this.displayCallback?.();
-											});
-										const domEl = (item as { dom?: HTMLElement }).dom;
-										domEl?.classList.add('button-indent');
+                                    menu.addItem((item) => {
+                                        item.setIcon('arrow-right')
+                                            .setTitle(btn.name)
+                                            .onClick(() => {
+                                                void (async () => {
+                                                    this.removeButtonFromCategory(
+                                                        currentCategory,
+                                                        currentButton.id
+                                                    );
+                                                    this.insertButtonToCategory(
+                                                        cat,
+                                                        currentButton,
+                                                        idx
+                                                    );
+                                                    await this.plugin.saveSettings();
+                                                    this.displayCallback?.();
+                                                })();
+                                            });
+                                        const domEl = (item as { dom?: HTMLElement }).dom;
+                                        domEl?.classList.add('button-indent');
                                     });
                                 });
                             });
@@ -613,7 +635,7 @@ export class ButtonManagementSection {
             .setTooltip(t('edit_button_tooltip'))
             .onClick(() => {
                 new ButtonEditModal(this.app, this.plugin, button, category, () => {
-                    this.plugin.saveSettings();
+                    void this.plugin.saveSettings();
                     this.displayCallback?.();
                 }).open();
             });
@@ -621,14 +643,15 @@ export class ButtonManagementSection {
         new ButtonComponent(controlsContainer)
             .setIcon('copy')
             .setTooltip(t('copy_button_tooltip'))
-            .onClick(async () => {
+            .onClick(() => {
                 const newButton: ButtonConfig = {
-                    ...JSON.parse(JSON.stringify(button)),
+                    ...button,
+                    actions: button.actions.map((action) => ({ ...action })),
                     id: Date.now().toString(),
                     order: category.buttons.length,
                 };
                 category.buttons.push(newButton);
-                await this.plugin.saveSettings();
+                void this.plugin.saveSettings();
                 this.displayCallback?.();
             });
 
@@ -639,7 +662,7 @@ export class ButtonManagementSection {
             .onClick(() => {
                 new ButtonDeleteModal(this.app, this.plugin, button, category, () => {
                     this.removeButtonFromCategory(category, button.id);
-                    this.plugin.saveSettings();
+                    void this.plugin.saveSettings();
                     this.displayCallback?.();
                 }).open();
             });
@@ -663,13 +686,14 @@ export class ButtonManagementSection {
         // 直接使用原分类名称，允许重名
         const newName = category.name;
 
-        // 深拷贝分类及其按钮
+        // 深拷贝分类及其按钮（显式复制字段，避免使用 JSON.parse(JSON.stringify(...))）
         const copiedCategory: CategoryConfig = {
             id: Date.now().toString(),
             name: newName,
             order: this.plugin.settings.categories.length,
             buttons: category.buttons.map((button, index) => ({
-                ...JSON.parse(JSON.stringify(button)),
+                ...button,
+                actions: button.actions.map((action) => ({ ...action })),
                 id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
                 order: index, // 重新设置按钮顺序
             })),
@@ -710,7 +734,7 @@ export class ButtonManagementSection {
             }
         });
 
-        categoryEl.addEventListener('drop', async (e) => {
+        categoryEl.addEventListener('drop', (e) => {
             e.preventDefault();
             categoryEl.removeClass('drag-over-category');
 
@@ -729,36 +753,42 @@ export class ButtonManagementSection {
             const draggedButtonId = e.dataTransfer?.getData('text/plain');
             if (!draggedButtonId) return;
 
-            // 查找被拖拽的按钮及其源分类
-            const { sourceCategory, buttonToMove } = this.findButtonAndCategory(draggedButtonId);
-            if (!sourceCategory || !buttonToMove) return;
+            void (async () => {
+                // 查找被拖拽的按钮及其源分类
+                const { sourceCategory, buttonToMove } = this.findButtonAndCategory(draggedButtonId);
+                if (!sourceCategory || !buttonToMove) return;
 
-            // 如果按钮当前分类与目标分类不同，则更新分类
-            if (sourceCategory.id !== category.id) {
-                // 从源分类中移除按钮
-                this.removeButtonFromCategory(sourceCategory, draggedButtonId);
+                // 如果按钮当前分类与目标分类不同，则更新分类
+                if (sourceCategory.id !== category.id) {
+                    // 从源分类中移除按钮
+                    this.removeButtonFromCategory(sourceCategory, draggedButtonId);
 
-                // 添加到目标分类的末尾
-                this.insertButtonToCategory(category, buttonToMove, category.buttons.length);
+                    // 添加到目标分类的末尾
+                    this.insertButtonToCategory(category, buttonToMove, category.buttons.length);
 
-                await this.plugin.saveSettings();
-                this.displayCallback?.();
-            } else {
-                // 如果是同一个分类，检查按钮是否已经在末尾
-                const lastButton = category.buttons[category.buttons.length - 1];
-                if (lastButton && lastButton.id !== draggedButtonId) {
-                    // 如果不在末尾，移动到末尾
-                    const currentIndex = category.buttons.findIndex(
-                        (b) => b.id === draggedButtonId
-                    );
-                    if (currentIndex > -1) {
-                        const [movedButton] = category.buttons.splice(currentIndex, 1);
-                        this.insertButtonToCategory(category, movedButton, category.buttons.length);
-                        await this.plugin.saveSettings();
-                        this.displayCallback?.();
+                    await this.plugin.saveSettings();
+                    this.displayCallback?.();
+                } else {
+                    // 如果是同一个分类，检查按钮是否已经在末尾
+                    const lastButton = category.buttons[category.buttons.length - 1];
+                    if (lastButton && lastButton.id !== draggedButtonId) {
+                        // 如果不在末尾，移动到末尾
+                        const currentIndex = category.buttons.findIndex(
+                            (b) => b.id === draggedButtonId
+                        );
+                        if (currentIndex > -1) {
+                            const [movedButton] = category.buttons.splice(currentIndex, 1);
+                            this.insertButtonToCategory(
+                                category,
+                                movedButton,
+                                category.buttons.length
+                            );
+                            await this.plugin.saveSettings();
+                            this.displayCallback?.();
+                        }
                     }
                 }
-            }
+            })();
         });
     }
 

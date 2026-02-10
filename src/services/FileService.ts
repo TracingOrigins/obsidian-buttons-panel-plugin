@@ -29,8 +29,8 @@ export class FileService {
             throw new Error('Invalid action type for file opening');
         }
 
-        // 类型断言
-        const fileParams = action.parameters as FileActionParams;
+        // 在 ButtonAction 类型中，parameters 在 type === 'file' 时已经是 FileActionParams
+        const fileParams: FileActionParams = action.parameters;
         const filePath = fileParams.filePath;
 
         // 检查文件是否存在
@@ -43,8 +43,12 @@ export class FileService {
         // 查找已打开的 leaf，激活已打开的标签页
         const allLeaves = this.getAllLeaves();
         for (const leaf of allLeaves) {
-            const view = (leaf as WorkspaceLeaf).view as any;
-            if (view && view.file && view.file.path === filePath) {
+            const view = leaf.view as unknown;
+            const fileFromView =
+                view && typeof view === 'object'
+                    ? (view as { file?: { path?: string } }).file
+                    : undefined;
+            if (fileFromView?.path === filePath) {
                 this.app.workspace.setActiveLeaf(leaf, { focus: true });
                 return;
             }

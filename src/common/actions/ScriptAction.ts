@@ -1,6 +1,10 @@
+import type { App } from 'obsidian';
 import { IButtonAction } from '@/common/actions/IButtonAction';
 import { t } from '@/common/utils/i18n';
 import { ScriptInput } from '@/common/components';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
+
+type ActionRenderContext = { app: App; plugin: ButtonsPanelPlugin };
 
 /**
  * “运行脚本”动作类，实现按钮动作表单的渲染、数据管理、校验和序列化。
@@ -8,13 +12,13 @@ import { ScriptInput } from '@/common/components';
 export class ScriptAction implements IButtonAction {
     type = 'script';
     scriptName: string;
-    args?: any[];
+	args?: unknown[];
     private scriptInput: ScriptInput | null = null;
 
     /**
      * 构造函数，初始化参数。
      */
-    constructor(params: { scriptName: string; args?: any[] }) {
+	constructor(params: { scriptName: string; args?: unknown[] }) {
         this.scriptName = params.scriptName;
         this.args = params.args;
     }
@@ -22,7 +26,7 @@ export class ScriptAction implements IButtonAction {
     /**
      * 渲染表单控件，绑定数据双向同步。
      */
-    render(container: HTMLElement, context: any) {
+	render(container: HTMLElement, context: ActionRenderContext) {
         // 使用可复用的脚本输入组件
         this.scriptInput = new ScriptInput(
             container,

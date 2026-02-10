@@ -1,4 +1,4 @@
-import { App, Notice, TFile, normalizePath, moment } from 'obsidian';
+import { App, Notice, normalizePath, moment } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { FileService } from '@/services/FileService';
@@ -29,8 +29,8 @@ export class CreateFileService {
             throw new Error('Invalid action type for file creation');
         }
 
-        // 类型断言
-        const createParams = action.parameters as CreateFileActionParams;
+        // 在 ButtonAction 类型中，parameters 在 type === 'create_file' 时已经是 CreateFileActionParams
+        const createParams: CreateFileActionParams = action.parameters;
 
         if (!createParams.fileName) {
             new Notice(t('file_name_empty'));
@@ -91,7 +91,8 @@ export class CreateFileService {
             }
         } catch (error) {
             console.error('创建文件时出错:', error);
-            new Notice(t('file_creation_failed') + `: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            new Notice(t('file_creation_failed') + `: ${errorMessage}`);
         }
     }
 
@@ -101,7 +102,7 @@ export class CreateFileService {
      * @returns 替换后的路径
      */
     private resolveDateVariables(filePath: string): string {
-        return filePath.replace(/{{DATE:(.*?)}}/g, (match, format) => {
+        return filePath.replace(/{{DATE:(.*?)}}/g, (_match: string, format: string) => {
             return moment().format(format);
         });
     }

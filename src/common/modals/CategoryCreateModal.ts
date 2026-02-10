@@ -1,4 +1,4 @@
-import { App, Modal, Setting, Notice } from 'obsidian';
+import { App, Modal, Setting, Notice, TextComponent } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 
@@ -13,8 +13,8 @@ export class CategoryCreateModal extends Modal {
     onCreate: (categoryName: string) => void;
     /** 输入框当前的分类名称 */
     newName: string;
-    /** 输入框组件引用 */
-    private nameInput: any = null;
+    /** 输入框组件引用（Obsidian Setting 的 text 控件） */
+    private nameInput: TextComponent | null = null;
 
     /**
      * 构造函数，初始化模态框。
@@ -43,11 +43,12 @@ export class CategoryCreateModal extends Modal {
         // 分类名称输入框
         const nameSetting = new Setting(contentEl).setName(t('category_name'));
 
-        this.nameInput = nameSetting.addText((text) => {
+        nameSetting.addText((text) => {
+            this.nameInput = text;
             text.setValue(this.newName).onChange((value) => {
                 this.newName = value;
                 // 清除错误状态
-                this.nameInput?.clearError?.();
+                this.nameInput?.inputEl.classList.remove('input-error');
             });
             // 支持回车直接提交
             text.inputEl.addEventListener('keydown', (e) => {
@@ -81,13 +82,13 @@ export class CategoryCreateModal extends Modal {
     handleCreate() {
         // 校验分类名称不能为空
         if (!this.newName || this.newName.trim() === '') {
-            this.nameInput?.setError?.(t('category_name_empty'));
+            this.nameInput?.inputEl.classList.add('input-error');
             new Notice(t('category_name_empty'));
             return;
         }
 
         // 清除错误状态
-        this.nameInput?.clearError?.();
+        this.nameInput?.inputEl.classList.remove('input-error');
 
         // 回调创建逻辑
         this.onCreate(this.newName.trim());

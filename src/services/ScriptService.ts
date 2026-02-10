@@ -1,4 +1,4 @@
-import { App, Notice, TFile, normalizePath } from 'obsidian';
+import { App, Notice, WorkspaceLeaf, normalizePath } from 'obsidian';
 import { ButtonAction } from '@/common/types/action';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t, tWithParams } from '@/common/utils/i18n';
@@ -34,15 +34,20 @@ export class ScriptService {
     async runScript(action: ButtonAction): Promise<void> {
         try {
             // 动作执行前，自动激活最后激活的内容标签页（排除按钮面板）
+            const safeLastLeaf =
+                this.plugin?.lastActiveContentLeaf instanceof WorkspaceLeaf
+                    ? this.plugin.lastActiveContentLeaf
+                    : null;
             const lastContentLeaf = getLastActiveContentLeaf(
                 this.app,
                 'buttons-panel-view',
-				this.plugin?.lastActiveContentLeaf ?? null
+                safeLastLeaf
             );
             if (lastContentLeaf) {
                 this.app.workspace.setActiveLeaf(lastContentLeaf, { focus: true });
             }
 
+			// 在 ButtonAction 类型中，parameters 在 type === 'script' 时已经拥有 scriptName 字段
 			const scriptFileName =
 				action.type === 'script' ? action.parameters.scriptName : '';
             // 获取脚本文件夹路径（从插件设置中读取）
@@ -67,11 +72,17 @@ export class ScriptService {
             const scriptContent = await this.app.vault.read(scriptFile);
 
             // 构造脚本执行环境
-			const module: { exports: unknown } = { exports: { undefined } };
-            const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+            const module: { exports: unknown } = { exports: undefined };
+            type AsyncFunctionConstructor = new (...args: string[]) => (
+                ...args: unknown[]
+            ) => Promise<unknown>;
+            const asyncFunctionPrototype = Object.getPrototypeOf(
+                async function () {}
+            ) as { constructor: AsyncFunctionConstructor };
+            const AsyncFunctionConstructor = asyncFunctionPrototype.constructor;
 
             // 动态构造异步函数，注入上述变量
-            const fn = new AsyncFunction(
+            const fn: (...args: unknown[]) => Promise<unknown> = new AsyncFunctionConstructor(
                 'module',
                 'exports',
                 'require',
@@ -82,31 +93,35 @@ export class ScriptService {
                 scriptContent
             );
             // 定义可选参数 params
-			const params = action.parameters ?? undefined;
+            const params = action.parameters ?? undefined;
 
             // 执行脚本内容，让 module.exports 被赋值为脚本导出的函数
-			const requireFromWindow =
-				(window as unknown as { require?: (...args: unknown[]) => unknown }).require;
-			await fn.call(
-				{ app: this.app, plugin: this.plugin },
-				module,
-				module.exports,
-				requireFromWindow,
-				this.app,
-				this.plugin,
-				(msg: string) => new Notice(msg),
-				params
-			);
+            const requireFromWindow = (
+                window as unknown as { require?: (...args: unknown[]) => unknown }
+            ).require;
+            await fn.call(
+                { app: this.app, plugin: this.plugin },
+                module,
+                module.exports,
+                requireFromWindow,
+                this.app,
+                this.plugin,
+                (msg: string) => new Notice(msg),
+                params
+            );
 
             // 如果脚本导出为函数或对象的 default.entry 是函数，则自动调用
             if (typeof module.exports === 'function') {
-				await (module.exports as (...args: unknown[]) => unknown).call(
-					{ app: this.app, plugin: this.plugin },
-					params,
-					this.app,
-					this.plugin,
-					(msg: string) => new Notice(msg)
-				);
+                const exportedFn = module.exports as (
+                    ...args: unknown[]
+                ) => Promise<unknown> | void;
+                await exportedFn.call(
+                    { app: this.app, plugin: this.plugin },
+                    params,
+                    this.app,
+                    this.plugin,
+                    (msg: string) => new Notice(msg)
+                );
             } else if (
                 module.exports &&
                 typeof module.exports === 'object' &&
@@ -130,7 +145,8 @@ export class ScriptService {
             }
 		} catch (error) {
             // 捕获并通知脚本运行异常
-			new Notice(t('script_run_failed') + `: ${(error as Error).message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+			new Notice(t('script_run_failed') + `: ${errorMessage}`);
         }
     }
 }

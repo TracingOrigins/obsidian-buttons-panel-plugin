@@ -168,8 +168,8 @@ export class ListRenderer {
                     .setTitle(t('edit'))
                     .setIcon('pencil')
                     .onClick(() => {
-                        new CategoryEditModal(this.app, this.plugin, category, async () => {
-                            await this.plugin.saveSettings();
+                        new CategoryEditModal(this.app, this.plugin, category, () => {
+                            void this.plugin.saveSettings();
                         }).open();
                     })
             );
@@ -179,22 +179,30 @@ export class ListRenderer {
                 item
                     .setTitle(t('copy'))
                     .setIcon('copy')
-                    .onClick(async () => {
-                        const newCategory = JSON.parse(JSON.stringify(category));
-                        newCategory.id =
-                            Date.now().toString() + Math.random().toString(36).substring(2, 9);
-                        newCategory.name = category.name;
-                        newCategory.order = this.plugin.settings.categories.length;
-                        newCategory.buttons.forEach((btn: ButtonConfig) => {
-                            btn.id =
-                                Date.now().toString() + Math.random().toString(36).substring(2, 9);
-                        });
-                        this.plugin.settings.categories.push(newCategory);
-                        // 统一排序order
-                        this.plugin.settings.categories.forEach((cat, idx) => {
-                            cat.order = idx;
-                        });
-                        await this.plugin.saveSettings();
+                    .onClick(() => {
+                        void (async () => {
+                            const newCategory: CategoryConfig = {
+                                id:
+                                    Date.now().toString() +
+                                    Math.random().toString(36).substring(2, 9),
+                                name: category.name,
+                                order: this.plugin.settings.categories.length,
+                                buttons: category.buttons.map((btn, index) => ({
+                                    ...btn,
+                                    actions: btn.actions.map((action) => ({ ...action })),
+                                    id:
+                                        Date.now().toString() +
+                                        Math.random().toString(36).substring(2, 9),
+                                    order: index,
+                                })),
+                            };
+                            this.plugin.settings.categories.push(newCategory);
+                            // 统一排序order
+                            this.plugin.settings.categories.forEach((cat, idx) => {
+                                cat.order = idx;
+                            });
+                            await this.plugin.saveSettings();
+                        })();
                     })
             );
 
@@ -204,8 +212,8 @@ export class ListRenderer {
                     .setTitle(t('delete'))
                     .setIcon('trash')
                     .onClick(() => {
-                        new CategoryDeleteModal(this.app, this.plugin, category, async () => {
-                            await this.plugin.saveSettings();
+                        new CategoryDeleteModal(this.app, this.plugin, category, () => {
+                            void this.plugin.saveSettings();
                         }).open();
                     })
             );
@@ -250,8 +258,8 @@ export class ListRenderer {
                 .setIcon('plus')
                 .setTooltip(t('add_button'))
                 .onClick(() => {
-                    new ButtonCreateModal(this.app, this.plugin, category, async () => {
-                        await this.plugin.saveSettings();
+                    new ButtonCreateModal(this.app, this.plugin, category, () => {
+                        void this.plugin.saveSettings();
                         // 可选：刷新面板
                     }).open();
                 });
@@ -298,7 +306,7 @@ export class ListRenderer {
      * @param container 容器元素
      * @param panelConfig 面板配置
      */
-    private addCategoryButton(container: HTMLElement, panelConfig: any): void {
+    private addCategoryButton(container: HTMLElement, panelConfig: PanelConfig): void {
         if (panelConfig.enableEditMode && !this.stateManager.isInCategoryMoveMode()) {
             const addCategoryBtn = new ButtonComponent(
                 container.createDiv('buttons-panel-category add-category-card')
@@ -306,19 +314,28 @@ export class ListRenderer {
                 .setIcon('plus')
                 .setTooltip(t('add_category'))
                 .onClick(() => {
-                    new CategoryCreateModal(this.app, this.plugin, async (categoryName: string) => {
-                        const newCategory = {
-                            id: Date.now().toString(),
-                            name: categoryName,
-                            order: this.plugin.settings.categories.length,
-                            buttons: [],
-                        };
-                        this.plugin.settings.categories.push(newCategory);
-                        await this.plugin.saveSettings();
-                        if (this.mainView && typeof this.mainView.renderPanel === 'function') {
-                            this.mainView.renderPanel();
+                    new CategoryCreateModal(
+                        this.app,
+                        this.plugin,
+                        (categoryName: string) => {
+                            void (async () => {
+                                const newCategory: CategoryConfig = {
+                                    id: Date.now().toString(),
+                                    name: categoryName,
+                                    order: this.plugin.settings.categories.length,
+                                    buttons: [],
+                                };
+                                this.plugin.settings.categories.push(newCategory);
+                                await this.plugin.saveSettings();
+                                if (
+                                    this.mainView &&
+                                    typeof this.mainView.renderPanel === 'function'
+                                ) {
+                                    this.mainView.renderPanel();
+                                }
+                            })();
                         }
-                    }).open();
+                    ).open();
                 });
             addCategoryBtn.buttonEl.classList.add('add-category-btn');
         }

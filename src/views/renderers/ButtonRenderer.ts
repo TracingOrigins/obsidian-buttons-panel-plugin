@@ -4,6 +4,7 @@ import type { MenuItem } from 'obsidian';
 import { Menu, App } from 'obsidian';
 import { ActionDispatcher } from '@/core/ActionDispatcher';
 import { ButtonConfig, PanelConfig } from '@/common/types';
+import type { ButtonMoveManager } from '@/views/managers/ButtonMoveManager';
 import { t } from '@/common/utils/i18n';
 import { ButtonEditModal } from '@/common/modals/ButtonEditModal';
 import { ButtonDeleteModal } from '@/common/modals/ButtonDeleteModal';
@@ -47,7 +48,7 @@ export class ButtonRenderer {
         panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void,
         isInMoveMode = false,
-        moveManager?: { stateManager?: { getMoveState?: () => { movingButton?: ButtonConfig | null } }; handleMoveClick?: (e: Event) => void }
+        moveManager?: ButtonMoveManager
     ): HTMLElement {
         // 创建按钮元素
         const buttonEl = container.createEl('button');
@@ -65,8 +66,8 @@ export class ButtonRenderer {
         this.renderButtonText(buttonEl, button);
 
         // 分类移动模式下所有按钮都可点击，并加 move-button-target
-        if (isInMoveMode) {
-            const moveState = moveManager?.stateManager?.getMoveState?.();
+        if (isInMoveMode && moveManager) {
+            const moveState = moveManager.getMoveState();
             const movingButtonId = moveState?.movingButton?.id;
             buttonEl.classList.add('move-button-target');
             if (button.id === movingButtonId) {
@@ -150,22 +151,12 @@ export class ButtonRenderer {
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void
     ): void {
         // 点击事件
-        buttonEl.addEventListener('click', async (e) => {
+        buttonEl.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             if ((buttonEl as HTMLButtonElement).disabled) return;
 
-            (buttonEl as HTMLButtonElement).disabled = true;
-            try {
-                await this.actionDispatcher.executeActions(
-                    button.actions,
-                    button.executionMode || 'sequential',
-                    button.stopOnError ?? true,
-                    button.delayBetweenActions ?? 100
-                );
-            } finally {
-                (buttonEl as HTMLButtonElement).disabled = false;
-            }
+            void this.handleButtonClick(buttonEl, button);
         });
 
         // 右键菜单
@@ -211,8 +202,8 @@ export class ButtonRenderer {
                         cat.buttons.some((b) => b.id === button.id)
                     );
                     if (category) {
-                        new ButtonEditModal(this.app, this.plugin, button, category, async () => {
-                            await this.plugin.saveSettings();
+                        new ButtonEditModal(this.app, this.plugin, button, category, () => {
+                            void this.plugin.saveSettings();
                         }).open();
                     }
                 });
@@ -222,23 +213,26 @@ export class ButtonRenderer {
         menu.addItem((item: MenuItem) => {
             item.setTitle(t('copy') || '复制')
                 .setIcon('copy')
-                .onClick(async () => {
-                    const category = this.plugin.settings.categories.find((cat) =>
-                        cat.buttons.some((b) => b.id === button.id)
-                    );
-                    if (category) {
-                        const newButton = {
-                            ...JSON.parse(JSON.stringify(button)),
-                            id: Date.now().toString(),
-                            order: category.buttons.length,
-                        };
-                        category.buttons.push(newButton);
-                        // 统一排序order
-                        category.buttons.forEach((btn, idx) => {
-                            btn.order = idx;
-                        });
-                        await this.plugin.saveSettings();
-                    }
+                .onClick(() => {
+                    void (async () => {
+                        const category = this.plugin.settings.categories.find((cat) =>
+                            cat.buttons.some((b) => b.id === button.id)
+                        );
+                        if (category) {
+                            const newButton: ButtonConfig = {
+                                ...button,
+                                actions: button.actions.map((action) => ({ ...action })),
+                                id: Date.now().toString(),
+                                order: category.buttons.length,
+                            };
+                            category.buttons.push(newButton);
+                            // 统一排序order
+                            category.buttons.forEach((btn, idx) => {
+                                btn.order = idx;
+                            });
+                            await this.plugin.saveSettings();
+                        }
+                    })();
                 });
         });
 
@@ -251,16 +245,44 @@ export class ButtonRenderer {
                         cat.buttons.some((b) => b.id === button.id)
                     );
                     if (category) {
-                        new ButtonDeleteModal(this.app, this.plugin, button, category, async () => {
-                            const idx = category.buttons.findIndex((b) => b.id === button.id);
-                            if (idx > -1) category.buttons.splice(idx, 1);
-                            await this.plugin.saveSettings();
-                        }).open();
+                        new ButtonDeleteModal(
+                            this.app,
+                            this.plugin,
+                            button,
+                            category,
+                            () => {
+                                void (async () => {
+                                    const idx = category.buttons.findIndex(
+                                        (b) => b.id === button.id
+                                    );
+                                    if (idx > -1) category.buttons.splice(idx, 1);
+                                    await this.plugin.saveSettings();
+                                })();
+                            }
+                        ).open();
                     }
                 });
         });
 
         menu.showAtPosition({ x: e.clientX, y: e.clientY });
+    }
+
+    /**
+     * 处理按钮点击执行动作的逻辑。
+     * 单独抽取为 async 方法，避免在事件监听中直接使用 async 回调触发 eslint 警告。
+     */
+    private async handleButtonClick(buttonEl: HTMLElement, button: ButtonConfig): Promise<void> {
+        (buttonEl as HTMLButtonElement).disabled = true;
+        try {
+            await this.actionDispatcher.executeActions(
+                button.actions,
+                button.executionMode || 'sequential',
+                button.stopOnError ?? true,
+                button.delayBetweenActions ?? 100
+            );
+        } finally {
+            (buttonEl as HTMLButtonElement).disabled = false;
+        }
     }
 
     /**

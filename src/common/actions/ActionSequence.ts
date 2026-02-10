@@ -1,7 +1,11 @@
+import type { App } from 'obsidian';
+import { Setting, ButtonComponent } from 'obsidian';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { IButtonAction } from '@/common/actions/IButtonAction';
 import { ButtonActionFactory } from '@/common/actions/ButtonActionFactory';
-import { Setting, ButtonComponent } from 'obsidian';
 import { t } from '@/common/utils/i18n';
+
+type ActionRenderContext = { app: App; plugin: ButtonsPanelPlugin };
 
 /**
  * 动作序列类，负责管理一组按钮动作的增删改查、渲染、验证和序列化。
@@ -10,13 +14,13 @@ import { t } from '@/common/utils/i18n';
 export class ActionSequence {
     actions: IButtonAction[] = [];
     private container: HTMLElement | null = null;
-    private context: any = null;
+	private context: ActionRenderContext | null = null;
 
     /**
      * 构造函数，将原始动作数据转为动作实例。
      * @param rawActions 原始动作配置数组
      */
-	constructor(rawActions: any[]) {
+	constructor(rawActions: Array<{ type: string; parameters?: unknown }>) {
 		this.actions = rawActions.map((raw) => ButtonActionFactory.fromRaw(raw));
     }
 
@@ -53,7 +57,7 @@ export class ActionSequence {
      * @param container 容器元素
      * @param context 上下文（如插件实例等）
      */
-    renderAll(container: HTMLElement, context: any) {
+	renderAll(container: HTMLElement, context: ActionRenderContext) {
         // 保存容器和上下文引用
         this.container = container;
         this.context = context;
@@ -90,7 +94,7 @@ export class ActionSequence {
         container: HTMLElement,
         action: IButtonAction,
         index: number,
-        context: any
+		context: ActionRenderContext
     ) {
         const actionEl = container.createDiv('action-item');
 
@@ -163,7 +167,11 @@ export class ActionSequence {
     /**
      * 渲染动作的具体内容表单。
      */
-    private renderActionContent(actionEl: HTMLElement, action: IButtonAction, context: any) {
+	private renderActionContent(
+		actionEl: HTMLElement,
+		action: IButtonAction,
+		context: ActionRenderContext
+	) {
         // 只移除 .action-content，不影响底部按钮区
         const existingContent = actionEl.querySelector('.action-content');
         if (existingContent) {

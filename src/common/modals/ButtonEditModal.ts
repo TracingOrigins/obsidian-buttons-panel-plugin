@@ -1,5 +1,8 @@
+import type { App } from 'obsidian';
 import { Modal, Setting, Notice } from 'obsidian';
 import { ButtonConfig, CategoryConfig } from '@/common/types';
+import type { ButtonAction } from '@/common/types/action';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { ActionSequence } from '@/common/actions/ActionSequence';
 import { NameInput, IconInput } from '@/common/components';
@@ -10,7 +13,7 @@ import { NameInput, IconInput } from '@/common/components';
  */
 export class ButtonEditModal extends Modal {
     // 插件主类实例
-    plugin: any;
+	plugin: ButtonsPanelPlugin;
     // 待编辑的按钮对象
     button: ButtonConfig;
     // 按钮所属分类
@@ -35,8 +38,8 @@ export class ButtonEditModal extends Modal {
      * @param onSave 保存成功回调
      */
     constructor(
-        app: any,
-        plugin: any,
+		app: App,
+		plugin: ButtonsPanelPlugin,
         button: ButtonConfig,
         parentCategory: CategoryConfig,
         onSave?: () => void
@@ -46,8 +49,11 @@ export class ButtonEditModal extends Modal {
         this.button = button;
         this.parentCategory = parentCategory;
         this.onSave = onSave;
-        // 深拷贝按钮对象，避免直接修改原始数据
-        this.tempButton = JSON.parse(JSON.stringify(button));
+        // 深拷贝按钮对象，避免直接修改原始数据（按字段手动拷贝，避免 any）
+        this.tempButton = {
+            ...button,
+            actions: button.actions.map((action) => ({ ...action })),
+        };
         // 过滤掉无效的 action
         const validActions = Array.isArray(this.tempButton.actions)
             ? this.tempButton.actions.filter((a) => a && typeof a === 'object' && a.type)
@@ -137,8 +143,8 @@ export class ButtonEditModal extends Modal {
                 drop.addOption('sequential', t('sequential'));
                 drop.addOption('parallel', t('parallel'));
                 drop.setValue(this.tempButton.executionMode || 'sequential');
-                drop.onChange((value) => {
-                    this.tempButton.executionMode = value as any;
+                drop.onChange((value: 'sequential' | 'parallel') => {
+                    this.tempButton.executionMode = value;
                     // 触发UI刷新以禁用/启用相关选项
                     container.empty();
                     this.createActionSettings(container);
@@ -235,8 +241,8 @@ export class ButtonEditModal extends Modal {
             return;
         }
 
-        // 更新临时按钮的动作
-        this.tempButton.actions = this.actionSequence.toJSON();
+        // 更新临时按钮的动作（ActionSequence 序列化结果转为 ButtonAction[]）
+        this.tempButton.actions = this.actionSequence.toJSON() as ButtonAction[];
 
         // 更新原始按钮
         Object.assign(this.button, this.tempButton);

@@ -67,11 +67,17 @@ export class ActionDispatcher {
                     }
                 } catch (error) {
                     console.error(`执行动作序列中的第 ${i + 1} 个动作时出错:`, error);
+                    const errorMessage =
+                        error instanceof Error ? error.message : String(error);
                     if (stopOnError) {
-                        new Notice(t('sequence_stopped_on_error') + `: ${error.message}`);
+                        new Notice(
+                            t('sequence_stopped_on_error') + `: ${errorMessage}`
+                        );
                         break;
                     } else {
-                        new Notice(t('action_in_sequence_failed') + `: ${error.message}`);
+                        new Notice(
+                            t('action_in_sequence_failed') + `: ${errorMessage}`
+                        );
                     }
                 }
             }

@@ -63,7 +63,7 @@ export class CategoryMoveManager {
         // 更新 order
         categories.forEach((cat, idx) => (cat.order = idx));
 
-        this.plugin.saveSettings();
+        void this.plugin.saveSettings();
 
         // 移动后刷新所有设置页面
         refreshAllSettingsViews(this.plugin.app);

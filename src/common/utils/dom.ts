@@ -22,7 +22,7 @@ export function safeSetSVG(el: HTMLElement, svgString: string) {
                     node.removeAttribute(attr.name);
                 }
             });
-            Array.from(node.children).forEach((child) => removeEventAttrs(child as Element));
+            Array.from(node.children).forEach((child) => removeEventAttrs(child));
         };
         removeEventAttrs(svg);
         // 移除所有<script>标签

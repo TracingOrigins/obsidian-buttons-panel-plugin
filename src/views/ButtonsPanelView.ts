@@ -260,7 +260,7 @@ export class ButtonsPanelView extends ItemView {
     /**
      * 渲染面板 - 使用模块化渲染器
      */
-    private renderPanel(): void {
+    public renderPanel(): void {
         try {
             if (this.stateManager.getIsRendering()) {
                 return;

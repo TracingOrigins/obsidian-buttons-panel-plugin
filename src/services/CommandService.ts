@@ -1,4 +1,4 @@
-import { App, Notice } from 'obsidian';
+import { App, Notice, WorkspaceLeaf } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { ButtonAction, CommandActionParams } from '@/common/types/action';
@@ -30,27 +30,43 @@ export class CommandService {
                 throw new Error('Invalid action type for command execution');
             }
 
-            // 类型断言：现在 TypeScript 知道这是命令动作
+            // 在 ButtonAction 类型中，parameters 在 type === 'command' 时是 CommandActionParams
+            // 这里通过类型断言收窄，便于后续安全访问 commandId
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             const commandParams = action.parameters as CommandActionParams;
 
             // 动作执行前，自动激活最后激活的内容标签页（排除按钮面板）
-			const lastContentLeaf = getLastActiveContentLeaf(
-				this.app,
-				'buttons-panel-view',
-				this.plugin?.lastActiveContentLeaf ?? null
-			);
+            const safeLastLeaf =
+                this.plugin?.lastActiveContentLeaf instanceof WorkspaceLeaf
+                    ? this.plugin.lastActiveContentLeaf
+                    : null;
+            const lastContentLeaf = getLastActiveContentLeaf(
+                this.app,
+                'buttons-panel-view',
+                safeLastLeaf
+            );
             if (lastContentLeaf) {
                 this.app.workspace.setActiveLeaf(lastContentLeaf, { focus: true });
             }
 
-			// 执行命令
-			await this.app.commands.executeCommandById(commandParams.commandId);
+            // 执行命令（通过局部封装的命令 API 调用，避免直接访问 error-typed 字段）
+            const commandsApi = (this.app as unknown as { commands?: unknown }).commands;
+            const executeCommandById = (
+                commandsApi as { executeCommandById?: (id: string) => boolean | void }
+            ).executeCommandById;
+            if (typeof executeCommandById === 'function') {
+                executeCommandById(commandParams.commandId);
+            } else {
+                throw new Error('commands.executeCommandById is not available');
+            }
 		} catch (error) {
             console.error('执行命令时出错:', error);
+            // 这里同样收窄为 CommandActionParams 以便读取 commandId
             const commandParams = action.parameters as CommandActionParams;
+            const errorMessage = error instanceof Error ? error.message : String(error);
             new Notice(
 				t('command_execution_failed') +
-					`: ${commandParams.commandId} - ${(error as Error).message}`
+					`: ${commandParams.commandId} - ${errorMessage}`
             );
         }
     }

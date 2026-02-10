@@ -1,5 +1,8 @@
+import type { App } from 'obsidian';
 import { Modal, Notice, Setting } from 'obsidian';
 import { ButtonConfig, CategoryConfig } from '@/common/types';
+import type { ButtonAction } from '@/common/types/action';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { ActionSequence } from '@/common/actions/ActionSequence';
 import { NameInput, IconInput } from '@/common/components';
@@ -10,7 +13,7 @@ import { NameInput, IconInput } from '@/common/components';
  */
 export class ButtonCreateModal extends Modal {
     // 插件主类实例
-    plugin: any;
+	plugin: ButtonsPanelPlugin;
     // 按钮所属分类
     parentCategory: CategoryConfig;
     // 保存成功回调
@@ -31,7 +34,7 @@ export class ButtonCreateModal extends Modal {
      * @param parentCategory 按钮所属分类
      * @param onSave 保存成功回调
      */
-    constructor(app: any, plugin: any, parentCategory: CategoryConfig, onSave?: () => void) {
+	constructor(app: App, plugin: ButtonsPanelPlugin, parentCategory: CategoryConfig, onSave?: () => void) {
         super(app);
         this.plugin = plugin;
         this.parentCategory = parentCategory;
@@ -135,8 +138,8 @@ export class ButtonCreateModal extends Modal {
                 drop.addOption('sequential', t('sequential'));
                 drop.addOption('parallel', t('parallel'));
                 drop.setValue(this.tempButton.executionMode || 'sequential');
-                drop.onChange((value) => {
-                    this.tempButton.executionMode = value as any;
+                drop.onChange((value: 'sequential' | 'parallel') => {
+                    this.tempButton.executionMode = value;
                     // 触发UI刷新以禁用/启用相关选项
                     container.empty();
                     this.createActionSettings(container);
@@ -233,8 +236,8 @@ export class ButtonCreateModal extends Modal {
             return;
         }
 
-        // 保存按钮
-        this.tempButton.actions = this.actionSequence.toJSON();
+        // 保存按钮（ActionSequence 序列化结果转为 ButtonAction[]）
+        this.tempButton.actions = this.actionSequence.toJSON() as ButtonAction[];
         this.tempButton.order = this.parentCategory.buttons.length;
         this.parentCategory.buttons.push({ ...this.tempButton });
         await this.plugin.saveSettings();

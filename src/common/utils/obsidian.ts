@@ -1,6 +1,5 @@
 import type { App, WorkspaceLeaf } from 'obsidian';
 import { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
-import { ButtonsPanelView } from '@/views/ButtonsPanelView';
 // obsidian.ts
 // Obsidian 相关工具函数。
 

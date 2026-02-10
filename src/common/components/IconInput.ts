@@ -3,6 +3,7 @@ import { setIcon, Setting, TextComponent } from 'obsidian';
 import { t } from '@/common/utils/i18n';
 import { IconSearchModal } from '@/common/modals/IconSearchModal';
 import { safeSetSVG } from '@/common/utils/dom';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
  * IconInput 组件用于在设置面板中创建图标输入框，支持 SVG 上传、图标搜索、预览和删除。
@@ -42,7 +43,7 @@ export class IconInput {
     constructor(
         container: HTMLElement,
         options: IconInputOptions,
-		context: { app: App; plugin: unknown },
+		context: { app: App; plugin: ButtonsPanelPlugin },
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container)

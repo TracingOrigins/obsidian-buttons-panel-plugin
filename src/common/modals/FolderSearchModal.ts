@@ -1,5 +1,4 @@
-import type { App, TAbstractFile, TFolder } from 'obsidian';
-import { Modal, TextComponent } from 'obsidian';
+import { App, Modal, TextComponent, TAbstractFile, TFolder } from 'obsidian';
 import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 

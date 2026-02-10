@@ -1,6 +1,10 @@
+import type { App } from 'obsidian';
 import { IButtonAction } from '@/common/actions/IButtonAction';
 import { t } from '@/common/utils/i18n';
 import { FileInput } from '@/common/components';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
+
+type ActionRenderContext = { app: App; plugin: ButtonsPanelPlugin };
 
 /**
  * “打开文件”动作类，实现按钮动作表单的渲染、数据管理、校验和序列化。
@@ -20,7 +24,7 @@ export class FileAction implements IButtonAction {
     /**
      * 渲染表单控件，绑定数据双向同步。
      */
-    render(container: HTMLElement, context: any) {
+	render(container: HTMLElement, context: ActionRenderContext) {
         // 使用可复用的文件输入组件
         this.fileInput = new FileInput(
             container,

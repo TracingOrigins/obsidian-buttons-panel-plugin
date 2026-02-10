@@ -1,6 +1,10 @@
+import type { App } from 'obsidian';
 import { IButtonAction } from '@/common/actions/IButtonAction';
 import { t } from '@/common/utils/i18n';
 import { CommandInput } from '@/common/components';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
+
+type ActionRenderContext = { app: App; plugin: ButtonsPanelPlugin };
 
 /**
  * “执行命令”动作类，实现按钮动作表单的渲染、数据管理、校验和序列化。
@@ -8,13 +12,13 @@ import { CommandInput } from '@/common/components';
 export class CommandAction implements IButtonAction {
     type = 'command';
     commandId: string;
-    args?: any[];
+	args?: unknown[];
     private commandInput: CommandInput | null = null;
 
     /**
      * 构造函数，初始化命令参数。
      */
-    constructor(params: { commandId: string; args?: any[] }) {
+	constructor(params: { commandId: string; args?: unknown[] }) {
         this.commandId = params.commandId;
         this.args = params.args;
     }
@@ -22,7 +26,7 @@ export class CommandAction implements IButtonAction {
     /**
      * 渲染表单控件，绑定数据双向同步。
      */
-    render(container: HTMLElement, context: any) {
+	render(container: HTMLElement, context: ActionRenderContext) {
         // 使用可复用的命令输入组件
         this.commandInput = new CommandInput(
             container,

@@ -1,8 +1,7 @@
-import { App, Setting, ButtonComponent, Notice, TextComponent, normalizePath, TFolder } from 'obsidian';
+import { App, Setting, Notice, TextComponent, normalizePath } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 import { FolderSearchModal } from '@/common/modals/FolderSearchModal';
-import { safeSetSVG } from '@/common/utils/dom';
 
 /**
  * createPathConfigSection 创建路径设置区域。
@@ -41,8 +40,7 @@ export function createPathConfigSection(
         desc: string,
         placeholder: string,
         getValue: () => string,
-        setValue: (value: string) => void,
-        onChange: (value: string) => Promise<void>
+        setValue: (value: string) => void
     ) => {
         const wrapper = containerEl.createDiv({ cls: 'path-input-wrapper' });
         const input = new TextComponent(wrapper)
@@ -61,14 +59,14 @@ export function createPathConfigSection(
                     .setClass('custom-button')
                     .setTooltip(t('search_folders_tooltip'))
                     .setIcon('search')
-                    .onClick(() => {
-                        new FolderSearchModal(app, plugin, (folderPath: string) => {
-                            input.setValue(folderPath);
-                            setValue(folderPath);
-                            plugin.saveSettings();
-                            updateInputErrorState(input, folderPath);
-                        }).open();
-                    })
+                .onClick(() => {
+                    new FolderSearchModal(app, plugin, (folderPath: string) => {
+                        input.setValue(folderPath);
+                        setValue(folderPath);
+                        void plugin.saveSettings();
+                        updateInputErrorState(input, folderPath);
+                    }).open();
+                })
             );
         setting.controlEl.appendChild(wrapper);
 
@@ -87,8 +85,9 @@ export function createPathConfigSection(
         t('template_folder_desc'),
         t('template_folder_placeholder'),
         () => plugin.settings.pathConfig.templateFolderPath ?? '',
-        (value) => { plugin.settings.pathConfig.templateFolderPath = value; },
-        async (value) => { plugin.settings.pathConfig.templateFolderPath = value; }
+        (value) => {
+            plugin.settings.pathConfig.templateFolderPath = value;
+        }
     );
 
     // 脚本文件夹路径设置
@@ -97,22 +96,25 @@ export function createPathConfigSection(
         t('script_folder_desc'),
         t('script_folder_placeholder'),
         () => plugin.settings.pathConfig.scriptFolderPath ?? '',
-        (value) => { plugin.settings.pathConfig.scriptFolderPath = value; },
-        async (value) => { plugin.settings.pathConfig.scriptFolderPath = value; }
+        (value) => {
+            plugin.settings.pathConfig.scriptFolderPath = value;
+        }
     );
 
     // 路径验证和创建按钮
     new Setting(card)
         .setName(t('create_paths'))
         .setDesc(t('create_paths_desc'))
-        .addButton((button) =>
+        .addButton((button) => {
             button
                 .setButtonText(t('create_paths'))
                 .setClass('mod-warning')
-                .onClick(async () => {
-                    await createPathsOnly(plugin, app, templateInput, scriptInput);
-                })
-        );
+                .onClick(() => {
+                    void createPathsOnly(plugin, app, templateInput, scriptInput);
+                });
+
+            return button;
+        });
 }
 
 /**
@@ -129,8 +131,7 @@ async function createPathsOnly(
         { path: plugin.settings.pathConfig.scriptFolderPath, input: scriptInput }
     ];
 
-    let createdFolders: string[] = [];
-    let allExist = true;
+    const createdFolders: string[] = [];
 
     // 创建文件夹
     for (const { path } of paths) {
@@ -141,9 +142,13 @@ async function createPathsOnly(
                 try {
                     await app.vault.createFolder(normalizedPath);
                     createdFolders.push(normalizedPath);
-                    allExist = false;
                 } catch (error) {
-                    new Notice(t('create_folder_failed') + `: ${normalizedPath} - ${error.message}`);
+                    const errorMessage =
+                        error instanceof Error ? error.message : String(error);
+                    new Notice(
+                        t('create_folder_failed') +
+                            `: ${normalizedPath} - ${errorMessage}`
+                    );
                     return;
                 }
             }
@@ -159,14 +164,13 @@ async function createPathsOnly(
 
     // 刷新输入框状态
     for (const { path, input } of paths) {
-        if (input?.inputEl) {
-            const normalizedPath = normalizePath(path || '');
-            const folder = normalizedPath ? app.vault.getFolderByPath(normalizedPath) : null;
-            if (normalizedPath && !folder) {
-                input.inputEl.classList.add('input-error');
-            } else {
-                input.inputEl.classList.remove('input-error');
-            }
+        if (!input?.inputEl) continue;
+        const normalizedPath = normalizePath(path || '');
+        const folder = normalizedPath ? app.vault.getFolderByPath(normalizedPath) : null;
+        if (normalizedPath && !folder) {
+            input.inputEl.classList.add('input-error');
+        } else {
+            input.inputEl.classList.remove('input-error');
         }
     }
 }

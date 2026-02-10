@@ -27,8 +27,8 @@ export class UrlService {
             throw new Error('Invalid action type for URL opening');
         }
 
-        // 类型断言
-        const urlParams = action.parameters as UrlActionParams;
+        // 在 ButtonAction 类型中，parameters 在 type === 'url' 时已经是 UrlActionParams
+        const urlParams: UrlActionParams = action.parameters;
         const url = urlParams.url;
 
         // 在新标签页打开外部链接
