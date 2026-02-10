@@ -1,5 +1,6 @@
-import { App, Modal, TextComponent, normalizePath } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import type { App, TFile } from 'obsidian';
+import { Modal, TextComponent, normalizePath } from 'obsidian';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 
 /**
@@ -10,7 +11,7 @@ export class FileSearchModal extends Modal {
     /** 插件主类实例 */
     plugin: ButtonsPanelPlugin;
     /** 选择文件后的回调函数，参数为文件对象 */
-    onSelect: (file: any) => void;
+	onSelect: (file: TFile | string) => void;
     rootFolder?: string;
     fileExts: string[];
     showFileNameOnly: boolean;
@@ -25,7 +26,7 @@ export class FileSearchModal extends Modal {
     constructor(
         app: App,
         plugin: ButtonsPanelPlugin,
-        onSelect: (file: any) => void,
+		onSelect: (file: TFile | string) => void,
         options?: { rootFolder?: string; fileExts?: string[]; showFileNameOnly?: boolean }
     ) {
         super(app);
@@ -52,9 +53,9 @@ export class FileSearchModal extends Modal {
             .setValue('');
         input.inputEl.classList.add('search-input');
 
-        // 建议列表容器
+		// 建议列表容器
         const suggestions = contentEl.createDiv({ cls: 'file-suggestions-container' });
-        let filteredFiles: any[] = [];
+		let filteredFiles: TFile[] = [];
         let selectedSuggestionIndex = 0;
 
         /**

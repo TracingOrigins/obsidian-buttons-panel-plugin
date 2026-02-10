@@ -11,10 +11,9 @@
 //
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
 
-import { ItemView, WorkspaceLeaf, Menu, debounce } from 'obsidian';
+import { ItemView, WorkspaceLeaf, debounce } from 'obsidian';
 import { ButtonConfig, ButtonsPanelPlugin, CategoryConfig, PanelConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
-import { ActionDispatcher } from '@/core/ActionDispatcher';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import { ButtonMoveManager } from '@/views/managers/ButtonMoveManager';
 import { CategoryMoveManager } from '@/views/managers/CategoryMoveManager';
@@ -279,7 +278,7 @@ export class ButtonsPanelView extends ItemView {
             this.panelRenderer.renderPanel(
                 container,
                 this.panelConfig,
-                this.handleMoveStart.bind(this),
+                this.handleMoveStart,
                 () => {
                     // 渲染完成回调
                     // 应用面板样式
@@ -301,14 +300,14 @@ export class ButtonsPanelView extends ItemView {
      * @param button 当前被移动的按钮配置
      * @param buttonEl 按钮对应的 DOM 元素
      */
-    private handleMoveStart(button: ButtonConfig, buttonEl: HTMLElement): void {
+    private readonly handleMoveStart = (button: ButtonConfig, buttonEl: HTMLElement): void => {
         this.moveManager.startMoveMode(button, buttonEl, this.panelConfig);
         this.moveModeRenderer.renderMoveModePanel(this.contentEl, this.panelConfig);
         this.addKeyboardEventListener();
         
         // 确保视图获得焦点，以便 scope 能够接收键盘事件
         this.containerEl.focus();
-    }
+    };
 
     /**
      * 处理移动模式下的 ESC 键退出逻辑
@@ -337,7 +336,7 @@ export class ButtonsPanelView extends ItemView {
      * 处理分类移动开始事件，进入分类移动模式
      * @param category 当前被移动的分类配置
      */
-    private handleCategoryMoveStart(category: CategoryConfig): void {
+    public handleCategoryMoveStart(category: CategoryConfig): void {
         this.categoryMoveManager.startCategoryMoveMode(category);
         this.categoryMoveModeRenderer.renderCategoryMoveModePanel(this.contentEl);
         this.addKeyboardEventListener();

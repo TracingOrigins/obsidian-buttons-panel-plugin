@@ -1,5 +1,4 @@
 import { Setting, TextComponent } from 'obsidian';
-import { t } from '@/common/utils/i18n';
 
 /**
  * UrlInput 组件用于在设置面板中创建 URL 输入框，支持回调和回车事件。
@@ -31,12 +30,13 @@ export class UrlInput {
      * @param context 上下文（含 app、plugin）
      * @param onValueChange 输入值变化回调
      */
-    constructor(
-        container: HTMLElement,
-        options: UrlInputOptions,
-        context: any,
-        onValueChange?: (value: string) => void
-    ) {
+	constructor(
+		container: HTMLElement,
+		options: UrlInputOptions,
+		// 目前未使用 context，保留参数仅为对齐其它组件签名
+		context: unknown,
+		onValueChange?: (value: string) => void
+	) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框

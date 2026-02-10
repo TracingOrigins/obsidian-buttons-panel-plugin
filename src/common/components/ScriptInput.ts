@@ -1,6 +1,7 @@
+import type { App, TFile } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
-import { t } from '@/common/utils/i18n';
 import { FileSearchModal } from '@/common/modals/FileSearchModal';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
  * ScriptInput 组件用于在设置面板中创建脚本文件选择输入框，支持 js 文件搜索和回调。
@@ -39,7 +40,7 @@ export class ScriptInput {
     constructor(
         container: HTMLElement,
         options: ScriptInputOptions,
-        context: any,
+		context: { app: App; plugin: ButtonsPanelPlugin },
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
@@ -52,10 +53,10 @@ export class ScriptInput {
                 .setIcon('search')
                 .onClick(() => {
                     new FileSearchModal(
-                        context.app,
-                        context.plugin,
-                        (file: any) => {
-                            let fileName = file?.name || (typeof file === 'string' ? file : '');
+						context.app,
+						context.plugin,
+						(file: TFile | string) => {
+							const fileName = typeof file === 'string' ? file : file?.name ?? '';
                             if (!fileName.endsWith('.js')) return;
                             this.input.setValue(fileName);
                             onValueChange?.(fileName);

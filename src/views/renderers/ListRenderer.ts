@@ -1,9 +1,10 @@
 // ListRenderer.ts
 // 列表渲染器，负责渲染按钮面板的列表视图。
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/common/types';
+import type { App, MenuItem } from 'obsidian';
+import { ButtonConfig, CategoryConfig, PanelConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
-import { ButtonComponent, App, Menu } from 'obsidian';
+import { ButtonComponent, Menu } from 'obsidian';
 import { CategoryCreateModal } from '@/common/modals/CategoryCreateModal';
 import { CategoryEditModal } from '@/common/modals/CategoryEditModal';
 import { CategoryDeleteModal } from '@/common/modals/CategoryDeleteModal';
@@ -11,6 +12,13 @@ import { ButtonCreateModal } from '@/common/modals/ButtonCreateModal';
 import { ButtonRenderer } from '@/views/renderers/ButtonRenderer';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import { CategoryMoveManager } from '@/views/managers/CategoryMoveManager';
+import type { ButtonMoveManager } from '@/views/managers/ButtonMoveManager';
+
+type ButtonsPanelMainView = {
+	handleCategoryMoveStart: (category: CategoryConfig) => void;
+	renderPanel: () => void;
+	enterCategoryMoveMode?: () => void;
+};
 
 /**
  * ListRenderer 列表渲染器。
@@ -23,8 +31,8 @@ export class ListRenderer {
     private categoryMoveManager: CategoryMoveManager;
     private buttonRenderer: ButtonRenderer;
     private app: App;
-    private moveManager: any;
-    private mainView: any; // 主视图引用
+    private moveManager?: ButtonMoveManager;
+    private mainView?: ButtonsPanelMainView; // 主视图引用
 
     /**
      * 构造函数，初始化渲染器依赖。
@@ -42,8 +50,8 @@ export class ListRenderer {
         categoryMoveManager: CategoryMoveManager,
         buttonRenderer: ButtonRenderer,
         app: App,
-        moveManager?: any,
-        mainView?: any
+        moveManager?: ButtonMoveManager,
+        mainView?: ButtonsPanelMainView
     ) {
         this.plugin = plugin;
         this.stateManager = stateManager;
@@ -67,7 +75,7 @@ export class ListRenderer {
         container: HTMLElement,
         groupedButtons: Record<string, ButtonConfig[]>,
         sortedCategories: CategoryConfig[],
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void,
         onRenderComplete?: () => void
     ): void {
@@ -110,7 +118,7 @@ export class ListRenderer {
     private renderCategoryTitle(
         container: HTMLElement,
         category: CategoryConfig,
-        panelConfig: any
+        panelConfig: PanelConfig
     ): void {
         const categoryTitle = container.createEl('h3', { text: category.name });
         categoryTitle.addClass('buttons-panel-category-title');
@@ -139,7 +147,7 @@ export class ListRenderer {
             const menu = new Menu();
 
             // 移动选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('move'))
                     .setIcon('move')
@@ -155,7 +163,7 @@ export class ListRenderer {
             );
 
             // 编辑选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('edit'))
                     .setIcon('pencil')
@@ -167,7 +175,7 @@ export class ListRenderer {
             );
 
             // 复制选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('copy'))
                     .setIcon('copy')
@@ -191,7 +199,7 @@ export class ListRenderer {
             );
 
             // 删除选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('delete'))
                     .setIcon('trash')
@@ -218,7 +226,7 @@ export class ListRenderer {
         container: HTMLElement,
         category: CategoryConfig,
         buttons: ButtonConfig[],
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void
     ): void {
         // 渲染按钮网格时，自动添加 icon-top 或 icon-left 类
@@ -260,7 +268,7 @@ export class ListRenderer {
     private handleCategoryMoveMode(
         categoryContainer: HTMLElement,
         category: CategoryConfig,
-        sortedCategories: CategoryConfig[]
+        _sortedCategories: CategoryConfig[]
     ): void {
         if (this.stateManager.isInCategoryMoveMode()) {
             categoryContainer.classList.add('move-category-target');
@@ -275,10 +283,8 @@ export class ListRenderer {
                     category
                 );
             });
-            // 进入分类移动模式时，绑定 ESC 监听
-            if (typeof (window as any).app?.view?.enterCategoryMoveMode === 'function') {
-                (window as any).app.view.enterCategoryMoveMode();
-            }
+            // 进入分类移动模式时，绑定 ESC 监听（由主视图统一处理）
+            this.mainView?.enterCategoryMoveMode?.();
             // 高亮被移动的分类
             const moveCategoryState = this.stateManager.getMoveCategoryState();
             if (category.id === moveCategoryState.movingCategory?.id) {

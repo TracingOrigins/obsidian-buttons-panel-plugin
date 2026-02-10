@@ -1,7 +1,7 @@
 // PanelRenderer.ts
 // 面板渲染器，负责渲染按钮面板的主体结构。
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { ButtonConfig, PanelConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
 import { setIcon } from 'obsidian';
 import { TabsRenderer } from '@/views/renderers/TabsRenderer';
@@ -47,7 +47,7 @@ export class PanelRenderer {
      */
     renderPanel(
         container: HTMLElement,
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void,
         onRenderComplete?: () => void
     ): void {
@@ -117,7 +117,7 @@ export class PanelRenderer {
      * @param panelEl 面板元素
      * @param panelConfig 面板配置
      */
-    private renderActionButtons(panelEl: HTMLElement, panelConfig: any): void {
+    private renderActionButtons(_panelEl: HTMLElement, _panelConfig: PanelConfig): void {
         // 暂时跳过操作按钮的渲染，专注于主要内容
         // TODO: 后续优化操作按钮的渲染逻辑
     }
@@ -127,7 +127,7 @@ export class PanelRenderer {
      * @param actionsGroup 操作按钮分组容器
      * @param panelConfig 面板配置
      */
-    private createViewToggleButton(actionsGroup: HTMLElement, panelConfig: any): void {
+    private createViewToggleButton(actionsGroup: HTMLElement, panelConfig: PanelConfig): void {
         const viewBtn = document.createElement('div');
         viewBtn.className = 'panel-action-btn view-btn clickable-icon nav-action-button';
         viewBtn.setAttr(
@@ -149,7 +149,7 @@ export class PanelRenderer {
      * @param actionsGroup 操作按钮分组容器
      * @param panelConfig 面板配置
      */
-    private createStyleToggleButton(actionsGroup: HTMLElement, panelConfig: any): void {
+    private createStyleToggleButton(actionsGroup: HTMLElement, panelConfig: PanelConfig): void {
         const styleBtn = document.createElement('div');
         styleBtn.className = 'panel-action-btn style-btn clickable-icon nav-action-button';
         styleBtn.setAttr(
@@ -197,7 +197,7 @@ export class PanelRenderer {
      */
     private renderMainContent(
         panelEl: HTMLElement,
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void,
         onRenderComplete?: () => void
     ): void {

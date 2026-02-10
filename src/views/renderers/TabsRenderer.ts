@@ -1,7 +1,8 @@
 // TabsRenderer.ts
 // 标签页渲染器，负责渲染按钮面板的标签页视图。
-import { App, ButtonComponent, Menu, setIcon } from 'obsidian';
-import { ButtonConfig, CategoryConfig } from '@/common/types';
+import type { App, MenuItem } from 'obsidian';
+import { ButtonComponent, Menu, setIcon } from 'obsidian';
+import { ButtonConfig, CategoryConfig, PanelConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
 import { CategoryCreateModal } from '@/common/modals/CategoryCreateModal';
 import { CategoryEditModal } from '@/common/modals/CategoryEditModal';
@@ -11,6 +12,12 @@ import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import { CategoryMoveManager } from '@/views/managers/CategoryMoveManager';
 import { ButtonRenderer } from '@/views/renderers/ButtonRenderer';
+import type { ButtonMoveManager } from '@/views/managers/ButtonMoveManager';
+
+type ButtonsPanelMainView = {
+	handleCategoryMoveStart: (category: CategoryConfig) => void;
+	renderPanel: () => void;
+};
 
 /**
  * TabsRenderer 标签页渲染器。
@@ -22,9 +29,9 @@ export class TabsRenderer {
     private stateManager: ViewStateManager;
     private categoryMoveManager: CategoryMoveManager;
     private buttonRenderer: ButtonRenderer;
-    private app: any;
-    private moveManager: any;
-    private mainView: any; // 主视图引用
+    private app: App;
+    private moveManager?: ButtonMoveManager;
+    private mainView?: ButtonsPanelMainView; // 主视图引用
 
     /**
      * 构造函数，初始化渲染器依赖。
@@ -42,8 +49,8 @@ export class TabsRenderer {
         categoryMoveManager: CategoryMoveManager,
         buttonRenderer: ButtonRenderer,
         app: App,
-        moveManager?: any,
-        mainView?: any
+        moveManager?: ButtonMoveManager,
+        mainView?: ButtonsPanelMainView
     ) {
         this.plugin = plugin;
         this.stateManager = stateManager;
@@ -67,7 +74,7 @@ export class TabsRenderer {
         container: HTMLElement,
         groupedButtons: Record<string, ButtonConfig[]>,
         sortedCategories: CategoryConfig[],
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void,
         onRenderComplete?: () => void
     ): void {
@@ -131,7 +138,7 @@ export class TabsRenderer {
         tabBar: HTMLElement,
         sortedCategories: CategoryConfig[],
         groupedButtons: Record<string, ButtonConfig[]>,
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void
     ): void {
         sortedCategories.forEach((category) => {
@@ -181,7 +188,7 @@ export class TabsRenderer {
         tabEl: HTMLElement,
         category: CategoryConfig,
         groupedButtons: Record<string, ButtonConfig[]>,
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void
     ): void {
         tabEl.addEventListener('click', () => {
@@ -224,7 +231,7 @@ export class TabsRenderer {
             const menu = new Menu();
 
             // 移动选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('move'))
                     .setIcon('move')
@@ -240,7 +247,7 @@ export class TabsRenderer {
             );
 
             // 编辑选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('edit'))
                     .setIcon('pencil')
@@ -252,7 +259,7 @@ export class TabsRenderer {
             );
 
             // 复制选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('copy'))
                     .setIcon('copy')
@@ -271,7 +278,7 @@ export class TabsRenderer {
             );
 
             // 删除选项
-            menu.addItem((item: any) =>
+            menu.addItem((item: MenuItem) =>
                 item
                     .setTitle(t('delete'))
                     .setIcon('trash')
@@ -312,7 +319,7 @@ export class TabsRenderer {
     private renderTabContent(
         container: HTMLElement,
         buttons: ButtonConfig[],
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void
     ): void {
         container.empty();
@@ -356,7 +363,7 @@ export class TabsRenderer {
      * @param tabBar 标签栏容器
      * @param panelConfig 面板配置
      */
-    private addCategoryButton(tabBar: HTMLElement, panelConfig: any): void {
+    private addCategoryButton(tabBar: HTMLElement, panelConfig: PanelConfig): void {
         if (panelConfig.enableEditMode && !this.stateManager.isInCategoryMoveMode()) {
             const addTabBtn = new ButtonComponent(
                 tabBar.createDiv('buttons-panel-tab add-category-card')

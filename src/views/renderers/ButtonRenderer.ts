@@ -1,14 +1,14 @@
 // ButtonRenderer.ts
 // 按钮渲染器，负责渲染单个按钮及其事件绑定、右键菜单等。
-import { Menu } from 'obsidian';
+import type { MenuItem } from 'obsidian';
+import { Menu, App } from 'obsidian';
 import { ActionDispatcher } from '@/core/ActionDispatcher';
-import { ButtonConfig, CategoryConfig } from '@/common/types';
+import { ButtonConfig, PanelConfig } from '@/common/types';
 import { t } from '@/common/utils/i18n';
 import { ButtonEditModal } from '@/common/modals/ButtonEditModal';
 import { ButtonDeleteModal } from '@/common/modals/ButtonDeleteModal';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { safeSetSVG } from '@/common/utils/dom';
-import { App } from 'obsidian';
 
 /**
  * ButtonRenderer 按钮渲染器。
@@ -44,10 +44,10 @@ export class ButtonRenderer {
     renderButton(
         container: HTMLElement,
         button: ButtonConfig,
-        panelConfig: any,
+        panelConfig: PanelConfig,
         onMoveStart?: (button: ButtonConfig, buttonEl: HTMLElement) => void,
         isInMoveMode = false,
-        moveManager?: any
+        moveManager?: { stateManager?: { getMoveState?: () => { movingButton?: ButtonConfig | null } }; handleMoveClick?: (e: Event) => void }
     ): HTMLElement {
         // 创建按钮元素
         const buttonEl = container.createEl('button');
@@ -93,7 +93,7 @@ export class ButtonRenderer {
      * @param buttonEl 按钮DOM元素
      * @param panelConfig 面板配置
      */
-    private applyButtonStyles(buttonEl: HTMLElement, panelConfig: any): void {
+    private applyButtonStyles(buttonEl: HTMLElement, panelConfig: PanelConfig): void {
         // 根据面板的全局设置来决定显示样式
         if (panelConfig.displayStyle === 'icon_top') {
             buttonEl.addClass('icon-top');
@@ -192,7 +192,7 @@ export class ButtonRenderer {
         const menu = new Menu();
 
         // 移动选项
-        menu.addItem((item) => {
+        menu.addItem((item: MenuItem) => {
             item.setTitle(t('move'))
                 .setIcon('move')
                 .onClick(() => {
@@ -203,7 +203,7 @@ export class ButtonRenderer {
         });
 
         // 编辑选项
-        menu.addItem((item) => {
+        menu.addItem((item: MenuItem) => {
             item.setTitle(t('edit'))
                 .setIcon('pencil')
                 .onClick(() => {
@@ -219,7 +219,7 @@ export class ButtonRenderer {
         });
 
         // 复制选项
-        menu.addItem((item) => {
+        menu.addItem((item: MenuItem) => {
             item.setTitle(t('copy') || '复制')
                 .setIcon('copy')
                 .onClick(async () => {
@@ -243,7 +243,7 @@ export class ButtonRenderer {
         });
 
         // 删除选项
-        menu.addItem((item) => {
+        menu.addItem((item: MenuItem) => {
             item.setTitle(t('delete') || '删除')
                 .setIcon('trash')
                 .onClick(() => {

@@ -1,7 +1,7 @@
+import type { App } from 'obsidian';
 import { Modal, TextComponent, getIconIds, getIcon, setIcon } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
-import { safeSetSVG } from '@/common/utils/dom';
 
 /**
  * IconSearchModal 图标搜索模态框类。
@@ -19,11 +19,7 @@ export class IconSearchModal extends Modal {
      * @param plugin 插件主类实例
      * @param onSelect 选择图标后的回调
      */
-    constructor(
-        app: any,
-        plugin: ButtonsPanelPlugin,
-        onSelect: (icon: { name: string; svg: string }) => void
-    ) {
+	constructor(app: App, plugin: ButtonsPanelPlugin, onSelect: (icon: { name: string; svg: string }) => void) {
         super(app);
         this.plugin = plugin;
         this.onSelect = onSelect;
@@ -47,14 +43,14 @@ export class IconSearchModal extends Modal {
 
 		// 图标列表容器
         const iconList = contentEl.createDiv({ cls: 'icon-list' });
-		let filteredIcons: any[] = [];
+		let filteredIcons: { name: string }[] = [];
         let selectedSuggestionIndex = 0;
         let page = 1;
         const PAGE_SIZE = 100;
 
 		// 从 Obsidian 获取内置图标列表
 		const allIconIds = getIconIds?.() ?? [];
-		const allIcons = allIconIds.map((id) => ({ name: id }));
+		const allIcons: { name: string }[] = allIconIds.map((id) => ({ name: id }));
 
 		// 确保图标数据正确加载
 		if (!allIcons || allIcons.length === 0) {
@@ -79,7 +75,7 @@ export class IconSearchModal extends Modal {
          * 渲染图标列表，支持分页。
          * @param append 是否为追加模式（滚动加载更多）
          */
-        const renderIcons = (append = false) => {
+		const renderIcons = (append = false) => {
             if (!append) {
                 iconList.empty();
             }
@@ -103,14 +99,17 @@ export class IconSearchModal extends Modal {
 				if (icon.name) setIcon(item, icon.name);
 				else item.textContent = t('unknown_icon');
                 item.setAttr('aria-label', icon.name);
-                item.onclick = () => {
-					this.onSelect({ name: icon.name, svg: getIcon?.(icon.name)?.outerHTML ?? '' });
-                    this.close();
-                };
+				item.onclick = () => {
+					this.onSelect({
+						name: icon.name,
+						svg: getIcon?.(icon.name)?.outerHTML ?? '',
+					});
+					this.close();
+				};
             });
             // 只在非追加模式下显示加载提示
             if (!append && toShow.length < filteredIcons.length) {
-                const loadingDiv = iconList.createDiv({
+				iconList.createDiv({
                     text: t('scroll_load_more'),
                     cls: 'icon-loading-tip',
                 });
@@ -161,14 +160,19 @@ export class IconSearchModal extends Modal {
                     selectedSuggestionIndex = (selectedSuggestionIndex - 1 + total) % total;
                     renderIcons(false); // 重新渲染以更新选中状态
                     break;
-                case 'Enter':
-                    e.preventDefault();
-                    if (selectedSuggestionIndex > -1) {
-						const icon = filteredIcons[selectedSuggestionIndex] ?? allIcons[selectedSuggestionIndex];
-                        this.onSelect(icon);
-                        this.close();
-                    }
-                    break;
+				case 'Enter':
+					e.preventDefault();
+					if (selectedSuggestionIndex > -1) {
+						const icon =
+							filteredIcons[selectedSuggestionIndex] ??
+							allIcons[selectedSuggestionIndex];
+						this.onSelect({
+							name: icon.name,
+							svg: getIcon?.(icon.name)?.outerHTML ?? '',
+						});
+						this.close();
+					}
+					break;
                 case 'Escape':
                     this.close();
                     break;

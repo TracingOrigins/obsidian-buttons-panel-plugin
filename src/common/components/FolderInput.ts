@@ -1,6 +1,7 @@
+import type { App } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
-import { t } from '@/common/utils/i18n';
 import { FolderSearchModal } from '@/common/modals/FolderSearchModal';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
  * FolderInput 组件用于在设置面板中创建文件夹选择输入框，支持文件夹搜索和回调。
@@ -33,7 +34,7 @@ export class FolderInput {
     constructor(
         container: HTMLElement,
         options: FolderInputOptions,
-        context: any,
+		context: { app: App; plugin: ButtonsPanelPlugin },
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
@@ -43,14 +44,13 @@ export class FolderInput {
             btn.setButtonText('')
                 .setClass('custom-button')
                 .setTooltip(options.searchTooltip)
-                .setIcon('folder')
-                .onClick(() => {
-                    new FolderSearchModal(context.app, context.plugin, (folder: any) => {
-                        let folderName = folder?.name || (typeof folder === 'string' ? folder : '');
-                        this.input.setValue(folderName);
-                        onValueChange?.(folderName);
-                    }).open();
-                });
+				.setIcon('folder')
+				.onClick(() => {
+					new FolderSearchModal(context.app, context.plugin, (folderPath: string) => {
+						this.input.setValue(folderPath);
+						onValueChange?.(folderPath);
+					}).open();
+				});
         });
 
         // 输入框

@@ -1,6 +1,7 @@
+import type { App } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
-import { t } from '@/common/utils/i18n';
 import { CommandSearchModal } from '@/common/modals/CommandSearchModal';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
  * CommandInput 组件用于在设置面板中创建命令选择输入框，支持命令搜索和回调。
@@ -32,13 +33,13 @@ export class CommandInput {
      * 构造函数
      * @param container 容器元素
      * @param options 组件配置项
-     * @param context 上下文（含 app、plugin）
+	 * @param context 上下文（含 app、plugin）
      * @param onValueChange 输入值变化回调
      */
     constructor(
         container: HTMLElement,
         options: CommandInputOptions,
-        context: any,
+		context: { app: App; plugin: ButtonsPanelPlugin },
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);

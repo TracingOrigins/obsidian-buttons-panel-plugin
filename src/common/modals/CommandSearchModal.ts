@@ -1,5 +1,6 @@
-import { App, Modal, TextComponent } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import type { App, Command } from 'obsidian';
+import { Modal, TextComponent } from 'obsidian';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 
 /**
@@ -40,9 +41,9 @@ export class CommandSearchModal extends Modal {
             .setValue('');
         input.inputEl.classList.add('search-input');
 
-        // 建议列表容器
+		// 建议列表容器
         const suggestions = contentEl.createDiv({ cls: 'command-suggestions-container' });
-        let filteredCommands: any[] = [];
+		let filteredCommands: Array<Command & { id: string }> = [];
         let selectedSuggestionIndex = 0;
 
         /**
@@ -95,12 +96,13 @@ export class CommandSearchModal extends Modal {
         const updateFilter = () => {
             const query = input.getValue().trim().toLowerCase();
             // 获取所有命令对象
-            const allCommands = (this.app as any).commands?.commands || {};
-            const commandList = Object.entries(allCommands).map(([id, cmd]: [string, any]) => ({
-                id,
-                name: cmd.name,
-                ...cmd,
-            }));
+			const allCommands = this.app.commands?.commands ?? {};
+			const commandList: Array<Command & { id: string }> = Object.entries(allCommands).map(
+				([id, cmd]) => ({
+					id,
+					...(cmd as Command),
+				})
+			);
 
             filteredCommands = commandList.filter(
                 (cmd) =>

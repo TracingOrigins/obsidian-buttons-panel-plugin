@@ -1,6 +1,7 @@
+import type { App, TFile } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
-import { t } from '@/common/utils/i18n';
 import { FileSearchModal } from '@/common/modals/FileSearchModal';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
  * FileInput 组件用于在设置面板中创建文件选择输入框，支持文件搜索和回调。
@@ -40,7 +41,7 @@ export class FileInput {
     constructor(
         container: HTMLElement,
         options: FileInputOptions,
-        context: any,
+		context: { app: App; plugin: ButtonsPanelPlugin },
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
@@ -53,14 +54,16 @@ export class FileInput {
                 .setIcon('search')
                 .onClick(() => {
                     new FileSearchModal(
-                        context.app,
-                        context.plugin,
-                        (file: any) => {
-                            let valueToSet;
+						context.app,
+						context.plugin,
+						(file: TFile | string) => {
+							let valueToSet: string;
                             if (options.showFileNameOnly) {
-                                valueToSet = file?.name || (typeof file === 'string' ? file : '');
+								valueToSet =
+									typeof file === 'string' ? file : file?.name ?? '';
                             } else {
-                                valueToSet = file?.path || (typeof file === 'string' ? file : '');
+								valueToSet =
+									typeof file === 'string' ? file : file?.path ?? '';
                             }
                             this.input.setValue(valueToSet);
                             onValueChange?.(valueToSet);

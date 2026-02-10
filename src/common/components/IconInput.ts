@@ -1,3 +1,4 @@
+import type { App } from 'obsidian';
 import { setIcon, Setting, TextComponent } from 'obsidian';
 import { t } from '@/common/utils/i18n';
 import { IconSearchModal } from '@/common/modals/IconSearchModal';
@@ -41,7 +42,7 @@ export class IconInput {
     constructor(
         container: HTMLElement,
         options: IconInputOptions,
-        context: any,
+		context: { app: App; plugin: unknown },
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container)

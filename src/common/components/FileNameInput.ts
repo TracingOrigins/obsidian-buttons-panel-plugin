@@ -1,6 +1,8 @@
+import type { App } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
 import { t } from '@/common/utils/i18n';
 import { FileNameSuggestModal } from '@/common/modals/FileNameSuggestModal';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
  * FileNameInput 组件用于在设置面板中创建文件名输入框，支持文件名建议和回调。
@@ -39,7 +41,7 @@ export class FileNameInput {
     constructor(
         container: HTMLElement,
         options: FileNameInputOptions,
-        context: any,
+		context: { app: App; plugin: ButtonsPanelPlugin },
         onValueChange?: (value: string) => void
     ) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);

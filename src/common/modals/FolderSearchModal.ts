@@ -1,5 +1,6 @@
-import { App, Modal, TextComponent } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
+import type { App, TAbstractFile, TFolder } from 'obsidian';
+import { Modal, TextComponent } from 'obsidian';
+import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
 
 /**
@@ -48,25 +49,23 @@ export class FolderSearchModal extends Modal {
         /**
          * 获取所有文件夹路径（包括空文件夹）。
          */
-        const getAllFolders = (): string[] => {
-            const folders: string[] = [];
-            const traverse = (folder: any) => {
-                // TFolder 类型
-                if (folder && folder.path !== undefined) {
-                    folders.push(folder.path);
-                }
-                if (folder && folder.children) {
-                    for (const child of folder.children) {
-                        // 只递归 TFolder
-                        if (child.children) {
-                            traverse(child);
-                        }
-                    }
-                }
-            };
-            traverse(this.app.vault.getRoot());
-            return folders.sort();
-        };
+		const getAllFolders = (): string[] => {
+			const folders: string[] = [];
+			const traverse = (folder: TFolder) => {
+				folders.push(folder.path);
+				const children: TAbstractFile[] = folder.children ?? [];
+				for (const child of children) {
+					if (child instanceof TFolder) {
+						traverse(child);
+					}
+				}
+			};
+			const root = this.app.vault.getRoot();
+			if (root instanceof TFolder) {
+				traverse(root);
+			}
+			return folders.sort();
+		};
 
         /**
          * 滚动到当前选中的建议项。

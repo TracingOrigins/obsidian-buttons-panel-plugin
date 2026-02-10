@@ -1,7 +1,7 @@
 // ButtonMoveManager.ts
 // 按钮移动管理器，负责处理按钮的移动逻辑。
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { ButtonConfig } from '@/common/types';
+import { ButtonConfig, PanelConfig } from '@/common/types';
 import { ViewStateManager } from '@/views/managers/ViewStateManager';
 import type { ButtonsPanelView } from '@/views/ButtonsPanelView';
 import { safeSetSVG } from '@/common/utils/dom';
@@ -36,7 +36,7 @@ export class ButtonMoveManager {
      * @param buttonEl 按钮对应的DOM元素
      * @param panelConfig 面板配置
      */
-    startMoveMode(button: ButtonConfig, buttonEl: HTMLElement, panelConfig: any): void {
+    startMoveMode(button: ButtonConfig, buttonEl: HTMLElement, panelConfig: PanelConfig): void {
         const moveState = this.stateManager.getMoveState();
         moveState.isMoving = true;
         moveState.movingButton = button;
@@ -77,7 +77,7 @@ export class ButtonMoveManager {
      * @param panelConfig 面板配置
      * @returns 指示器DOM元素
      */
-    private createMoveIndicator(button: ButtonConfig, panelConfig: any): HTMLElement {
+    private createMoveIndicator(button: ButtonConfig, panelConfig: PanelConfig): HTMLElement {
         const indicator = document.createElement('button');
         indicator.className = 'buttons-panel-plugin button-move-indicator';
         indicator.setAttribute('data-button-id', button.id);
