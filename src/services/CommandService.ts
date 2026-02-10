@@ -34,22 +34,23 @@ export class CommandService {
             const commandParams = action.parameters as CommandActionParams;
 
             // 动作执行前，自动激活最后激活的内容标签页（排除按钮面板）
-            const lastContentLeaf = getLastActiveContentLeaf(
-                this.app,
-                'buttons-panel-view',
-                (this.plugin as any).lastActiveContentLeaf
-            );
+			const lastContentLeaf = getLastActiveContentLeaf(
+				this.app,
+				'buttons-panel-view',
+				this.plugin?.lastActiveContentLeaf ?? null
+			);
             if (lastContentLeaf) {
                 this.app.workspace.setActiveLeaf(lastContentLeaf, { focus: true });
             }
 
-            // 执行命令
-            await (this.app as any).commands.executeCommandById(commandParams.commandId);
-        } catch (error) {
+			// 执行命令
+			await this.app.commands.executeCommandById(commandParams.commandId);
+		} catch (error) {
             console.error('执行命令时出错:', error);
             const commandParams = action.parameters as CommandActionParams;
             new Notice(
-                t('command_execution_failed') + `: ${commandParams.commandId} - ${error.message}`
+				t('command_execution_failed') +
+					`: ${commandParams.commandId} - ${(error as Error).message}`
             );
         }
     }

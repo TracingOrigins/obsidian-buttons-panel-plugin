@@ -1,6 +1,6 @@
 // plugin.ts
 // 插件主类接口类型扩展，约束插件主类结构。
-import { Plugin } from 'obsidian';
+import type { Plugin, SettingTab } from 'obsidian';
 import { ButtonsPanelPluginSettings } from '@/common/types';
 
 /**
@@ -11,7 +11,7 @@ export interface ButtonsPanelPlugin extends Plugin {
     /** 插件设置对象 */
     settings: ButtonsPanelPluginSettings;
     /** 设置页签对象（类型可自定义） */
-    settingTab: any;
+	settingTab: SettingTab;
 
     /** 动作调度器实例（暴露最小可用表面） */
     ActionDispatcher: {

@@ -10,15 +10,17 @@ export class ButtonActionFactory {
      * 从原始 JSON 数据创建动作实例。
      * @param raw 原始动作对象
      */
-    static fromRaw(raw: any): IButtonAction {
-        if (!raw || typeof raw !== 'object' || !raw.type) {
+	static fromRaw(raw: unknown): IButtonAction {
+		if (!raw || typeof raw !== 'object' || !('type' in raw)) {
             throw new Error('Invalid raw action: ' + JSON.stringify(raw));
         }
-        const ActionClass = ACTION_TYPES[raw.type as keyof typeof ACTION_TYPES];
+		const type = (raw as { type: string }).type;
+		const ActionClass = ACTION_TYPES[type as keyof typeof ACTION_TYPES];
         if (!ActionClass) {
-            throw new Error('Unknown action type: ' + raw.type);
+			throw new Error('Unknown action type: ' + type);
         }
-        return new ActionClass(raw.parameters);
+		const parameters = (raw as { parameters?: unknown }).parameters;
+		return new ActionClass(parameters);
     }
 
     /**
@@ -26,7 +28,7 @@ export class ButtonActionFactory {
      * @param type 动作类型字符串
      * @param parameters 构造参数
      */
-    static createAction(type: string, parameters: any): IButtonAction {
+	static createAction(type: string, parameters: unknown): IButtonAction {
         const ActionClass = ACTION_TYPES[type as keyof typeof ACTION_TYPES];
         if (!ActionClass) {
             throw new Error('Unknown action type: ' + type);

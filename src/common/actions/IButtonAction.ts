@@ -8,13 +8,13 @@ export interface IButtonAction {
     /**
      * 渲染表单控件
      * @param container 容器元素
-     * @param context 上下文
+	 * @param context 上下文（具体结构由各动作自行定义）
      */
-    render(container: HTMLElement, context: any): void;
+	render(container: HTMLElement, context: unknown): void;
     /** 校验表单数据有效性 */
     validate(): boolean;
     /** 序列化为 JSON 数据 */
-    toJSON(): any;
+	toJSON(): unknown;
     /** 设置错误提示（可选） */
     setError?(message: string): void;
     /** 清除错误提示（可选） */

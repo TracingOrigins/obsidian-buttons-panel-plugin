@@ -521,10 +521,10 @@ export class ButtonManagementSection {
                                         btn.id === currentButton.id
                                     )
                                         return;
-                                    menu.addItem((item) => {
-                                        item.setIcon('arrow-right')
-                                            .setTitle(btn.name)
-                                            .onClick(async () => {
+									menu.addItem((item) => {
+										item.setIcon('arrow-right')
+											.setTitle(btn.name)
+											.onClick(async () => {
                                                 this.removeButtonFromCategory(
                                                     currentCategory,
                                                     currentButton.id
@@ -534,11 +534,11 @@ export class ButtonManagementSection {
                                                     currentButton,
                                                     idx
                                                 );
-                                                await this.plugin.saveSettings();
-                                                this.displayCallback?.();
-                                            });
-                                        (item as any).dom?.classList &&
-                                            (item as any).dom.classList.add('button-indent');
+												await this.plugin.saveSettings();
+												this.displayCallback?.();
+											});
+										const domEl = (item as { dom?: HTMLElement }).dom;
+										domEl?.classList.add('button-indent');
                                     });
                                 });
                             });

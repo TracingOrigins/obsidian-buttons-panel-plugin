@@ -35,7 +35,7 @@ export default class ButtonsPanelPlugin extends Plugin {
     /** 设置页签对象 */
     settingTab: ButtonsPanelSettingTab;
     /** 按钮动作执行器对象 */
-    ActionDispatcher: any;
+	ActionDispatcher: ButtonsPanelPluginType['ActionDispatcher'];
     /** 记录最后激活的内容标签页（排除按钮面板） */
     lastActiveContentLeaf: WorkspaceLeaf | null = null;
     /** 分类展开状态（运行时状态，不持久化） */
@@ -124,8 +124,8 @@ export default class ButtonsPanelPlugin extends Plugin {
      * 加载插件设置（异步），合并默认设置和已保存设置。
      */
     async loadSettings() {
-        const data = await this.loadData();
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, data);
+		const data = await this.loadData<ButtonsPanelPluginSettings>();
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, data ?? {});
         // 只在初始化时重置运行时状态，避免重复调用时丢失状态
         if (Object.keys(this.categoryOpenState).length === 0) {
             this.categoryOpenState = {};

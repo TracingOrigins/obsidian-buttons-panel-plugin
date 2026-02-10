@@ -37,13 +37,14 @@ export class ScriptService {
             const lastContentLeaf = getLastActiveContentLeaf(
                 this.app,
                 'buttons-panel-view',
-                (this.plugin as any).lastActiveContentLeaf
+				this.plugin?.lastActiveContentLeaf ?? null
             );
             if (lastContentLeaf) {
                 this.app.workspace.setActiveLeaf(lastContentLeaf, { focus: true });
             }
 
-            const scriptFileName = action.type === 'script' ? action.parameters.scriptName : '';
+			const scriptFileName =
+				action.type === 'script' ? action.parameters.scriptName : '';
             // 获取脚本文件夹路径（从插件设置中读取）
             let scriptFolderPath = this.plugin?.settings?.pathConfig?.scriptFolderPath ?? '';
             // 使用 normalizePath 清理路径
@@ -66,7 +67,7 @@ export class ScriptService {
             const scriptContent = await this.app.vault.read(scriptFile);
 
             // 构造脚本执行环境
-            const module: { exports: any } = { exports: { undefined } };
+			const module: { exports: unknown } = { exports: { undefined } };
             const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
             // 动态构造异步函数，注入上述变量
@@ -81,49 +82,55 @@ export class ScriptService {
                 scriptContent
             );
             // 定义可选参数 params
-            let params = action.parameters ?? undefined;
+			const params = action.parameters ?? undefined;
 
             // 执行脚本内容，让 module.exports 被赋值为脚本导出的函数
-            await fn.call(
-                { app: this.app, plugin: this.plugin },
-                module,
-                module.exports,
-                require,
-                this.app,
-                this.plugin,
-                (msg: string) => new Notice(msg),
-                params
-            );
+			const requireFromWindow =
+				(window as unknown as { require?: (...args: unknown[]) => unknown }).require;
+			await fn.call(
+				{ app: this.app, plugin: this.plugin },
+				module,
+				module.exports,
+				requireFromWindow,
+				this.app,
+				this.plugin,
+				(msg: string) => new Notice(msg),
+				params
+			);
 
             // 如果脚本导出为函数或对象的 default.entry 是函数，则自动调用
             if (typeof module.exports === 'function') {
-                await module.exports.call(
-                    { app: this.app, plugin: this.plugin },
-                    params,
-                    this.app,
-                    this.plugin,
-                    (msg: string) => new Notice(msg)
-                );
+				await (module.exports as (...args: unknown[]) => unknown).call(
+					{ app: this.app, plugin: this.plugin },
+					params,
+					this.app,
+					this.plugin,
+					(msg: string) => new Notice(msg)
+				);
             } else if (
                 module.exports &&
                 typeof module.exports === 'object' &&
-                module.exports.default &&
-                typeof module.exports.default.entry === 'function'
+				(module.exports as { default?: { entry?: unknown } }).default &&
+				typeof (module.exports as { default?: { entry?: unknown } }).default
+					?.entry === 'function'
             ) {
-                await module.exports.default.entry.call(
-                    { app: this.app, plugin: this.plugin },
-                    params,
-                    this.app,
-                    this.plugin,
-                    (msg: string) => new Notice(msg)
-                );
+				const entry = (module.exports as {
+					default?: { entry?: (...args: unknown[]) => unknown };
+				}).default?.entry;
+				await entry?.call(
+					{ app: this.app, plugin: this.plugin },
+					params,
+					this.app,
+					this.plugin,
+					(msg: string) => new Notice(msg)
+				);
             } else {
                 // 未正确导出函数，弹出通知
                 new Notice(tWithParams('script_invalid_export', { scriptFileName }));
             }
-        } catch (error) {
+		} catch (error) {
             // 捕获并通知脚本运行异常
-            new Notice(t('script_run_failed') + `: ${error.message}`);
+			new Notice(t('script_run_failed') + `: ${(error as Error).message}`);
         }
     }
 }

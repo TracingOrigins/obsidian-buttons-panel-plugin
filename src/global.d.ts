@@ -2,7 +2,7 @@
 
 declare global {
 	interface DocumentEventMap {
-		'buttons-panel-refresh': CustomEvent<any>;
+		'buttons-panel-refresh': CustomEvent<unknown>;
 	}
 }
 

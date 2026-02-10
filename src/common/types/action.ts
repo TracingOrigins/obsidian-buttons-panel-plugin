@@ -18,7 +18,7 @@ export interface CommandActionParams {
     /** 命令ID */
     commandId: string;
     /** 命令参数（可选） */
-    args?: any[];
+	args?: unknown[];
 }
 
 /**
@@ -51,7 +51,7 @@ export interface ScriptActionParams {
     /** 脚本名 */
     scriptName: string;
     /** 脚本参数（可选） */
-    args?: any[];
+	args?: unknown[];
 }
 
 /**

@@ -16,8 +16,8 @@ export class ActionSequence {
      * 构造函数，将原始动作数据转为动作实例。
      * @param rawActions 原始动作配置数组
      */
-    constructor(rawActions: any[]) {
-        this.actions = rawActions.map(ButtonActionFactory.fromRaw);
+	constructor(rawActions: any[]) {
+		this.actions = rawActions.map((raw) => ButtonActionFactory.fromRaw(raw));
     }
 
     /**

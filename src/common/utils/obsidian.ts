@@ -14,13 +14,13 @@ export function refreshAllSettingsViews(app: App): void {
     if (Array.isArray(leaves)) {
         for (const leaf of leaves) {
             try {
-                // 安全处理 DeferredView (Obsidian v1.7.2+)
-                if (leaf.view instanceof ButtonsPanelSettingsView) {
-                    const view = leaf.view as ButtonsPanelSettingsView;
-                    if (view && typeof view.refreshSettings === 'function') {
-                        view.refreshSettings();
-                    }
-                }
+				// 安全处理 DeferredView (Obsidian v1.7.2+)
+				if (leaf.view instanceof ButtonsPanelSettingsView) {
+					const view = leaf.view;
+					if (view && typeof view.refreshSettings === 'function') {
+						view.refreshSettings();
+					}
+				}
             } catch (error) {
                 console.warn('刷新设置视图时出错:', error);
             }
