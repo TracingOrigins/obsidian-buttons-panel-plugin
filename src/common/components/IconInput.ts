@@ -1,9 +1,9 @@
 import type { App } from 'obsidian';
-import { setIcon, Setting, TextComponent } from 'obsidian';
+import { Setting, TextComponent, getIcon } from 'obsidian';
 import { t } from '@/common/utils/i18n';
-import { IconSearchModal } from '@/common/modals/IconSearchModal';
 import { safeSetSVG } from '@/common/utils/dom';
 import type { ButtonsPanelPlugin } from '@/common/types/plugin';
+import { IconInputSuggest } from '@/common/suggest/IconInputSuggest';
 
 /**
  * IconInput 组件用于在设置面板中创建图标输入框，支持 SVG 上传、图标搜索、预览和删除。
@@ -30,8 +30,8 @@ export class IconInput {
     private input: TextComponent;
     private setting: Setting;
     private svgPreview: HTMLSpanElement | null = null;
-    private deleteBtn: HTMLButtonElement | null = null;
     private value: string = '';
+    private suggest: IconInputSuggest | null = null;
 
     /**
      * 构造函数
@@ -76,26 +76,6 @@ export class IconInput {
             btn.buttonEl.classList.add('icon-upload-btn');
         });
 
-        // 搜索按钮
-        this.setting.addButton((btn) => {
-            btn.setButtonText('')
-                .setClass('custom-button')
-                .setTooltip(options.searchTooltip ?? t('search_icons_tooltip'))
-                .setIcon('search')
-                .onClick(() => {
-                    new IconSearchModal(
-                        context.app,
-                        context.plugin,
-                        (icon: { name: string; svg: string }) => {
-                            this.setValue(icon.svg);
-                            onValueChange?.(icon.svg);
-                            options.onIconChange?.(icon.svg);
-                        }
-                    ).open();
-                });
-            btn.buttonEl.classList.add('icon-search-btn');
-        });
-
         // 输入框
         this.setting.addText((text) => {
             this.input = text;
@@ -110,6 +90,17 @@ export class IconInput {
 
         const iconInputEl = this.setting.controlEl.querySelector('input')!;
         iconInputEl.addEventListener('input', () => this.refreshIconUI());
+
+        // 为图标输入框附加基于 ID 的下拉建议
+        this.suggest = new IconInputSuggest(context.app, iconInputEl);
+        this.suggest.onSelect((iconId, _evt) => {
+            // 将选中的图标 ID 转为 SVG 字符串，与原先 IconSearchModal 行为保持一致
+            const svg = getIcon?.(iconId)?.outerHTML ?? iconId;
+            this.setValue(svg);
+            onValueChange?.(svg);
+            options.onIconChange?.(svg);
+            this.suggest?.close();
+        });
     }
 
     /**
@@ -139,20 +130,6 @@ export class IconInput {
             safeSetSVG(this.svgPreview, val);
             this.svgPreview.classList.remove(HIDDEN_CLASS);
             this.setting.controlEl.insertBefore(this.svgPreview, iconInputEl);
-
-            // 删除按钮
-            if (!this.deleteBtn) {
-                this.deleteBtn = this.setting.controlEl.createEl('button', {
-                    cls: 'icon-delete-btn',
-                });
-                setIcon(this.deleteBtn, 'x');
-                this.deleteBtn.onclick = () => {
-                    this.setValue('');
-                };
-                iconInputEl.parentElement!.classList.add('icon-input-container');
-                iconInputEl.parentElement!.appendChild(this.deleteBtn);
-            }
-            this.deleteBtn.classList.remove(HIDDEN_CLASS);
         } else {
             // 显示上传和搜索按钮
             const uploadBtn = this.setting.controlEl.querySelector(
@@ -164,7 +141,6 @@ export class IconInput {
             if (uploadBtn) uploadBtn.classList.remove(HIDDEN_CLASS);
             if (searchBtn) searchBtn.classList.remove(HIDDEN_CLASS);
             if (this.svgPreview) this.svgPreview.classList.add(HIDDEN_CLASS);
-            if (this.deleteBtn) this.deleteBtn.classList.add(HIDDEN_CLASS);
         }
     }
 

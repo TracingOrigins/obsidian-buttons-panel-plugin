@@ -39,4 +39,21 @@ export function createHelpSection(containerEl: HTMLElement, _plugin: ButtonsPane
     subLi1.textContent = t('help_tab_scroll_pc');
     const subLi2 = subUl.createEl('li');
     subLi2.textContent = t('help_tab_scroll_mobile');
+
+    // 推荐图标库
+    const li6 = ul.createEl('li');
+    li6.appendText(t('help_icon_library_recommend') + ' ');
+    li6.createEl('a', {
+        text: t('help_icon_library_iconfont'),
+        href: 'https://www.iconfont.cn/',
+        attr: {
+            target: '_blank',
+            rel: 'noopener',
+        },
+    });
+
+    // 推荐图标库的子级提示
+    const iconSubUl = li6.createEl('ul', { cls: 'help-sub-list' });
+    const iconSubLi = iconSubUl.createEl('li');
+    iconSubLi.textContent = t('help_icon_library_suggestion');
 }

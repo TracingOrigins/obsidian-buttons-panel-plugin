@@ -1,6 +1,6 @@
 import type { App } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
-import { CommandSearchModal } from '@/common/modals/CommandSearchModal';
+import { CommandInputSuggest } from '@/common/suggest/CommandInputSuggest';
 import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
@@ -28,6 +28,7 @@ export interface CommandInputOptions {
 export class CommandInput {
     private input: TextComponent;
     private setting: Setting;
+    private suggest: CommandInputSuggest | null = null;
 
     /**
      * 构造函数
@@ -44,21 +45,6 @@ export class CommandInput {
     ) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
-        // 搜索按钮
-        this.setting.addButton((btn) => {
-            btn.setButtonText('')
-                .setClass('custom-button')
-                .setTooltip(options.searchTooltip)
-                .setIcon('search')
-                .onClick(() => {
-                    new CommandSearchModal(context.app, context.plugin, (commandId: string) => {
-                        this.input.setValue(commandId);
-                        onValueChange?.(commandId);
-                        options.onCommandChange?.(commandId);
-                    }).open();
-                });
-        });
-
         // 输入框
         this.input = new TextComponent(document.createElement('input')).setPlaceholder(
             options.placeholder
@@ -66,6 +52,22 @@ export class CommandInput {
 
         // 将输入框添加到设置控件中
         this.setting.controlEl.appendChild(this.input.inputEl);
+
+        // 附加 Obsidian 原生的输入框下拉建议
+        this.suggest = new CommandInputSuggest(context.app, this.input.inputEl);
+        this.suggest.onSelect((cmd, _evt) => {
+            const commandId = cmd.id;
+            this.input.setValue(commandId);
+            onValueChange?.(commandId);
+            options.onCommandChange?.(commandId);
+            // 选中后关闭悬浮建议框
+            this.suggest?.close();
+        });
+
+        // 聚焦时主动打开建议框（显示全部命令），提升可发现性
+        this.input.inputEl.addEventListener('focus', () => {
+            this.suggest?.open();
+        });
 
         // 输入变化回调
         this.input.onChange((value) => {

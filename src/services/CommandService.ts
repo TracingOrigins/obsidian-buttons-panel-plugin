@@ -49,13 +49,19 @@ export class CommandService {
                 this.app.workspace.setActiveLeaf(lastContentLeaf, { focus: true });
             }
 
-            // 执行命令（通过局部封装的命令 API 调用，避免直接访问 error-typed 字段）
-            const commandsApi = (this.app as unknown as { commands?: unknown }).commands;
-            const executeCommandById = (
-                commandsApi as { executeCommandById?: (id: string) => boolean | void }
-            ).executeCommandById;
-            if (typeof executeCommandById === 'function') {
-                executeCommandById(commandParams.commandId);
+            // 执行命令
+            // 注意：不能将 executeCommandById 解构出来单独调用，否则会丢失 this 上下文，
+            // 在 Obsidian 内部实现中会导致类似 "Cannot read properties of undefined (reading 'findCommand')" 的错误。
+            const commandsApi = (this.app as unknown as {
+                commands?: { executeCommandById?: (id: string) => boolean | void };
+            }).commands;
+
+            if (
+                commandsApi &&
+                typeof commandsApi.executeCommandById === 'function'
+            ) {
+                // 直接通过对象调用以确保 this 绑定正确
+                commandsApi.executeCommandById(commandParams.commandId);
             } else {
                 throw new Error('commands.executeCommandById is not available');
             }

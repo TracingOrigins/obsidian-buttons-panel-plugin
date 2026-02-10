@@ -334,8 +334,6 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
 .buttons-panel-plugin .add-button-card button {
     border: none;
     background-color: unset;
-    /* color: var(--text-normal); */
-    /* color: var(--text-muted); */
     color: var(--text-faint);
     box-shadow: none;
     padding: 1px 6px;
@@ -344,9 +342,7 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
 .buttons-panel-plugin .add-action-btn:hover,
 .buttons-panel-plugin .add-category-btn:hover,
 .buttons-panel-plugin .add-button-btn:hover {
-    border-color: var(--interactive-accent);
     color: var(--interactive-accent);
-    background: var(--background-modifier-hover);
 }
 
 .buttons-panel-plugin .add-action-card {
@@ -579,6 +575,7 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
     color: var(--text-normal);
     padding: 1px 6px;
     gap: 0;
+    box-shadow: unset !important;
 }
 
 /* 模态框：图标搜索模态框、文件搜索模态框、文件夹搜索模态框、命令搜索模态框、文件名模态框的样式 */
@@ -596,24 +593,6 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
     display: flex;
     justify-content: center;
     margin: 24px;
-}
-
-.buttons-panel-plugin .search-input {
-    width: 320px;
-    height: 35px;
-    text-align: center;
-    font-size: 1.1em;
-    border: 1px solid var(--interactive-accent);
-    border-radius: 16px;
-}
-
-.buttons-panel-plugin input:focus,
-.buttons-panel-plugin select:focus,
-.buttons-panel-plugin select.dropdown:focus,
-.buttons-panel-plugin textarea:focus {
-    outline: none;
-    border-color: var(--interactive-accent);
-    box-shadow: unset;
 }
 
 .buttons-panel-plugin .icon-list,
@@ -729,14 +708,33 @@ button.buttons-panel-plugin.button-move-indicator.icon-top .button-text,
     color: var(--text-muted);
 }
 
+.buttons-panel-plugin .setting-item-control button.icon-delete-btn:hover {
+    background-color: var(--interactive-normal) !important;
+}
 /* 图标输入框容器 */
 .buttons-panel-plugin .icon-input-container {
     position: relative;
 }
 
-.buttons-panel-plugin .icon-input-container input {
-    display: inline-block;
-    position: relative;
+/* 图标输入框：下拉建议项样式 */
+.buttons-panel-icon-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+}
+
+.buttons-panel-icon-suggestion__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+}
+
+.buttons-panel-icon-suggestion__label {
+    color: var(--text-muted);
+    font-size: 0.9em;
 }
 
 /* 编辑按钮模态框：动作类型为创建文件时，其下方的div的样式 */
@@ -952,23 +950,23 @@ button.buttons-panel-plugin.button-move-indicator.icon-top {
 /* --------------------- ▼ 移动端样式 ▼ --------------------- */
 
 /* 配置面板：去除在移动端的按钮管理中长按分类或者按钮弹出的菜单中的选项的背景色 */
-.is-phone .buttons-panel-plugin .menu-item.mobile-tap:not(.is-disabled) {
+.is-mobile .buttons-panel-plugin .menu-item.mobile-tap:not(.is-disabled) {
     background-color: unset;
 }
 
 /* 配置面板：给在移动端的按钮管理中长按按钮弹出的菜单中的按钮选项添加缩进样式 */
-.is-phone .menu.buttons-panel-plugin .button-indent {
+.is-mobile .menu.buttons-panel-plugin .button-indent {
     padding-left: 2em;
 }
 
 /* 配置面板、模态框：让移动端选项中的文字和输入框在同一行显示 */
-.is-phone .buttons-panel-plugin .setting-item:not(.mod-toggle):not(.setting-item-heading) {
+.is-mobile .buttons-panel-plugin .setting-item:not(.mod-toggle):not(.setting-item-heading) {
     flex-direction: unset;
     align-items: center;
 }
 
 /* 配置面板、模态框：固定移动端上的按钮和输入框容器的长度 */
-.is-phone
+.is-mobile
     .buttons-panel-plugin
     .setting-item:not(.mod-toggle):not(.setting-item-heading)
     .setting-item-control {
@@ -977,21 +975,19 @@ button.buttons-panel-plugin.button-move-indicator.icon-top {
 }
 
 /* 配置面板、模态框：优化移动端的输入框左侧按钮样式 */
-.is-phone .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).custom-button {
+.is-mobile .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).custom-button {
     width: unset;
-    padding: 0;
     padding: 0;
     width: 30px;
     height: 30px;
-    border: 1px solid var(--background-modifier-border);
 }
 
 /* 模态框：优化移动端的保存按钮样式 */
-.is-phone
+.is-mobile
     .buttons-panel-plugin
     .setting-item-control
     button:not(.clickable-icon).custom-save-button,
-.is-phone
+.is-mobile
     .buttons-panel-plugin
     .setting-item-control
     button:not(.clickable-icon).custom-cancel-button {
@@ -1000,7 +996,7 @@ button.buttons-panel-plugin.button-move-indicator.icon-top {
 }
 
 /* 模态框：优化移动端的模态框的样式 */
-.is-phone .modal:has(.buttons-panel-plugin) {
+.is-mobile .modal:has(.buttons-panel-plugin) {
     border: 1px solid var(--interactive-accent);
     border-radius: 8px;
     width: 95vw;
@@ -1017,20 +1013,6 @@ button.buttons-panel-plugin.button-move-indicator.icon-top {
 }
 
 /* --------------------- ▼ 通用样式 ▼ --------------------- */
-
-/* 配置面板、模态框：输入框、下拉框等的样式 */
-.buttons-panel-plugin .setting-item-control input[type='text'],
-.buttons-panel-plugin .setting-item-control select,
-.buttons-panel-plugin .setting-item-control select.drdropdown {
-    width: 160px;
-    height: 30px;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    background-color: var(--background-primary);
-    color: var(--text-normal);
-    font-size: 1em;
-    transition: border-color 0.2s;
-}
 
 /* 全局：通用隐藏样式 */
 .buttons-panel-plugin .is-hidden {

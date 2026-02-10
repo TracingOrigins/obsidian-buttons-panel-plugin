@@ -1,7 +1,7 @@
 import { App, Setting, Notice, TextComponent, normalizePath } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/common/types/plugin';
 import { t } from '@/common/utils/i18n';
-import { FolderSearchModal } from '@/common/modals/FolderSearchModal';
+import { FolderInputSuggest } from '@/common/suggest/FolderInputSuggest';
 
 /**
  * createPathConfigSection 创建路径设置区域。
@@ -50,25 +50,18 @@ export function createPathConfigSection(
         // 初始化时验证路径
         updateInputErrorState(input, getValue());
 
-        const setting = new Setting(card)
-            .setName(name)
-            .setDesc(desc)
-            .addButton((button) =>
-                button
-                    .setButtonText('')
-                    .setClass('custom-button')
-                    .setTooltip(t('search_folders_tooltip'))
-                    .setIcon('search')
-                .onClick(() => {
-                    new FolderSearchModal(app, plugin, (folderPath: string) => {
-                        input.setValue(folderPath);
-                        setValue(folderPath);
-                        void plugin.saveSettings();
-                        updateInputErrorState(input, folderPath);
-                    }).open();
-                })
-            );
+        const setting = new Setting(card).setName(name).setDesc(desc);
         setting.controlEl.appendChild(wrapper);
+
+        // 附加文件夹路径下拉建议
+        const suggest = new FolderInputSuggest(app, input.inputEl);
+        suggest.onSelect((folderPath, _evt) => {
+            input.setValue(folderPath);
+            setValue(folderPath);
+            void plugin.saveSettings();
+            updateInputErrorState(input, folderPath);
+            suggest.close();
+        });
 
         input.onChange(async (value) => {
             setValue(value);

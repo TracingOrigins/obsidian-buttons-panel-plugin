@@ -1,6 +1,6 @@
 import type { App } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
-import { FolderSearchModal } from '@/common/modals/FolderSearchModal';
+import { FolderInputSuggest } from '@/common/suggest/FolderInputSuggest';
 import type { ButtonsPanelPlugin } from '@/common/types/plugin';
 
 /**
@@ -23,6 +23,7 @@ export interface FolderInputOptions {
 export class FolderInput {
     private input: TextComponent;
     private setting: Setting;
+    private suggest: FolderInputSuggest | null = null;
 
     /**
      * 构造函数
@@ -39,26 +40,24 @@ export class FolderInput {
     ) {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
-        // 搜索按钮
-        this.setting.addButton((btn) => {
-            btn.setButtonText('')
-                .setClass('custom-button')
-                .setTooltip(options.searchTooltip)
-				.setIcon('folder')
-				.onClick(() => {
-					new FolderSearchModal(context.app, context.plugin, (folderPath: string) => {
-						this.input.setValue(folderPath);
-						onValueChange?.(folderPath);
-					}).open();
-				});
-        });
-
         // 输入框
         this.input = new TextComponent(document.createElement('input')).setPlaceholder(
             options.placeholder
         );
 
         this.setting.controlEl.appendChild(this.input.inputEl);
+
+        // 附加文件夹路径下拉建议
+        this.suggest = new FolderInputSuggest(context.app, this.input.inputEl);
+        this.suggest.onSelect((folderPath, _evt) => {
+            this.input.setValue(folderPath);
+            onValueChange?.(folderPath);
+            this.suggest?.close();
+        });
+
+        this.input.inputEl.addEventListener('focus', () => {
+            this.suggest?.open();
+        });
 
         // 输入变化回调
         this.input.onChange((value) => {
