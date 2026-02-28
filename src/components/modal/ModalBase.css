@@ -1,0 +1,94 @@
+/* 模态框基础样式（用于所有搜索模态框） */
+.buttons-panel-plugin.icon-search-modal,
+.buttons-panel-plugin.command-search-modal,
+.buttons-panel-plugin.file-search-modal,
+.buttons-panel-plugin.filename-suggest-modal,
+.buttons-panel-plugin.folder-search-modal {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.buttons-panel-plugin .search-input-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 24px;
+}
+
+.buttons-panel-plugin .icon-list,
+.buttons-panel-plugin .category-suggestions-container,
+.buttons-panel-plugin .file-suggestions-container,
+.buttons-panel-plugin .folder-suggestions-container,
+.buttons-panel-plugin .command-suggestions-container,
+.buttons-panel-plugin .filename-suggestions-container {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.buttons-panel-plugin .suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    margin: 2px 0;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    border: 1px solid transparent;
+}
+
+.buttons-panel-plugin .suggestion-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+.buttons-panel-plugin .suggestion-item.is-active,
+.buttons-panel-plugin .icon-item.is-active {
+    background: var(--background-modifier-hover);
+    border-radius: 6px;
+    border-color: var(--interactive-accent);
+}
+
+.buttons-panel-plugin .icon-item {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+    padding: 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 24px;
+    transition: all 0.2s;
+}
+
+.buttons-panel-plugin .icon-item:hover {
+    background: var(--background-modifier-hover);
+    border-color: var(--interactive-accent);
+}
+
+.buttons-panel-plugin .icon-loading-tip {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.buttons-panel-plugin .icon-item svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* 移动端样式 */
+.is-mobile .buttons-panel-plugin .search-input {
+    width: 250px;
+}
+
+.is-mobile .modal:has(.buttons-panel-plugin) {
+    border: 1px solid var(--interactive-accent);
+    border-radius: 8px;
+    width: 95vw;
+}
+

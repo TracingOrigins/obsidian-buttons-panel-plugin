@@ -1,7 +1,7 @@
 import { App, Notice, WorkspaceLeaf } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { ButtonAction, FileActionParams } from '@/common/types/action';
-import { t } from '@/common/utils/i18n';
+import { ButtonsPanelPlugin } from '@/types/plugin';
+import { ButtonAction, FileActionParams } from '@/types/action';
+import { t } from '@/utils/i18n';
 
 /**
  * 文件动作服务类，负责处理文件打开和相关的动作。
@@ -24,23 +24,55 @@ export class FileService {
      * @param action 按钮动作配置对象，需包含 type: 'file' 及参数
      */
     async openFile(action: ButtonAction): Promise<void> {
-        // 类型守卫：确保这是文件动作
-        if (action.type !== 'file') {
-            throw new Error('Invalid action type for file opening');
-        }
-
-        // 在 ButtonAction 类型中，parameters 在 type === 'file' 时已经是 FileActionParams
-        const fileParams: FileActionParams = action.parameters;
-        const filePath = fileParams.filePath;
-
-        // 检查文件是否存在
-        const file = this.app.vault.getFileByPath(filePath);
+        const filePath = this.validateAndExtractFilePath(action);
+        const file = this.getFileByPath(filePath);
         if (!file) {
-            new Notice(t('file_not_found') + `: ${filePath}`);
             return;
         }
 
-        // 查找已打开的 leaf，激活已打开的标签页
+        const existingLeaf = this.findOpenLeafForFile(filePath);
+        if (existingLeaf) {
+            this.activateLeaf(existingLeaf);
+            return;
+        }
+
+        await this.openFileInNewLeaf(filePath);
+    }
+
+    /**
+     * 验证动作类型并提取文件路径
+     * @param action 按钮动作配置对象
+     * @returns 文件路径
+     * @throws 如果动作类型不是 'file'
+     */
+    private validateAndExtractFilePath(action: ButtonAction): string {
+        if (action.type !== 'file') {
+            throw new Error('Invalid action type for file opening');
+        }
+        const fileParams: FileActionParams = action.parameters;
+        return fileParams.filePath;
+    }
+
+    /**
+     * 根据路径获取文件，如果不存在则显示通知
+     * @param filePath 文件路径
+     * @returns 文件对象，如果不存在则返回 null
+     */
+    private getFileByPath(filePath: string) {
+        const file = this.app.vault.getFileByPath(filePath);
+        if (!file) {
+            new Notice(t('file_not_found') + `: ${filePath}`);
+            return null;
+        }
+        return file;
+    }
+
+    /**
+     * 查找已打开指定文件的 leaf
+     * @param filePath 文件路径
+     * @returns 已打开的 leaf，如果不存在则返回 null
+     */
+    private findOpenLeafForFile(filePath: string): WorkspaceLeaf | null {
         const allLeaves = this.getAllLeaves();
         for (const leaf of allLeaves) {
             const view = leaf.view as unknown;
@@ -49,12 +81,25 @@ export class FileService {
                     ? (view as { file?: { path?: string } }).file
                     : undefined;
             if (fileFromView?.path === filePath) {
-                this.app.workspace.setActiveLeaf(leaf, { focus: true });
-                return;
+                return leaf;
             }
         }
+        return null;
+    }
 
-        // 没有已打开的 leaf，打开新标签页
+    /**
+     * 激活指定的 leaf
+     * @param leaf 要激活的 leaf
+     */
+    private activateLeaf(leaf: WorkspaceLeaf): void {
+        this.app.workspace.setActiveLeaf(leaf, { focus: true });
+    }
+
+    /**
+     * 在新标签页中打开文件
+     * @param filePath 文件路径
+     */
+    private async openFileInNewLeaf(filePath: string): Promise<void> {
         await this.app.workspace.openLinkText(filePath, '', true);
     }
 

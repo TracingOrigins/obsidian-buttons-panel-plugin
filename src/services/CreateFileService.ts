@@ -1,8 +1,8 @@
 import { App, Notice, normalizePath, moment } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { t } from '@/common/utils/i18n';
+import { ButtonsPanelPlugin } from '@/types/plugin';
+import { t } from '@/utils/i18n';
 import { FileService } from '@/services/FileService';
-import { ButtonAction, CreateFileActionParams } from '@/common/types/action';
+import { ButtonAction, CreateFileActionParams } from '@/types/action';
 
 /**
  * 文件创建动作服务类，负责处理文件创建相关的动作。
@@ -38,62 +38,95 @@ export class CreateFileService {
         }
 
         try {
-            // 构建完整文件路径，支持日期变量
-            let fileName = this.resolveDateVariables(createParams.fileName);
-            if (!fileName.endsWith('.md')) fileName = fileName + '.md';
-
-            let filePath = fileName;
-            if (createParams.folderPath) {
-                const folderPath = this.resolveDateVariables(createParams.folderPath);
-                filePath = `${folderPath}/${fileName}`;
-            }
-
-            // 使用 normalizePath 清理路径
-            filePath = normalizePath(filePath);
+            // 构建目标文件路径
+            const filePath = this.buildTargetFilePath(createParams);
 
             // 检查文件是否已存在，已存在则直接打开
             const existingFile = this.app.vault.getFileByPath(filePath);
-            const openFileService = new FileService(this.app, this.plugin);
             if (existingFile) {
-                await openFileService.openFile({
-                    type: 'file',
-                    parameters: { filePath: filePath },
-                });
+                await this.ensureFileCreatedAndOpened(filePath);
                 return;
             }
 
             // 读取模板内容（如有）
-            let fileContent = '';
-            const templateName = createParams.templateName;
-            if (templateName) {
-                let templateFolder = this.plugin?.settings?.pathConfig?.templateFolderPath ?? '';
-                // 使用 normalizePath 清理模板文件夹路径
-                templateFolder = normalizePath(templateFolder);
-                let templatePath = templateFolder
-                    ? `${templateFolder}/${templateName}`
-                    : templateName;
-                templatePath = normalizePath(templatePath);
-                const templateFile = this.app.vault.getFileByPath(templatePath);
-                if (templateFile) {
-                    fileContent = await this.app.vault.read(templateFile);
-                } else {
-                    new Notice(t('template_file_not_found') + `: ${templatePath}`);
-                }
-            }
+            const fileContent = await this.readTemplateContent(createParams.templateName);
 
-            // 创建新文件
-            const newFile = await this.app.vault.create(filePath, fileContent);
-            if (newFile) {
-                await openFileService.openFile({
-                    type: 'file',
-                    parameters: { filePath: filePath },
-                });
-            }
+            // 创建新文件并打开
+            await this.ensureFileCreatedAndOpened(filePath, fileContent);
         } catch (error) {
             console.error('创建文件时出错:', error);
             const errorMessage = error instanceof Error ? error.message : String(error);
             new Notice(t('file_creation_failed') + `: ${errorMessage}`);
         }
+    }
+
+    /**
+     * 构建目标文件路径，支持日期变量
+     * @param params 创建文件参数
+     * @returns 规范化后的文件路径
+     */
+    private buildTargetFilePath(params: CreateFileActionParams): string {
+        // 构建完整文件路径，支持日期变量
+        let fileName = this.resolveDateVariables(params.fileName);
+        if (!fileName.endsWith('.md')) fileName = fileName + '.md';
+
+        let filePath = fileName;
+        if (params.folderPath) {
+            const folderPath = this.resolveDateVariables(params.folderPath);
+            filePath = `${folderPath}/${fileName}`;
+        }
+
+        // 使用 normalizePath 清理路径
+        return normalizePath(filePath);
+    }
+
+    /**
+     * 读取模板文件内容
+     * @param templateName 模板文件名（可选）
+     * @returns 模板内容字符串，如果未指定模板或模板不存在则返回空字符串
+     */
+    private async readTemplateContent(templateName?: string): Promise<string> {
+        if (!templateName) {
+            return '';
+        }
+
+        let templateFolder = this.plugin?.settings?.pathConfig?.templateFolderPath ?? '';
+        // 使用 normalizePath 清理模板文件夹路径
+        templateFolder = normalizePath(templateFolder);
+        let templatePath = templateFolder ? `${templateFolder}/${templateName}` : templateName;
+        templatePath = normalizePath(templatePath);
+
+        const templateFile = this.app.vault.getFileByPath(templatePath);
+        if (templateFile) {
+            return await this.app.vault.read(templateFile);
+        } else {
+            new Notice(t('template_file_not_found') + `: ${templatePath}`);
+            return '';
+        }
+    }
+
+    /**
+     * 确保文件已创建并打开
+     * @param filePath 文件路径
+     * @param fileContent 文件内容（可选，如果文件已存在则忽略）
+     */
+    private async ensureFileCreatedAndOpened(
+        filePath: string,
+        fileContent: string = ''
+    ): Promise<void> {
+        const existingFile = this.app.vault.getFileByPath(filePath);
+        const openFileService = new FileService(this.app, this.plugin);
+
+        if (!existingFile) {
+            // 文件不存在，创建新文件
+            await this.app.vault.create(filePath, fileContent);
+        }
+
+        // 打开文件
+        await openFileService.openFile({
+            type: 'file',
+            parameters: { filePath: filePath },
+        });
     }
 
     /**

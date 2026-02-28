@@ -24,6 +24,7 @@
 - 🛡️ **Form Validation**: Required fields (button name, file path, command ID, URL, folder, script name) are highlighted in red if empty for intuitive feedback.
 - 🖱️ **Edit Mode**: Enable edit mode to create categories and buttons directly in the panel, and use right-click menus for move, edit, copy, and delete.
 - 🧭 **Top Navigation Bar**: Quickly switch panel view, button style, edit mode, and open settings from the top navigation bar.
+- 🔍 **Search Feature**: The navigation bar includes a search function that filters categories and buttons in real-time for quick access.
 - 🔗 **Action Sequences**: Configure multiple actions for a single button and execute them in order with one click.
 
 ## 🚀 Installation
@@ -79,14 +80,13 @@
 
 - **Panel Title**: Set a custom title for the panel.
 - **Show Title**: Toggle the display of the panel title.
-- **Panel Height**: Customize the panel height (e.g. `auto`, `300px`).
 - **View Mode**: Choose between list or tabbed view.
 - **Button Style**: Display icon and text on the same line, or icon above text.
 - **Animation**: Enable button hover animation.
 - **Edit Mode**: Enable or disable edit mode.
 - **Top Navigation**: Enable or disable the top navigation bar.
 
-> Example: Set the panel height to `400px` and choose "Tabbed View" to group buttons by category.
+> Example: Choose "Tabbed View" to group buttons by category.
 
 ### 📁 Path Management
 
@@ -96,15 +96,6 @@
 - **One-Click Creation**: Click the "Create Paths" button to automatically create any missing folders.
 
 > Example: Set the template folder to `templates/` and script folder to `scripts/` so that the create file and run script features work properly.
-
-### 🎮 Button Management
-
-- **Category Organization**: Group buttons by category for better organization.
-- **Drag-and-Drop Sorting**: Reorder buttons and categories via drag-and-drop.
-- **Icon Picker**: Choose from 6000+ Lucide icons.
-- **Live Preview**: Instantly preview button effects during configuration.
-
-> Example: Create multiple categories, add different buttons to each, and rearrange them by dragging.
 
 ### 🖱️ Edit Mode
 
@@ -116,14 +107,34 @@
     - **Delete**: Remove the category or button after confirmation.
 - This feature is optional and can be toggled in the panel configuration section of the settings tab.
 
+#### 📦 Button Move Mode
+
+- **Enter Move Mode**: In edit mode, right-click a button and select "Move" to enter button move mode.
+- **Move Methods**:
+    - **Click another button**: Move the button to that button's position.
+    - **Click category name**: Move the button to the last position of that category (quick move to category end).
+    - **Click button container blank area**: Move the button to the last position of the current category.
+    - **Click empty category placeholder**: Move the button to the first position of that category.
+    - **Click itself**: Exit move mode without changing position.
+    - **Press ESC key**: Exit move mode without changing position.
+- The panel will automatically save and refresh after moving.
+
 ### 🧭 Top Navigation Bar
 
 - The panel features a top navigation bar with the following functions:
     - **Panel View Switch**: Switch between tabbed and list views.
     - **Button Style Switch**: Instantly change button styles.
     - **Edit Mode Toggle**: Quickly enter or exit edit mode.
+    - **Search Feature**: Click the search icon to open the search box and filter categories and button names in real-time.
     - **Panel Settings**: Open the panel settings page with one click.
 - The navigation bar is designed for efficiency and a smooth user experience.
+
+### 🔍 Search Feature
+
+- Click the search icon in the navigation bar to open the search box.
+- After entering keywords, the panel will automatically filter and display matching categories and buttons.
+- Search only filters category names and button names, with real-time updates.
+- Click the clear button or close the search box to clear the search criteria.
 
 ### 🧩 Script Feature
 
@@ -162,19 +173,21 @@
 ## 🛠️ Development
 
 - Clone this repository.
-- Make sure your NodeJS is at least v16 (`node --version`).
+- Make sure your NodeJS is at least v18 (`node --version`), LTS version recommended.
 - Run `npm install` to install dependencies.
-- Run `npm run dev` to start compilation in watch mode.
-- Run `npm run build` to build the plugin.
-- Run `npm run build:vault` to build the plugin and copy it to your vault's plugins folder (create a `.env` file in the project root and add: `VAULT_PATH=/path/to/your/vault`).
+- Run `npm run dev` to start development mode with live compilation (automatically deploys to test vault).
+- Run `npm run build` to build the production version and deploy to test vault.
+- Run `npm run lint` to check code quality.
+- To deploy to a custom vault, create a `.env` file in the project root and add: `VAULT_PATH=/path/to/your/vault`.
 
 ## 🎨 Tech Stack
 
-- **TypeScript**: Type-safe JavaScript.
+- **TypeScript**: Type-safe JavaScript with strict mode.
+- **React**: Modern framework for building user interfaces.
 - **Obsidian API**: Official plugin API.
-- **Lucide Icons**: Modern icon library.
-- **CSS Grid**: Responsive layout.
-- **ESBuild**: Fast build tool.
+- **Lucide Icons**: Modern icon library (6000+ icons).
+- **CSS Grid & Flexbox**: Responsive layout.
+- **ESBuild**: Fast build tool with TypeScript and React support.
 
 ## 📄 License
 

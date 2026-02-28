@@ -1,0 +1,41 @@
+/* 输入组件基础样式 */
+.buttons-panel-plugin .input-error {
+    border-color: red !important;
+}
+
+/* 移动端样式 */
+.is-mobile .buttons-panel-plugin .setting-item:not(.mod-toggle):not(.setting-item-heading) {
+    flex-direction: unset;
+    align-items: center;
+}
+
+.is-mobile
+    .buttons-panel-plugin
+    .setting-item:not(.mod-toggle):not(.setting-item-heading)
+    .setting-item-control {
+    margin-top: 0;
+    width: 250px;
+}
+
+.is-mobile .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).remove-action-btn,
+.is-mobile .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).move-up-btn,
+.is-mobile .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).move-down-btn,
+.is-mobile .buttons-panel-plugin .setting-item-control button:not(.clickable-icon).upload-icon-btn {
+    width: unset;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.is-mobile
+    .buttons-panel-plugin
+    .setting-item-control
+    button:not(.clickable-icon).save-btn,
+.is-mobile
+    .buttons-panel-plugin
+    .setting-item-control
+    button:not(.clickable-icon).cancel-btn {
+    width: unset;
+    padding: 4px 12px;
+}
+

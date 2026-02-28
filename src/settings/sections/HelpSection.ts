@@ -1,5 +1,5 @@
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { t } from '@/common/utils/i18n';
+import { ButtonsPanelPlugin } from '@/types/plugin';
+import { t } from '@/utils/i18n';
 
 /**
  * createHelpSection 创建帮助说明区域。
@@ -8,32 +8,28 @@ import { t } from '@/common/utils/i18n';
  * @param plugin 插件实例
  */
 export function createHelpSection(containerEl: HTMLElement, _plugin: ButtonsPanelPlugin): void {
-    const card = containerEl.createDiv('settings-card-group');
-    const helpDiv = card.createDiv({ cls: 'help-content' });
+    const help = containerEl.createDiv({ cls: 'settings-help' });
 
     // 标题
-    const titleSpan = helpDiv.createEl('span', { cls: 'help-title' });
+    const titleSpan = help.createEl('span', { cls: 'help-title' });
     titleSpan.textContent = t('help_title');
 
     // 列表
-    const ul = helpDiv.createEl('ul', { cls: 'help-list' });
+    const ul = help.createEl('ul', { cls: 'help-list' });
 
     const li1 = ul.createEl('li');
     li1.textContent = t('help_panel_config');
 
     const li2 = ul.createEl('li');
-    li2.textContent = t('help_button_management');
+    li2.textContent = t('help_icon_picker');
 
     const li3 = ul.createEl('li');
-    li3.textContent = t('help_icon_picker');
+    li3.textContent = t('help_data_storage');
 
     const li4 = ul.createEl('li');
-    li4.textContent = t('help_data_storage');
+    li4.textContent = t('help_tab_scroll');
 
-    const li5 = ul.createEl('li');
-    li5.textContent = t('help_tab_scroll');
-
-    const subUl = li5.createEl('ul', { cls: 'help-sub-list' });
+    const subUl = li4.createEl('ul', { cls: 'help-sub-list' });
 
     const subLi1 = subUl.createEl('li');
     subLi1.textContent = t('help_tab_scroll_pc');

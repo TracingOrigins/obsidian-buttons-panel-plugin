@@ -1,0 +1,164 @@
+/* 编辑按钮模态框：输入框空白错误提示 */
+.buttons-panel-plugin .input-error {
+    border-color: red !important;
+}
+
+/* 编辑按钮模态框：按钮图标设置区域样式 */
+/* SVG预览容器 */
+.buttons-panel-plugin .icon-svg-preview {
+    margin-right: 0px;
+    margin-left: 0px;
+    vertical-align: middle;
+    height: 24px;
+    width: 24px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* SVG图标 */
+.buttons-panel-plugin .icon-svg-preview svg {
+    height: 24px;
+    width: 24px;
+}
+
+/* 图标删除按钮 */
+.buttons-panel-plugin .setting-item-control button.icon-delete-btn {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    padding: 2px;
+    transition: background-color 0.2s ease;
+    color: var(--text-muted);
+}
+
+.buttons-panel-plugin .setting-item-control button.icon-delete-btn:hover {
+    background-color: var(--interactive-normal) !important;
+}
+
+/* 图标输入框容器 */
+.buttons-panel-plugin .icon-input-container {
+    position: relative;
+}
+
+/* 编辑按钮模态框：动作类型为创建文件时，其下方的div的样式 */
+.buttons-panel-plugin .actions-list-container .action-content {
+    padding-top: 0.75em;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+/* 动作序列编辑器样式 */
+.buttons-panel-plugin .actions-list-container {
+    margin-top: 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 12px 12px 0 12px;
+    background: var(--background-secondary);
+}
+
+.buttons-panel-plugin .action-item {
+    margin-bottom: 16px;
+    padding: 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    background: var(--background-primary);
+    position: relative;
+}
+
+.buttons-panel-plugin .action-value-input {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+.buttons-panel-plugin .action-footer,
+.buttons-panel-plugin .setting-item.action-btn-setting {
+    display: block;
+    align-items: center !important;
+    padding: 0;
+    margin-top: 8px;
+}
+
+/* 动作序列：添加动作按钮的样式 */
+.buttons-panel-plugin .add-action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    border: none;
+    padding: 12px 0;
+}
+
+.buttons-panel-plugin .add-action button {
+    border: none;
+    background-color: unset;
+    color: var(--text-muted);
+    opacity: 0.5;
+    box-shadow: none;
+    padding: 1px 6px;
+}
+
+.buttons-panel-plugin .add-action-btn:hover {
+    opacity: 0.8;
+    color: var(--interactive-accent) !important;
+}
+
+/* 添加、编辑按钮模态框：让动作序列中的每个动作底部的移动按钮靠左、删除按钮靠右 */
+.buttons-panel-plugin .action-btn-setting .setting-item-control {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    gap: 6px;
+}
+
+.buttons-panel-plugin .action-delete-btn {
+    margin-left: auto;
+}
+
+/* 移动端样式 */
+.is-mobile .buttons-panel-plugin .actions-list-container .action-content {
+    padding-top: 0;
+}
+
+
+/* 模态框：本插件专属的通用的模态框样式 */
+.modal .buttons-panel-plugin .setting-item {
+    padding-left: 8px;
+}
+
+.buttons-panel-plugin.modal-content {
+    /* max-width: 600px; */
+    max-width: 526px;
+}
+
+.buttons-panel-plugin .setting-item-description {
+    color: var(--text-muted);
+    font-size: 0.9em;
+    margin-top: 0.25rem;
+}
+
+/* 全局：通用隐藏样式 */
+.buttons-panel-plugin .is-hidden {
+    display: none !important;
+}
+
+/* 全局：给指定的某些svg图标设置样式 */
+body > button.buttons-panel-plugin > span.button-icon > svg,
+.buttons-panel-plugin .button-list-icon svg,
+.buttons-panel-plugin span.icon-svg-preview svg,
+.buttons-panel-plugin .buttons-panel-grid span.button-icon svg,
+.buttons-panel-plugin .buttons-panel-content span.button-icon svg {
+    color: var(--interactive-accent);
+}

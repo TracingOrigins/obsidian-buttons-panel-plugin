@@ -1,0 +1,9 @@
+/* 文件名输入建议样式 */
+.buttons-panel-filename-suggestion {
+    /* 文件名建议项的基础样式 */
+}
+
+.buttons-panel-plugin .format-preview {
+    color: var(--text-muted);
+}
+

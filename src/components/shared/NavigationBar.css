@@ -1,0 +1,4 @@
+/* 顶部导航栏按钮激活态 */
+.buttons-panel-plugin .nav-buttons-container .nav-action-button.is-active {
+    color: var(--interactive-accent) !important;
+}

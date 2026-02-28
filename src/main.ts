@@ -11,19 +11,17 @@
 // 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
 import { Plugin, WorkspaceLeaf, TFile, Notice, normalizePath } from 'obsidian';
 import { ButtonsPanelView } from '@/views/ButtonsPanelView';
-import { ButtonsPanelSettingsView } from '@/views/ButtonsPanelSettingsView';
 import { ButtonsPanelSettingTab } from '@/settings/ButtonsPanelSettingTab';
 import {
     DEFAULT_SETTINGS,
     ButtonsPanelPluginSettings,
     ButtonConfig,
-} from '@/common/types';
-import type { ButtonsPanelPlugin as ButtonsPanelPluginType } from '@/common/types';
-import { t, tWithParams } from '@/common/utils/i18n';
+} from '@/types';
+import type { ButtonsPanelPlugin as ButtonsPanelPluginType } from '@/types';
+import { t, tWithParams } from '@/utils/i18n';
 
 // 视图类型常量
 export const BUTTONS_PANEL_VIEW_TYPE = 'buttons-panel-view';
-export const BUTTONS_PANEL_SETTINGS_VIEW_TYPE = 'buttons-panel-settings-view';
 
 /**
  * 按钮面板插件主类，继承自 Obsidian 的 Plugin。
@@ -35,7 +33,7 @@ export default class ButtonsPanelPlugin extends Plugin {
     /** 设置页签对象 */
     settingTab: ButtonsPanelSettingTab;
     /** 按钮动作执行器对象 */
-	ActionDispatcher: ButtonsPanelPluginType['ActionDispatcher'];
+	actionDispatcher: ButtonsPanelPluginType['actionDispatcher'];
     /** 记录最后激活的内容标签页（排除按钮面板） */
     lastActiveContentLeaf: WorkspaceLeaf | null = null;
     /** 分类展开状态（运行时状态，不持久化） */
@@ -46,7 +44,7 @@ export default class ButtonsPanelPlugin extends Plugin {
      */
     async onload() {
         await this.loadSettings();
-        this.ActionDispatcher = new (await import('./core/ActionDispatcher')).ActionDispatcher(
+        this.actionDispatcher = new (await import('./services/ActionDispatcher')).ActionDispatcher(
             this.app,
             this
         );
@@ -55,13 +53,7 @@ export default class ButtonsPanelPlugin extends Plugin {
         this.registerView(
             BUTTONS_PANEL_VIEW_TYPE,
             (leaf: WorkspaceLeaf) =>
-                new ButtonsPanelView(leaf, this, this.getAllButtons(), this.settings.panelConfig)
-        );
-
-        // 注册配置面板视图（主页面新标签页）
-        this.registerView(
-            BUTTONS_PANEL_SETTINGS_VIEW_TYPE,
-            (leaf: WorkspaceLeaf) => new ButtonsPanelSettingsView(leaf, this)
+                new ButtonsPanelView(leaf, this, this.settings.categories, this.settings.panelConfig)
         );
 
         // 添加命令：打开按钮面板（右侧边栏）
@@ -115,7 +107,6 @@ export default class ButtonsPanelPlugin extends Plugin {
     onunload() {
         // 注销按钮面板视图和设置视图
         // this.app.workspace.detachLeavesOfType(BUTTONS_PANEL_VIEW_TYPE);
-        // this.app.workspace.detachLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE);
         // 不需要手动detach leaves，Obsidian会自动管理
         // 如有手动注册的事件或资源，请在此清理
     }
@@ -169,10 +160,10 @@ export default class ButtonsPanelPlugin extends Plugin {
                         const view = leaf.view;
                         if (
                             view &&
-                            typeof view.updateButtons === 'function' &&
+                            typeof view.updateCategories === 'function' &&
                             typeof view.updatePanelConfig === 'function'
                         ) {
-                            view.updateButtons(this.getAllButtons());
+                            view.updateCategories(this.settings.categories);
                             view.updatePanelConfig(this.settings.panelConfig);
                         }
                     }
@@ -186,42 +177,6 @@ export default class ButtonsPanelPlugin extends Plugin {
             const errorMessage = error instanceof Error ? error.message : String(error);
             console.warn('更新按钮面板时出错:', errorMessage);
         }
-    }
-
-    /**
-     * 更新所有已打开的设置页面视图。
-     */
-    updateSettingsViews() {
-        try {
-            this.app.workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE).forEach(
-                (leaf) => {
-                    try {
-                        // 安全处理 DeferredView (Obsidian v1.7.2+)
-                        if (leaf.view instanceof ButtonsPanelSettingsView) {
-                            const view = leaf.view;
-                            if (view && typeof view.refreshSettings === 'function') {
-                                view.refreshSettings();
-                            }
-                        }
-                    } catch (error) {
-                        const errorMessage =
-                            error instanceof Error ? error.message : String(error);
-                        console.warn('更新设置页面视图时出错:', errorMessage);
-                    }
-                }
-            );
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            console.warn('更新设置页面时出错:', errorMessage);
-        }
-    }
-
-    /**
-     * 更新所有相关视图（按钮面板和设置页面）。
-     */
-    updateAllViews() {
-        this.updatePanels();
-        this.updateSettingsViews();
     }
 
     /**
@@ -255,30 +210,27 @@ export default class ButtonsPanelPlugin extends Plugin {
     }
 
     /**
-     * 激活（或创建）主页面的新标签页作为设置视图。
-     * 若已存在则激活，否则新建。
+     * 打开 Obsidian 设置面板，并直接定位到本插件的设置页（main）。
+     * 用于替代原有的「按钮面板选项」独立页面。
      */
     private async activateSettingsView() {
-        const { workspace } = this.app;
-        let leaf: WorkspaceLeaf | null = null;
-        const leaves = workspace.getLeavesOfType(BUTTONS_PANEL_SETTINGS_VIEW_TYPE);
-        
-        if (leaves.length > 0) {
-            leaf = leaves[0];
-            // 如果标签已存在，直接激活而不使用 revealLeaf 避免闪烁
-            // 使用 workspace.setActiveLeaf 来避免标签页闪烁
-            workspace.setActiveLeaf(leaf, { focus: false });
-        } else {
-            // 创建新的配置面板在主页面新标签页
-            leaf = workspace.getLeaf('tab');
-            if (leaf) {
-                await leaf.setViewState({
-                    type: BUTTONS_PANEL_SETTINGS_VIEW_TYPE,
-                    active: true,
-                });
-                // 确保标签页被正确激活
-                workspace.setActiveLeaf(leaf, { focus: false });
-            }
+        const appAny = this.app as unknown as {
+            setting?: {
+                open: () => void;
+                // Obsidian 1.4+ 提供的 API，使用 any 以兼容类型定义
+                openTabById?: (id: string) => void;
+            };
+        };
+
+        const setting = appAny.setting;
+        if (!setting) return;
+
+        // 打开设置面板
+        setting.open();
+
+        // 尝试直接定位到当前插件的设置页
+        if (typeof setting.openTabById === 'function') {
+            setting.openTabById(this.manifest.id);
         }
     }
 
@@ -294,7 +246,7 @@ export default class ButtonsPanelPlugin extends Plugin {
                 if (leaf.view instanceof ButtonsPanelView) {
                     const view = leaf.view;
                     if (view) {
-                        view.updateButtons(this.getAllButtons());
+                        view.updateCategories(this.settings.categories);
                         view.updatePanelConfig(this.settings.panelConfig);
                     }
                 }
@@ -336,7 +288,7 @@ async function registerScriptCommands(plugin: ButtonsPanelPluginType) {
             callback: async () => {
                 try {
                     // new Notice(tWithParams('script_command_run', { scriptName: file.name }));
-                    const dispatcher = plugin.ActionDispatcher as {
+                    const dispatcher = plugin.actionDispatcher as {
                         scriptService?: { runScript: (action: unknown) => Promise<void> };
                     } | undefined;
                     await dispatcher?.scriptService?.runScript({

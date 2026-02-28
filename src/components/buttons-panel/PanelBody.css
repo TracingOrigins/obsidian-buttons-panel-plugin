@@ -1,0 +1,27 @@
+
+/* 通用：添加分类 / 添加按钮 样式 */
+.buttons-panel-plugin .add-category,
+.buttons-panel-plugin .add-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    border: none;
+}
+
+.buttons-panel-plugin .add-category button,
+.buttons-panel-plugin .add-button button {
+    color: var(--text-muted);
+    opacity: 0.5;
+    border: none;
+    background-color: unset;
+    box-shadow: none;
+    padding: 1px 6px;
+}
+
+.buttons-panel-plugin .add-category-btn:hover,
+.buttons-panel-plugin .add-button-btn:hover {
+    opacity: 0.8;
+    color: var(--interactive-accent) !important;
+}

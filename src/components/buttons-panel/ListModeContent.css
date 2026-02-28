@@ -1,0 +1,42 @@
+.buttons-panel-plugin .buttons-panel-category {
+    margin-bottom: 16px;
+}
+
+.buttons-panel-plugin .buttons-panel-category-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.buttons-panel-plugin .buttons-panel-category.move-category-target .buttons-panel-category-title {
+    /* 分类移动模式：不要显示标题下方横线，只保留“折叠图标 + 分类名称” */
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.buttons-panel-plugin .buttons-panel-category-title.is-collapsible {
+    cursor: pointer;
+    user-select: none;
+}
+
+.buttons-panel-plugin .buttons-panel-category-title.is-collapsible:focus-visible {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+.buttons-panel-plugin .buttons-panel-category-title .category-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+    width: 16px;
+    height: 16px;
+}

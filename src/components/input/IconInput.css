@@ -1,0 +1,51 @@
+/* 图标输入组件样式 */
+.buttons-panel-plugin .icon-input-container {
+    position: relative;
+}
+
+/* SVG预览容器 */
+.buttons-panel-plugin .icon-svg-preview {
+    margin-right: 0px;
+    margin-left: 0px;
+    vertical-align: middle;
+    height: 24px;
+    width: 24px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* SVG图标 */
+.buttons-panel-plugin .icon-svg-preview svg {
+    height: 24px;
+    width: 24px;
+}
+
+/* 图标删除按钮 */
+.buttons-panel-plugin .setting-item-control button.icon-delete-btn {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    padding: 2px;
+    transition: background-color 0.2s ease;
+    color: var(--text-muted);
+}
+
+.buttons-panel-plugin .setting-item-control button.icon-delete-btn:hover {
+    background-color: var(--interactive-normal) !important;
+}
+
+/* 输入框错误提示 */
+.buttons-panel-plugin .input-error {
+    border-color: red !important;
+}
+
