@@ -1,0 +1,53 @@
+.buttons-panel .buttons-panel-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.buttons-panel .buttons-panel-empty-hint {
+    width: 100%;
+    padding: 8px 0;
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+/* 按钮面板：grid 布局样式（按钮移动模式下使用） */
+.buttons-panel .buttons-panel-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+/* 按钮移动模式下，确保按钮紧密排列，没有额外空白 */
+.buttons-panel .buttons-panel-grid button {
+    flex-shrink: 0;
+    /* 确保按钮尺寸一致，避免布局抖动 */
+    box-sizing: border-box;
+    /* 确保按钮不会因为 transform 而超出容器 */
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+/* 按钮面板加号按钮宽高自适应当前按钮风格（grid 模式） */
+.buttons-panel .buttons-panel-content.icon-top .add-button {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.buttons-panel .buttons-panel-content.icon-left .add-button {
+    width: 96px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+

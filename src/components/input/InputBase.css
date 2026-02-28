@@ -1,0 +1,5 @@
+/* 输入组件基础样式 */
+.buttons-panel .input-error {
+    border-color: red !important;
+}
+

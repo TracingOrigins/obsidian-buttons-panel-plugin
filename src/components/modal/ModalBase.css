@@ -1,0 +1,11 @@
+/* 通用的模态框样式 */
+.buttons-panel .setting-item-description {
+    color: var(--text-muted);
+    font-size: 0.9em;
+    margin-top: 0.25rem;
+}
+
+.modal .buttons-panel .setting-item .save-btn,
+.modal .buttons-panel .setting-item .cancel-btn {
+    width: 70px !important;
+}

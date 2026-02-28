@@ -1,0 +1,14 @@
+
+/* 全局：通用隐藏样式 */
+.buttons-panel .is-hidden {
+    display: none !important;
+}
+
+/* 全局：给指定的某些svg图标设置样式 */
+body > button.buttons-panel > span.button-icon > svg,
+.buttons-panel .button-list-icon svg,
+.buttons-panel span.icon-svg-preview svg,
+.buttons-panel .buttons-panel-grid span.button-icon svg,
+.buttons-panel .buttons-panel-content span.button-icon svg {
+    color: var(--interactive-accent);
+}

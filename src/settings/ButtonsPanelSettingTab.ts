@@ -1,14 +1,13 @@
 import { App, PluginSettingTab } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types';
+import { ButtonsPanelPlugin } from '@/types';
 import { createPanelConfigSection } from '@/settings/sections/PanelConfigSection';
 import { createHelpSection } from '@/settings/sections/HelpSection';
 import { createPathConfigSection } from '@/settings/sections/PathConfigSection';
-import { createButtonManagementSection } from '@/settings/sections/ButtonManagementSection';
-import { t } from '@/common/utils/i18n';
+import { t } from '@/utils/i18n';
 
 /**
  * ButtonsPanelSettingTab 插件设置页签类。
- * 负责渲染面板设置、按钮管理、路径设置、帮助等设置界面。
+ * 负责渲染面板设置、路径设置、帮助等设置界面。
  */
 export class ButtonsPanelSettingTab extends PluginSettingTab {
     /** 插件主类实例 */
@@ -34,13 +33,12 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
     display(): void {
         const { containerEl } = this;
         containerEl.empty();
-        containerEl.addClass('buttons-panel-plugin');
+        containerEl.addClass('buttons-panel');
 
         // 标签页定义
         const tabs = [
             { key: 'panel', label: t('panel_config') },
             { key: 'paths', label: t('path_config') },
-            { key: 'buttons', label: t('button_management') },
             { key: 'help', label: t('help') },
         ];
 
@@ -61,8 +59,6 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
             createPanelConfigSection(content, this.plugin, () => this.display());
         } else if (this.currentActiveTab === 'paths') {
             createPathConfigSection(content, this.plugin, this.app);
-        } else if (this.currentActiveTab === 'buttons') {
-            createButtonManagementSection(content, this.plugin, this.app, () => this.display());
         } else if (this.currentActiveTab === 'help') {
             createHelpSection(content, this.plugin);
         }

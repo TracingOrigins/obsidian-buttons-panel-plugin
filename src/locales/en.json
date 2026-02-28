@@ -14,7 +14,6 @@
     "button_icon": "Button icon",
     "button_icon_desc": "Upload, search, or enter an icon",
     "button_icon_placeholder": "SVG code or Unicode",
-    "button_management": "Button management",
     "button_name": "Button name",
     "button_name_desc": "Enter button name",
     "button_name_empty": "Button name cannot be empty",
@@ -83,7 +82,6 @@
     "folders_created_success": "Folders created successfully",
     "global": "Global",
     "help": "Help",
-    "help_button_management": "\"Button management\" supports grouping, drag-and-drop sorting, editing, and deleting buttons",
     "help_data_storage": "All data is written to data.json",
     "help_icon_picker": "The icon picker supports local search of lucide icons",
     "help_panel_config": "In \"Panel options\", you can customize the panel title, layout, and style",
@@ -106,9 +104,7 @@
     "no_format_match": "No matching format",
     "no_icons_available": "No icons available",
     "open_buttons_panel": "Open buttons panel (right sidebar)",
-    "open_buttons_panel_options": "Open buttons panel options (central content area)",
-    "panel_height": "Panel height",
-    "panel_height_desc": "Height of the panel. Default is auto. If you enter a number, the unit is px by default.",
+    "open_buttons_panel_options": "Open plugin settings",
     "panel_config": "Panel options",
     "panel_title_desc": "Title displayed at the top of the panel",
     "panel_title_setting": "Panel title",
@@ -191,5 +187,7 @@
     "show_top_nav_bar": "Show top navigation bar",
     "show_top_nav_bar_desc": "Control the display/hide of top navigation bar",
     "tabs_wrap": "Tabs auto wrap",
-    "tabs_wrap_desc": "When enabled, tabs will automatically wrap to the next line based on page width instead of horizontal scrolling"
+    "tabs_wrap_desc": "When enabled, tabs will automatically wrap to the next line based on page width instead of horizontal scrolling",
+    "auto_collapse_list_view": "Auto collapse in list view",
+    "auto_collapse_list_view_desc": "When enabled, each time you open list view, all categories start collapsed"
 }

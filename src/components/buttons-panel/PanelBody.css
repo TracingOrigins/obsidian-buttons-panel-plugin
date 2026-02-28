@@ -1,0 +1,38 @@
+
+/* 通用：添加分类 / 添加按钮 样式 */
+.buttons-panel .add-category,
+.buttons-panel .add-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    border: none;
+}
+
+.buttons-panel .add-category button,
+.buttons-panel .add-button button {
+    color: var(--text-muted);
+    opacity: 0.5;
+    border: none;
+    background-color: unset;
+    box-shadow: none;
+    padding: 1px 6px;
+}
+
+.buttons-panel .add-category button span,
+.buttons-panel .add-button button span {
+    width: 18px;
+    height: 18px;
+}
+
+.buttons-panel .add-category-btn:hover,
+.buttons-panel .add-button-btn:hover {
+    opacity: 0.8;
+    color: var(--interactive-accent) !important;
+}
+
+.is-phone .buttons-panel .add-category-btn:hover,
+.is-phone .buttons-panel .add-button-btn:hover {
+    background-color: unset !important;
+}

@@ -1,0 +1,37 @@
+
+/* 配置面板：标签栏样式 */
+.buttons-panel .settings-tab-bar {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1.5px solid var(--background-modifier-border);
+    margin-bottom: 16px;
+    background: var(--background-primary);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.buttons-panel .settings-tab {
+    cursor: pointer;
+    padding: 8px;
+    font-size: 1.12em;
+    color: var(--text-muted);
+    border-radius: 8px 8px 0 0;
+    transition:
+        background 0.2s,
+        color 0.2s,
+        box-shadow 0.2s;
+    user-select: none;
+    margin-bottom: -2px;
+}
+
+.buttons-panel .settings-tab:hover {
+    color: var(--text-normal);
+    background: var(--background-modifier-hover);
+}
+
+.buttons-panel .settings-tab.is-active {
+    color: var(--text-normal);
+    background: var(--background-primary-alt);
+    border-bottom: 2.5px solid var(--interactive-accent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}

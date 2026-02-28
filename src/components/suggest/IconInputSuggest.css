@@ -1,0 +1,21 @@
+/* 图标输入建议样式 */
+.buttons-panel .icon-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+}
+
+.buttons-panel .icon-suggestion__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+}
+
+.buttons-panel .icon-suggestion__label {
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+

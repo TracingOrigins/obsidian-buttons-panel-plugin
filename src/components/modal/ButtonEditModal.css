@@ -1,0 +1,117 @@
+/* 编辑按钮模态框：输入框空白错误提示 */
+.buttons-panel .input-error {
+    border-color: red !important;
+}
+
+/* 编辑按钮模态框：按钮图标设置区域样式 */
+/* SVG预览容器 */
+.buttons-panel .icon-svg-preview {
+    margin-right: 0px;
+    margin-left: 0px;
+    vertical-align: middle;
+    height: 24px;
+    width: 24px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* SVG图标 */
+.buttons-panel .icon-svg-preview svg {
+    height: 24px;
+    width: 24px;
+}
+
+/* 图标输入框容器 */
+.buttons-panel .icon-input-container {
+    position: relative;
+}
+
+/* 编辑按钮模态框：动作类型为创建文件时，其下方的div的样式 */
+.buttons-panel .actions-list-container .action-content {
+    padding-top: 0.75em;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+/* 动作序列编辑器样式 */
+.buttons-panel .actions-list-container {
+    margin-top: 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 12px 12px 0 12px;
+    background: var(--background-secondary);
+}
+
+.buttons-panel .action-item {
+    margin-bottom: 16px;
+    padding: 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    background: var(--modal-background);
+    position: relative;
+}
+
+.buttons-panel .action-value-input {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+.buttons-panel .action-footer {
+    display: block;
+    align-items: center !important;
+    padding: 0;
+    margin-top: 16px;
+}
+
+.buttons-panel .setting-item.action-btn-setting {
+    display: block;
+    align-items: center !important;
+}
+
+/* 动作序列：添加动作按钮的样式 */
+.buttons-panel .add-action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    border: none;
+    padding: 12px 0;
+}
+
+.buttons-panel .add-action button {
+    border: none;
+    background-color: unset;
+    color: var(--text-muted);
+    opacity: 0.5;
+    box-shadow: none;
+    padding: 1px 6px;
+}
+
+.buttons-panel .add-action-btn:hover {
+    opacity: 0.8;
+    color: var(--interactive-accent) !important;
+}
+
+.is-phone .buttons-panel .add-action-btn:hover {
+    background-color: unset !important;
+}
+
+/* 添加、编辑按钮模态框：让动作序列中的每个动作底部的移动按钮靠左、删除按钮靠右 */
+.buttons-panel .action-btn-setting .setting-item-control {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    gap: 6px;
+}
+.is-phone .buttons-panel .action-move-btn,
+.is-phone .buttons-panel .action-delete-btn {
+    width: 36px !important;
+    height: 36px !important;
+}
+
+.buttons-panel .action-delete-btn {
+    margin-left: auto !important;
+}

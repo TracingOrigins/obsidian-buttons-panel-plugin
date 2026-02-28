@@ -1,0 +1,13 @@
+.buttons-panel .move-mode-tip {
+    margin-bottom: 16px;
+}
+
+.buttons-panel .move-mode-tip > div {
+    text-align: center;
+    padding: 10px;
+    background: var(--background-modifier-hover);
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+

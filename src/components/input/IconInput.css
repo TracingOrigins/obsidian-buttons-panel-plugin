@@ -1,0 +1,47 @@
+/* 图标输入组件样式 */
+.buttons-panel .icon-input-container {
+    position: relative;
+}
+
+/* SVG预览容器 */
+.buttons-panel .icon-svg-preview {
+    margin-right: 0px;
+    margin-left: 0px;
+    vertical-align: middle;
+    height: 24px;
+    width: 24px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* SVG图标 */
+.buttons-panel .icon-svg-preview svg {
+    height: 24px;
+    width: 24px;
+}
+
+/* 图标上传按钮 */
+.buttons-panel .setting-item-control button.icon-upload-btn {
+    width: 32px !important;
+    height: 32px;
+    border: none;
+    background-color: unset;
+    color: var(--text-muted);
+    opacity: 0.5;
+    box-shadow: none;
+    padding: 1px 6px;
+}
+
+.buttons-panel .setting-item-control button.icon-upload-btn:hover {
+    color: var(--interactive-accent) !important;
+    opacity: 0.8;
+}
+
+.is-phone .buttons-panel .setting-item-control button.icon-upload-btn:hover {
+    background-color: unset !important;
+}
+
+/* 输入框错误提示 */
+.buttons-panel .input-error {
+    border-color: red !important;
+}

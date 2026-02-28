@@ -1,8 +1,8 @@
 // PanelConfigSection.ts
 // 用于在设置界面配置按钮面板的显示、样式、动画等参数。
 import { Setting } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { t } from '@/common/utils/i18n';
+import { ButtonsPanelPlugin } from '@/types/plugin';
+import { t } from '@/utils/i18n';
 
 /**
  * createPanelConfigSection 创建面板设置区域。
@@ -16,11 +16,10 @@ export function createPanelConfigSection(
     plugin: ButtonsPanelPlugin,
     onDisplayRefresh?: () => void
 ): void {
-    // 新增：卡片包裹，风格与按钮管理一致
-    const card = containerEl.createDiv('settings-card-group');
+    const panel = containerEl.createDiv('settings-panel');
 
     // 显示标题开关
-    new Setting(card)
+    new Setting(panel)
         .setName(t('show_title'))
         .setDesc(t('show_title_desc'))
         .addToggle((toggle) =>
@@ -33,7 +32,7 @@ export function createPanelConfigSection(
         );
 
     // 面板标题设置
-    const panelTitleSetting = new Setting(card)
+    const panelTitleSetting = new Setting(panel)
         .setName(t('panel_title_setting'))
         .setDesc(t('panel_title_desc'))
         .addText((text) =>
@@ -61,24 +60,7 @@ export function createPanelConfigSection(
     // 初始化显示状态
     updatePanelTitleSettingVisibility();
 
-    new Setting(card)
-        .setName(t('panel_height'))
-        .setDesc(t('panel_height_desc'))
-        .addText((text) =>
-            text
-                .setPlaceholder(t('auto'))
-                .setValue(plugin.settings.panelConfig.panelHeight)
-                .onChange(async (value) => {
-                    let v = value.trim();
-                    if (/^\d+$/.test(v)) {
-                        v = v + 'px';
-                    }
-                    plugin.settings.panelConfig.panelHeight = v;
-                    await plugin.saveSettings();
-                })
-        );
-
-    new Setting(card)
+    new Setting(panel)
         .setName(t('button_panel_view'))
         .setDesc(t('button_panel_view_desc'))
         .addDropdown((dropdown) => {
@@ -91,12 +73,38 @@ export function createPanelConfigSection(
                     await plugin.saveSettings();
                     // 更新标签页自动换行选项的显示状态
                     updateTabsWrapSettingVisibility();
+                    // 更新列表视图自动折叠选项的显示状态
+                    updateAutoCollapseListViewSettingVisibility();
                     onDisplayRefresh?.();
                 });
         });
 
+    // 列表视图：自动折叠设置（仅在 list 视图显示）
+    const autoCollapseListViewSetting = new Setting(panel)
+        .setName(t('auto_collapse_list_view'))
+        .setDesc(t('auto_collapse_list_view_desc'))
+        .addToggle((toggle) =>
+            toggle
+                .setValue(plugin.settings.panelConfig.autoCollapseListView ?? false)
+                .onChange(async (value) => {
+                    plugin.settings.panelConfig.autoCollapseListView = value;
+                    await plugin.saveSettings();
+                })
+        );
+
+    const updateAutoCollapseListViewSettingVisibility = () => {
+        const isListView = plugin.settings.panelConfig.panelViewType === 'list';
+        if (!isListView) {
+            autoCollapseListViewSetting.settingEl.addClass('is-disabled');
+            autoCollapseListViewSetting.settingEl.addClass('is-hidden');
+        } else {
+            autoCollapseListViewSetting.settingEl.removeClass('is-disabled');
+            autoCollapseListViewSetting.settingEl.removeClass('is-hidden');
+        }
+    };
+
     // 标签页自动换行设置
-    const tabsWrapSetting = new Setting(card)
+    const tabsWrapSetting = new Setting(panel)
         .setName(t('tabs_wrap'))
         .setDesc(t('tabs_wrap_desc'))
         .addToggle((toggle) =>
@@ -123,8 +131,9 @@ export function createPanelConfigSection(
 
     // 初始化显示状态
     updateTabsWrapSettingVisibility();
+    updateAutoCollapseListViewSettingVisibility();
 
-    new Setting(card)
+    new Setting(panel)
         .setName(t('button_display_style'))
         .setDesc(t('button_display_style_desc'))
         .addDropdown((dropdown) => {
@@ -139,7 +148,7 @@ export function createPanelConfigSection(
                 });
         });
 
-    new Setting(card)
+    new Setting(panel)
         .setName(t('enable_button_animation'))
         .setDesc(t('enable_button_animation_desc'))
         .addToggle((toggle) =>
@@ -151,7 +160,7 @@ export function createPanelConfigSection(
                 })
         );
 
-    new Setting(card)
+    new Setting(panel)
         .setName(t('enable_edit_mode'))
         .setDesc(t('enable_edit_mode_desc'))
         .addToggle((toggle) =>
@@ -165,7 +174,7 @@ export function createPanelConfigSection(
         );
 
     // 新增：显示顶部导航栏开关
-    new Setting(card)
+    new Setting(panel)
         .setName(t('show_top_nav_bar'))
         .setDesc(t('show_top_nav_bar_desc'))
         .addToggle((toggle) =>

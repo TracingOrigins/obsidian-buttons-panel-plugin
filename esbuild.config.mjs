@@ -83,7 +83,7 @@ async function buildCSS() {
 		fs.writeFileSync(cssDest, combinedCss);
 	}
 
-	console.log(`✓ CSS 已打包: ${cssDest}（共 ${cssFiles.length} 个文件）`);
+	// console.log(`✓ CSS 已打包: ${cssDest}（共 ${cssFiles.length} 个文件）`);
 }
 
 // 复制 manifest.json 到输出目录

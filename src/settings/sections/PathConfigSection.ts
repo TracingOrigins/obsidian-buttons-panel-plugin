@@ -1,7 +1,7 @@
 import { App, Setting, Notice, TextComponent, normalizePath } from 'obsidian';
-import { ButtonsPanelPlugin } from '@/common/types/plugin';
-import { t } from '@/common/utils/i18n';
-import { FolderInputSuggest } from '@/common/suggest/FolderInputSuggest';
+import { ButtonsPanelPlugin } from '@/types/plugin';
+import { t } from '@/utils/i18n';
+import { FolderInputSuggest } from '@/components/suggest/FolderInputSuggest';
 
 /**
  * createPathConfigSection 创建路径设置区域。
@@ -16,7 +16,7 @@ export function createPathConfigSection(
     app: App
 ): void {
     // 创建卡片组
-    const card = containerEl.createDiv('settings-card-group');
+    const path = containerEl.createDiv('settings-path');
 
     // 路径验证函数
     const validatePath = (path: string): boolean => {
@@ -50,7 +50,7 @@ export function createPathConfigSection(
         // 初始化时验证路径
         updateInputErrorState(input, getValue());
 
-        const setting = new Setting(card).setName(name).setDesc(desc);
+        const setting = new Setting(path).setName(name).setDesc(desc);
         setting.controlEl.appendChild(wrapper);
 
         // 附加文件夹路径下拉建议
@@ -95,7 +95,7 @@ export function createPathConfigSection(
     );
 
     // 路径验证和创建按钮
-    new Setting(card)
+    new Setting(path)
         .setName(t('create_paths'))
         .setDesc(t('create_paths_desc'))
         .addButton((button) => {
