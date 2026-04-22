@@ -35,14 +35,16 @@ export class CategoryDeleteModal extends Modal {
      * 打开模态框时自动调用，渲染确认界面。
      */
     onOpen() {
-        const { contentEl } = this;
+        const { contentEl, titleEl } = this;
         contentEl.empty();
         contentEl.addClass('buttons-panel');
         contentEl.addClass('category-delete');
 
         const buttonCount = this.category.buttons.length;
 
-        contentEl.createEl('h2', { text: t('delete_category') });
+        // 使用 Obsidian Modal 自带标题栏，和“添加分类”保持一致
+        titleEl.setText(t('delete_category'));
+        titleEl.addClass('buttons-panel-delete-title');
 
         // 警告消息
         contentEl.createEl('p', {
@@ -116,7 +118,8 @@ export class CategoryDeleteModal extends Modal {
      * 关闭模态框时自动调用，清理内容。
      */
     onClose() {
-        const { contentEl } = this;
+        const { contentEl, titleEl } = this;
+        titleEl.removeClass('buttons-panel-delete-title');
         contentEl.empty();
     }
 }

@@ -1,7 +1,7 @@
 {
 	"id": "buttons-panel",
 	"name": "Buttons Panel",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"minAppVersion": "1.12.4",
 	"description": "Create customizable button panels for quick access to files, commands, links, and scripts.",
 	"author": "Kevin",

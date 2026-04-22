@@ -9,3 +9,27 @@
 .modal .buttons-panel .setting-item .cancel-btn {
     width: 70px !important;
 }
+
+/* 删除类弹框：统一标题样式（与系统标题栏一致，略增强层级） */
+.modal .buttons-panel-delete-title {
+    margin: 0;
+    letter-spacing: 0;
+}
+
+/* 删除类弹框：正文文案间距与可读性优化 */
+.buttons-panel.category-delete .delete-message,
+.buttons-panel.button-delete .delete-message {
+    margin-top: 0;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.buttons-panel.category-delete .warning-message {
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: rgba(var(--background-modifier-error-rgb), 0.12);
+    color: var(--text-error);
+    line-height: 1.5;
+}

@@ -39,14 +39,17 @@ export class ButtonDeleteModal extends Modal {
      * 打开模态框时自动调用，渲染确认界面。
      */
     onOpen() {
-        const { contentEl } = this;
+        const { contentEl, titleEl } = this;
         contentEl.empty();
         contentEl.addClass('buttons-panel');
         contentEl.addClass('button-delete');
 
-        contentEl.createEl('h2', { text: t('delete_button') });
+        // 使用 Obsidian Modal 自带标题栏，和“添加分类”保持一致
+        titleEl.setText(t('delete_button'));
+        titleEl.addClass('buttons-panel-delete-title');
         contentEl.createEl('p', {
             text: tWithParams('delete_button_warning', { name: this.button.name }),
+            cls: 'delete-message',
         });
 
         new Setting(contentEl)
@@ -67,6 +70,7 @@ export class ButtonDeleteModal extends Modal {
      * 关闭模态框时自动调用，清理内容。
      */
     onClose() {
+        this.titleEl.removeClass('buttons-panel-delete-title');
         this.contentEl.empty();
     }
 }
