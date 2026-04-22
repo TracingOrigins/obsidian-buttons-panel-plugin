@@ -6,7 +6,7 @@ import type { ButtonsPanelPlugin } from '@/types/plugin';
 // Obsidian 相关工具函数（仅保留当前仍在使用的部分）。
 
 /**
- * 获取最后激活的内容标签页（排除指定 viewType，如按钮面板）。
+ * 获取最后激活的内容标签页（排除指定 viewType，如按钮面板，且仅返回 markdown leaf）。
  * 用于在执行命令/脚本等动作前，把焦点切回正文区域，避免动作在面板 leaf 上执行异常。
  *
  * @param app Obsidian 应用实例
@@ -18,17 +18,18 @@ export function getLastActiveContentLeaf(
     excludeViewType: string,
     lastActiveLeaf?: WorkspaceLeaf | null
 ): WorkspaceLeaf | null {
-    // 优先使用传入的 lastActiveLeaf
+    // 优先使用传入的 lastActiveLeaf（必须是 markdown 且非排除 viewType）
     if (
         lastActiveLeaf &&
         lastActiveLeaf.view &&
         typeof lastActiveLeaf.view.getViewType === 'function' &&
-        lastActiveLeaf.view.getViewType() !== excludeViewType
+        lastActiveLeaf.view.getViewType() !== excludeViewType &&
+        lastActiveLeaf.view.getViewType() === 'markdown'
     ) {
         return lastActiveLeaf;
     }
 
-    // 兜底：遍历 workspace 的所有 leaf，返回第一个非 excludeViewType 的 leaf
+    // 兜底：遍历 workspace 的所有 leaf，返回第一个 markdown 且非 excludeViewType 的 leaf
     const workspaceAny = app.workspace as unknown as {
         getLeavesOfType?: (type: string) => WorkspaceLeaf[];
         getLeavesOfTypeEmpty?: (type: string) => WorkspaceLeaf[];
@@ -42,7 +43,8 @@ export function getLastActiveContentLeaf(
                 leaf &&
                 leaf.view &&
                 typeof leaf.view.getViewType === 'function' &&
-                leaf.view.getViewType() !== excludeViewType
+                leaf.view.getViewType() !== excludeViewType &&
+                leaf.view.getViewType() === 'markdown'
             ) {
                 return leaf;
             }

@@ -48,8 +48,12 @@ export class ButtonDeleteModal extends Modal {
         titleEl.setText(t('delete_button'));
         titleEl.addClass('buttons-panel-delete-title');
         contentEl.createEl('p', {
-            text: tWithParams('delete_button_warning', { name: this.button.name }),
+            text: tWithParams('confirm_delete_button', { buttonName: this.button.name }),
             cls: 'delete-message',
+        });
+        contentEl.createEl('p', {
+            text: t('delete_button_warning'),
+            cls: 'warning-message',
         });
 
         new Setting(contentEl)

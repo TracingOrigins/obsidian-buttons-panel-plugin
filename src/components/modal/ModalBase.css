@@ -24,7 +24,8 @@
     line-height: 1.5;
 }
 
-.buttons-panel.category-delete .warning-message {
+.buttons-panel.category-delete .warning-message,
+.buttons-panel.button-delete .warning-message {
     margin-top: 0;
     margin-bottom: 12px;
     padding: 8px 10px;
