@@ -95,6 +95,7 @@
     "icon_text_same_line": "Icon and text same line",
     "icon_top_text_bottom": "Icon top, text bottom",
     "icons_data_empty": "Icons data is empty",
+    "invalid_url": "Invalid URL: {url}",
     "list_view": "List view",
     "moment_not_available": "Moment.js is not available",
     "move": "Move",

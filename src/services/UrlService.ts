@@ -1,7 +1,7 @@
 import { App, Notice } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/types/plugin';
 import { ButtonAction, UrlActionParams } from '@/types/action';
-import { t } from '@/utils/i18n';
+import { tWithParams } from '@/utils/i18n';
 
 /**
  * URL 动作服务类，负责处理外部链接打开。
@@ -28,12 +28,13 @@ export class UrlService {
             return;
         }
 
-        if (!this.validateUrl(url)) {
-            new Notice(t('invalid_url') || `无效的 URL: ${url}`);
+        const target = this.resolveOpenableUrl(url);
+        if (!target) {
+            new Notice(tWithParams('invalid_url', { url }));
             return;
         }
 
-        this.openUrlInNewTab(url);
+        window.open(target, '_blank');
     }
 
     /**
@@ -49,47 +50,40 @@ export class UrlService {
         return urlParams.url?.trim() || '';
     }
 
+    private static readonly allowedUrlProtocols = new Set(['http:', 'https:', 'obsidian:']);
+
     /**
-     * 验证 URL 格式
-     * @param url 要验证的 URL
-     * @returns 如果 URL 格式有效则返回 true
+     * 解析并校验为可打开的绝对 URL；失败返回 null。
+     * 允许 obsidian://、http(s)://（须被 URL 解析器接受），以及可补全为 https:// 的裸主机。
      */
-    private validateUrl(url: string): boolean {
+    private resolveOpenableUrl(url: string): string | null {
         if (!url) {
-            return false;
+            return null;
         }
-        try {
-            // 尝试创建 URL 对象来验证格式
-            new URL(url);
-            return true;
-        } catch {
-            // 如果 URL 对象创建失败，尝试添加协议前缀
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                try {
-                    new URL(`https://${url}`);
-                    return true;
-                } catch {
-                    return false;
-                }
+
+        if (url.toLowerCase().startsWith('obsidian://')) {
+            try {
+                new URL(url);
+                return url;
+            } catch {
+                return null;
             }
-            return false;
         }
-    }
 
-    /**
-     * 在新标签页中打开 URL
-     * @param url 要打开的 URL
-     */
-    private openUrlInNewTab(url: string): void {
-        // 如果 URL 没有协议前缀，添加 https://
-        const normalizedUrl = url.startsWith('http://') || url.startsWith('https://')
-            ? url
-            : `https://${url}`;
-
-        const newWindow = window.open(normalizedUrl, '_blank');
-        if (!newWindow) {
-            // 如果浏览器阻止了弹窗，显示通知
-            new Notice(t('popup_blocked') || '浏览器阻止了弹窗，请允许弹窗后重试');
+        try {
+            const { protocol } = new URL(url);
+            return UrlService.allowedUrlProtocols.has(protocol.toLowerCase()) ? url : null;
+        } catch {
+            if (url.includes('://')) {
+                return null;
+            }
+            try {
+                const withHttps = `https://${url}`;
+                const { protocol } = new URL(withHttps);
+                return protocol === 'https:' ? withHttps : null;
+            } catch {
+                return null;
+            }
         }
     }
 }

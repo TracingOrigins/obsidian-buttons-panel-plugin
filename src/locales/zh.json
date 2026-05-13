@@ -95,6 +95,7 @@
     "icon_text_same_line": "图标和文本同行",
     "icon_top_text_bottom": "图标在上，文本在下",
     "icons_data_empty": "图标数据为空",
+    "invalid_url": "无效的链接：{url}",
     "list_view": "列表视图",
     "moment_not_available": "Moment.js 不可用",
     "move": "移动",
