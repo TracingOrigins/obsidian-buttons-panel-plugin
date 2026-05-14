@@ -1,8 +1,31 @@
 // dom.ts
 // DOM 操作相关工具函数。
 
+const SCRIPT_LOCAL = 'script';
+
 /**
- * 安全地将SVG字符串插入到指定元素，只允许<svg>标签，移除所有事件属性和<script>标签。
+ * 从原始 SVG 字符串中剥离内联 `<script>...</script>`，避免 DOMParser 在内存中实例化可执行脚本节点。
+ * 与解析后遍历移除配合，形成纵深防御。
+ */
+function stripSvgScriptMarkup(svgMarkup: string): string {
+    return svgMarkup.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+}
+
+/**
+ * 移除已解析 DOM 子树中所有 `script` 元素（含 SVG 内嵌 HTML 等变体），不依赖 `querySelectorAll('script')`。
+ */
+function removeScriptElementsFromSubtree(root: Element): void {
+    const candidates = root.querySelectorAll('*');
+    for (let i = candidates.length - 1; i >= 0; i--) {
+        const el = candidates[i];
+        if (el.localName?.toLowerCase() === SCRIPT_LOCAL) {
+            el.remove();
+        }
+    }
+}
+
+/**
+ * 安全地将SVG字符串插入到指定元素，只允许<svg>标签，移除所有事件属性和可执行脚本内容。
  * @param el 目标元素
  * @param svgString SVG字符串
  */
@@ -11,8 +34,9 @@ export function safeSetSVG(el: HTMLElement, svgString: string) {
         el.empty();
         return;
     }
+    const sanitized = stripSvgScriptMarkup(svgString);
     const parser = new DOMParser();
-    const doc = parser.parseFromString(svgString, 'image/svg+xml');
+    const doc = parser.parseFromString(sanitized, 'image/svg+xml');
     const svg = doc.querySelector('svg');
     if (svg) {
         // 移除所有事件属性（on*）
@@ -25,8 +49,7 @@ export function safeSetSVG(el: HTMLElement, svgString: string) {
             Array.from(node.children).forEach((child) => removeEventAttrs(child));
         };
         removeEventAttrs(svg);
-        // 移除所有<script>标签
-        svg.querySelectorAll('script').forEach((script) => script.remove());
+        removeScriptElementsFromSubtree(svg);
         el.empty();
         el.appendChild(svg);
     } else {

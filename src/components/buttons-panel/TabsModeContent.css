@@ -54,7 +54,6 @@
 
 .buttons-panel .buttons-panel-tab.is-active {
     opacity: 1;
-    background: var(--background-primary-alt);
 }
 
 .buttons-panel .buttons-panel-tab.is-active::after {
