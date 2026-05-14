@@ -35,7 +35,7 @@ export class NavigationBarRenderer {
         let actionsWrapper: HTMLElement | null = containerEl.querySelector('.nav-header');
 
         if (!actionsWrapper) {
-            actionsWrapper = document.createElement('div');
+            actionsWrapper = activeDocument.createElement('div');
             actionsWrapper.className = 'nav-header';
             const viewHeader = containerEl.querySelector('.view-header');
             if (viewHeader?.parentNode) {
@@ -55,18 +55,18 @@ export class NavigationBarRenderer {
                     this.panelConfig.panelViewType =
                         this.panelConfig.panelViewType === 'tabs' ? 'list' : 'tabs';
                     void this.plugin.saveSettings();
-                    document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                    activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                 }}
                 onToggleStyle={() => {
                     this.panelConfig.displayStyle =
                         this.panelConfig.displayStyle === 'icon_top' ? 'default' : 'icon_top';
                     void this.plugin.saveSettings();
-                    document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                    activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                 }}
                 onToggleEditMode={() => {
                     this.panelConfig.enableEditMode = !this.panelConfig.enableEditMode;
                     void this.plugin.saveSettings();
-                    document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                    activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                 }}
                 onOpenSettings={() => {
                     const pluginWithSettings = this.plugin as unknown as {
@@ -75,7 +75,7 @@ export class NavigationBarRenderer {
                     pluginWithSettings.activateSettingsView?.();
                 }}
                 onSearchChange={(query) => {
-                    document.dispatchEvent(
+                    activeDocument.dispatchEvent(
                         new CustomEvent('buttons-panel-search', {
                             detail: { query },
                         })

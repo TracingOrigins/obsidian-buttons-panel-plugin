@@ -95,7 +95,7 @@ export const MoveModeProvider: React.FC<React.PropsWithChildren<MoveModeProvider
 
                 await plugin.saveSettings();
                 // 通知所有视图刷新
-                document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
             } catch (error) {
                 console.error('更新按钮位置时出错:', error);
             } finally {
@@ -128,7 +128,7 @@ export const MoveModeProvider: React.FC<React.PropsWithChildren<MoveModeProvider
                 if (fromIdx === toIdx) {
                     exitMoveMode();
                     // 仍然刷新一下视图，保持和老实现一致
-                    document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                    activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                     return;
                 }
 
@@ -141,7 +141,7 @@ export const MoveModeProvider: React.FC<React.PropsWithChildren<MoveModeProvider
                 });
 
                 await plugin.saveSettings();
-                document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
             } catch (error) {
                 console.error('更新分类位置时出错:', error);
             } finally {
@@ -166,9 +166,9 @@ export const MoveModeProvider: React.FC<React.PropsWithChildren<MoveModeProvider
         };
 
         // 使用捕获阶段，尽量优先于其他监听
-        document.addEventListener('keydown', handleKeyDown, true);
+        activeDocument.addEventListener('keydown', handleKeyDown, true);
         return () => {
-            document.removeEventListener('keydown', handleKeyDown, true);
+            activeDocument.removeEventListener('keydown', handleKeyDown, true);
         };
     }, [state.type, exitMoveMode]);
 

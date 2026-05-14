@@ -53,7 +53,7 @@ export function useButtonMenu(
                     .onClick(() => {
                         new ButtonEditModal(app, plugin, button, category, () => {
                             void plugin.saveSettings();
-                            document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                            activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                         }).open();
                     });
             });

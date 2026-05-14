@@ -20,7 +20,7 @@ export const MoveIndicatorLayer: React.FC = () => {
         const button = state.button;
 
         // 创建指示器元素
-        const indicator = document.createElement('button');
+        const indicator = activeDocument.createElement('button');
         indicator.className = 'buttons-panel button-move-indicator';
         indicator.setAttribute('data-button-id', button.id);
 
@@ -33,7 +33,7 @@ export const MoveIndicatorLayer: React.FC = () => {
 
         // 添加图标
         if (button.icon) {
-            const iconEl = document.createElement('span');
+            const iconEl = activeDocument.createElement('span');
             iconEl.className = 'button-icon';
 
             if (button.icon.trim().startsWith('<svg')) {
@@ -46,12 +46,12 @@ export const MoveIndicatorLayer: React.FC = () => {
         }
 
         // 添加按钮文字
-        const textEl = document.createElement('span');
+        const textEl = activeDocument.createElement('span');
         textEl.className = 'button-text';
         textEl.textContent = button.name;
         indicator.appendChild(textEl);
 
-        document.body.appendChild(indicator);
+        activeDocument.body.appendChild(indicator);
 
         const handleMouseMove = (e: MouseEvent) => {
             indicator.style.left = `${e.clientX + 10}px`;
@@ -66,12 +66,12 @@ export const MoveIndicatorLayer: React.FC = () => {
             }
         };
 
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('keydown', handleKeyDown);
+        activeDocument.addEventListener('mousemove', handleMouseMove);
+        activeDocument.addEventListener('keydown', handleKeyDown);
 
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('keydown', handleKeyDown);
+            activeDocument.removeEventListener('mousemove', handleMouseMove);
+            activeDocument.removeEventListener('keydown', handleKeyDown);
             indicator.remove();
         };
     }, [state, panelConfig.displayStyle, exitMoveMode]);

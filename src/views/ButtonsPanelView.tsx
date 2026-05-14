@@ -79,11 +79,11 @@ export class ButtonsPanelView extends ItemView {
             this.debouncedRender();
         };
         // 使用视图的 registerDomEvent 注册自定义 DOM 事件
-        this.registerDomEvent(document, 'buttons-panel-refresh', this.handleRefreshEvent);
+        this.registerDomEvent(activeDocument, 'buttons-panel-refresh', this.handleRefreshEvent);
 
         // 监听来自导航栏的搜索事件
         this.registerDomEvent(
-            document,
+            activeDocument,
             'buttons-panel-search',
             (event: Event) => {
                 const customEvent = event as CustomEvent<{ query?: string }>;

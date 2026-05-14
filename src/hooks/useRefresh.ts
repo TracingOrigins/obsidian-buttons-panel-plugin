@@ -13,7 +13,7 @@ export function useRefresh() {
      * 触发按钮面板刷新
      */
     const refresh = useCallback(() => {
-        document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+        activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
     }, []);
 
     return {

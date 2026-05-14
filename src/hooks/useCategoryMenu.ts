@@ -50,7 +50,7 @@ export function useCategoryMenu(category: CategoryConfig, categories: CategoryCo
                     .onClick(() => {
                         new CategoryEditModal(app, plugin, category, () => {
                             void plugin.saveSettings();
-                            document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                            activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                         }).open();
                     });
             });
@@ -74,7 +74,7 @@ export function useCategoryMenu(category: CategoryConfig, categories: CategoryCo
                             };
                             plugin.settings.categories.push(newCategory);
                             await plugin.saveSettings();
-                            document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                            activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                         })();
                     });
             });
@@ -85,7 +85,7 @@ export function useCategoryMenu(category: CategoryConfig, categories: CategoryCo
                     .setIcon('trash')
                     .onClick(() => {
                         new CategoryDeleteModal(app, plugin, category, () => {
-                            document.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
+                            activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                         }).open();
                     });
             });

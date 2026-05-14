@@ -40,7 +40,7 @@ export class UrlInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(document.createElement('input')).setPlaceholder(
+        this.input = new TextComponent(activeDocument.createElement('input')).setPlaceholder(
             options.placeholder || 'https://example.com'
         );
         this.setting.controlEl.appendChild(this.input.inputEl);
