@@ -29,7 +29,6 @@
     box-sizing: border-box;
     /* 确保按钮不会因为 transform 而超出容器 */
     overflow: visible;
-    box-sizing: border-box;
 }
 
 /* 按钮面板加号按钮宽高自适应当前按钮风格（grid 模式） */
