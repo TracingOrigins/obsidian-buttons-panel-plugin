@@ -1,0 +1,49 @@
+# 在发布 GitHub Release 时，从对应 tag 构建插件并对产物做 artifact attestation（SLSA provenance）。
+# 校验示例: gh attestation verify main.js -R <owner>/<repo>
+#           gh attestation verify styles.css -R <owner>/<repo>
+# 说明: https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds
+
+name: Release artifact attestation
+
+on:
+    release:
+        types: [published]
+
+permissions:
+    id-token: write
+    contents: write          # 改为 write，允许上传到 Release
+    attestations: write
+    artifact-metadata: write
+
+jobs:
+    attest-release-build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout release tag
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.release.tag_name }}
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "22.x"
+                  cache: npm
+
+            - run: npm ci
+            - run: npm run build
+
+            # 上传构建产物到 Release
+            - name: Upload assets to Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: |
+                      dist/main.js
+                      dist/styles.css
+                      dist/manifest.json
+
+            # styles.css / main.js / manifest.json 与常见 Release 资源一致；同一 provenance 内多 subject
+            - name: Generate build provenance attestation (styles.css, main.js, manifest.json)
+              uses: actions/attest@v4
+              with:
+                  subject-path: "dist/styles.css, dist/main.js, dist/manifest.json"
