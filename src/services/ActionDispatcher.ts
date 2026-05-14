@@ -86,7 +86,7 @@ export class ActionDispatcher {
                 await this.executeSingleAction(actions[i]);
                 // 在动作之间添加延迟（最后一个动作后不需要延迟）
                 if (i < actions.length - 1 && delayBetweenActions > 0) {
-                    await new Promise((resolve) => setTimeout(resolve, delayBetweenActions));
+                    await new Promise((resolve) => window.setTimeout(resolve, delayBetweenActions));
                 }
             } catch (error) {
                 this.handleActionError(error, i, stopOnError);
