@@ -26,7 +26,6 @@
         "@types/node": "^16.11.6",
         "@types/react": "^19.2.14",
         "@types/react-dom": "^19.2.3",
-        "dotenv": "^17.2.3",
         "esbuild": "0.25.5",
         "eslint": "^9.39.2",
         "eslint-plugin-obsidianmd": "0.1.9",
