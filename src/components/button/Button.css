@@ -1,5 +1,6 @@
-.buttons-panel-simple-button {
-    background-color: unset !important;
+/* 面板内主按钮：链到 body + 容器，压过主题对 button 的背景（替代 !important） */
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button {
+    background-color: transparent;
     border: none;
     box-shadow: none;
     cursor: pointer;
@@ -14,7 +15,7 @@
         box-shadow 0.15s ease;
 }
 
-.buttons-panel-simple-button:hover {
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button:hover {
     background-color: var(--background-modifier-hover);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
@@ -63,32 +64,30 @@
 }
 
 /* 按钮面板：浅色模式下按钮的悬浮阴影样式 */
-.theme-light .buttons-panel button.icon-left:hover,
-.theme-light .buttons-panel button.icon-top:hover {
+.theme-light .buttons-panel .buttons-panel-container button.icon-left:hover,
+.theme-light .buttons-panel .buttons-panel-container button.icon-top:hover {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* 按钮面板：深色模式下按钮的悬浮阴影样式 */
-.theme-dark .buttons-panel button.icon-left:hover,
-.theme-dark .buttons-panel button.icon-top:hover {
+.theme-dark .buttons-panel .buttons-panel-container button.icon-left:hover,
+.theme-dark .buttons-panel .buttons-panel-container button.icon-top:hover {
     box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
 }
 
 /* 按钮面板：按钮移动模式下，正在移动的按钮的样式 */
-.buttons-panel .buttons-panel-container button.moving {
-    opacity: 0.5 !important;
-    transform: rotate(5deg) !important;
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.moving {
+    opacity: 0.5;
+    transform: rotate(5deg);
     z-index: 1000;
     border: 1px solid var(--interactive-accent);
-    /* 确保旋转后的按钮不会超出容器，避免布局问题 */
     transform-origin: center center;
-    /* 保持按钮尺寸不变，避免布局抖动 */
     box-sizing: border-box;
 }
 
-/* 移动指示器：固定定位 + 外观强化（补充 icon-left/icon-top 中的基础按钮样式） */
-button.buttons-panel.button-move-indicator.icon-left,
-button.buttons-panel.button-move-indicator.icon-top {
+/* 移动指示器：挂到 body 上，用直接子选择器提高特异性 */
+body > button.buttons-panel.button-move-indicator.icon-left,
+body > button.buttons-panel.button-move-indicator.icon-top {
     position: fixed;
     z-index: 10000;
     transition: none;
@@ -98,12 +97,12 @@ button.buttons-panel.button-move-indicator.icon-top {
     border: 1px solid var(--interactive-accent);
 }
 
-/* 按钮面板：按钮的图标在左/上的样式（按钮与移动指示器共用） */
-button.buttons-panel.button-move-indicator.icon-left,
-.buttons-panel button.icon-left {
+/* 图标在左：移动指示器 + 面板内按钮 */
+body > button.buttons-panel.button-move-indicator.icon-left,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left {
     width: 96px;
     height: 40px;
-    background-color: unset !important;
+    background-color: transparent;
     box-shadow: none;
     padding: 20px 8px;
     gap: 4px;
@@ -111,8 +110,8 @@ button.buttons-panel.button-move-indicator.icon-left,
     font-size: 14px;
 }
 
-button.buttons-panel.button-move-indicator.icon-left .button-icon,
-.buttons-panel button.icon-left .button-icon {
+body > button.buttons-panel.button-move-indicator.icon-left .button-icon,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left .button-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -121,14 +120,14 @@ button.buttons-panel.button-move-indicator.icon-left .button-icon,
     height: 18px;
 }
 
-button.buttons-panel.button-move-indicator.icon-left .button-icon svg,
-.buttons-panel button.icon-left .button-icon svg {
+body > button.buttons-panel.button-move-indicator.icon-left .button-icon svg,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left .button-icon svg {
     color: var(--text-normal);
     display: block;
 }
 
-button.buttons-panel.button-move-indicator.icon-left .button-text,
-.buttons-panel button.icon-left .button-text {
+body > button.buttons-panel.button-move-indicator.icon-left .button-text,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left .button-text {
     font-size: 13px;
     text-align: left;
     width: 60px;
@@ -136,10 +135,11 @@ button.buttons-panel.button-move-indicator.icon-left .button-text,
     color: var(--text-muted);
 }
 
-button.buttons-panel.button-move-indicator.icon-top,
-.buttons-panel button.icon-top {
+/* 图标在上 */
+body > button.buttons-panel.button-move-indicator.icon-top,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top {
     flex-direction: column;
-    background-color: unset !important;
+    background-color: transparent;
     box-shadow: none;
     padding: 0;
     gap: 0;
@@ -148,22 +148,22 @@ button.buttons-panel.button-move-indicator.icon-top,
     height: 56px;
 }
 
-button.buttons-panel.button-move-indicator.icon-top .button-icon,
-.buttons-panel button.icon-top .button-icon {
+body > button.buttons-panel.button-move-indicator.icon-top .button-icon,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top .button-icon {
     font-size: 24px;
     margin-bottom: 2px;
     width: 32px;
     height: 32px;
 }
 
-button.buttons-panel.button-move-indicator.icon-top .button-icon svg,
-.buttons-panel button.icon-top .button-icon svg {
+body > button.buttons-panel.button-move-indicator.icon-top .button-icon svg,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top .button-icon svg {
     width: 32px;
     height: 32px;
 }
 
-button.buttons-panel.button-move-indicator.icon-top .button-text,
-.buttons-panel button.icon-top .button-text {
+body > button.buttons-panel.button-move-indicator.icon-top .button-text,
+body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top .button-text {
     font-size: 12px;
     text-align: center;
     font-weight: 500;

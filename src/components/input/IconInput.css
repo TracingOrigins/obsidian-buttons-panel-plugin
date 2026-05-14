@@ -21,27 +21,23 @@
 }
 
 /* 图标上传按钮 */
-.buttons-panel .setting-item-control button.icon-upload-btn {
-    width: 32px !important;
+.modal .buttons-panel .setting-item .setting-item-control button.icon-upload-btn {
+    width: 32px;
+    min-width: 32px;
     height: 32px;
     border: none;
-    background-color: unset;
+    background-color: transparent;
     color: var(--text-muted);
     opacity: 0.5;
     box-shadow: none;
     padding: 1px 6px;
 }
 
-.buttons-panel .setting-item-control button.icon-upload-btn:hover {
-    color: var(--interactive-accent) !important;
+.modal .buttons-panel .setting-item .setting-item-control button.icon-upload-btn:hover {
+    color: var(--interactive-accent);
     opacity: 0.8;
 }
 
-.is-phone .buttons-panel .setting-item-control button.icon-upload-btn:hover {
-    background-color: unset !important;
-}
-
-/* 输入框错误提示 */
-.buttons-panel .input-error {
-    border-color: red !important;
+.is-phone .modal .buttons-panel .setting-item .setting-item-control button.icon-upload-btn:hover {
+    background-color: transparent;
 }

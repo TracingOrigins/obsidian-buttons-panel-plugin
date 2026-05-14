@@ -1,8 +1,3 @@
-/* 编辑按钮模态框：输入框空白错误提示 */
-.buttons-panel .input-error {
-    border-color: red !important;
-}
-
 /* 编辑按钮模态框：按钮图标设置区域样式 */
 /* SVG预览容器 */
 .buttons-panel .icon-svg-preview {
@@ -56,16 +51,10 @@
     border-top: 1px solid var(--background-modifier-border);
 }
 
-.buttons-panel .action-footer {
+.modal .buttons-panel .action-footer.setting-item {
     display: block;
-    align-items: center !important;
     padding: 0;
     margin-top: 16px;
-}
-
-.buttons-panel .setting-item.action-btn-setting {
-    display: block;
-    align-items: center !important;
 }
 
 /* 动作序列：添加动作按钮的样式 */
@@ -88,13 +77,13 @@
     padding: 1px 6px;
 }
 
-.buttons-panel .add-action-btn:hover {
+.modal .buttons-panel .add-action button.add-action-btn:hover {
     opacity: 0.8;
-    color: var(--interactive-accent) !important;
+    color: var(--interactive-accent);
 }
 
-.is-phone .buttons-panel .add-action-btn:hover {
-    background-color: unset !important;
+.is-phone .modal .buttons-panel .add-action button.add-action-btn:hover {
+    background-color: transparent;
 }
 
 /* 添加、编辑按钮模态框：让动作序列中的每个动作底部的移动按钮靠左、删除按钮靠右 */
@@ -106,12 +95,12 @@
     position: relative;
     gap: 6px;
 }
-.is-phone .buttons-panel .action-move-btn,
-.is-phone .buttons-panel .action-delete-btn {
-    width: 36px !important;
-    height: 36px !important;
+.is-phone .modal .buttons-panel .action-btn-setting .setting-item-control button.action-move-btn,
+.is-phone .modal .buttons-panel .action-btn-setting .setting-item-control button.action-delete-btn {
+    width: 36px;
+    height: 36px;
 }
 
-.buttons-panel .action-delete-btn {
-    margin-left: auto !important;
+.modal .buttons-panel .action-btn-setting .setting-item-control button.action-delete-btn {
+    margin-left: auto;
 }

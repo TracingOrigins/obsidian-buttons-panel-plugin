@@ -1,4 +1,4 @@
-/* 顶部导航栏按钮激活态 */
-.buttons-panel .nav-buttons-container .nav-action-button.is-active {
-    color: var(--interactive-accent) !important;
+/* 顶部导航栏按钮激活态（侧栏视图内链式选择器，避免与全局 clickable-icon 冲突） */
+body .workspace-leaf-content .buttons-panel .nav-buttons-container .nav-action-button.is-active {
+    color: var(--interactive-accent);
 }

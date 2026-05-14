@@ -5,9 +5,12 @@
     margin-top: 0.25rem;
 }
 
-.modal .buttons-panel .setting-item .save-btn,
-.modal .buttons-panel .setting-item .cancel-btn {
-    width: 70px !important;
+.modal .buttons-panel .setting-item .setting-item-control button.mod-cta.save-btn,
+.modal .buttons-panel .setting-item .setting-item-control button.save-btn,
+.modal .buttons-panel .setting-item .setting-item-control button.cancel-btn {
+    min-width: 70px;
+    width: 70px;
+    box-sizing: border-box;
 }
 
 /* 删除类弹框：统一标题样式（与系统标题栏一致，略增强层级） */

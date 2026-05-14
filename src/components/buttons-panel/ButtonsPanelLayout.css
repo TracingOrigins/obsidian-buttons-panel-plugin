@@ -134,11 +134,11 @@
 }
 
 /* 按钮面板：分类移动模式下，正在被移动的分类的样式 */
-.buttons-panel
+body .buttons-panel
     .buttons-panel-container
     .buttons-panel-category.move-category-target.moving-category {
     border: 1px solid var(--interactive-accent);
-    transform: rotate(2deg) !important;
+    transform: rotate(2deg);
     opacity: 0.5;
 }
 

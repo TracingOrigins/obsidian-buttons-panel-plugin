@@ -26,13 +26,13 @@
     height: 18px;
 }
 
-.buttons-panel .add-category-btn:hover,
-.buttons-panel .add-button-btn:hover {
+body .buttons-panel .add-category button.add-category-btn:hover,
+body .buttons-panel .add-button button.add-button-btn:hover {
     opacity: 0.8;
-    color: var(--interactive-accent) !important;
+    color: var(--interactive-accent);
 }
 
-.is-phone .buttons-panel .add-category-btn:hover,
-.is-phone .buttons-panel .add-button-btn:hover {
-    background-color: unset !important;
+.is-phone body .buttons-panel .add-category button.add-category-btn:hover,
+.is-phone body .buttons-panel .add-button button.add-button-btn:hover {
+    background-color: transparent;
 }

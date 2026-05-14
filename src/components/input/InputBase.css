@@ -1,5 +1,7 @@
-/* 输入组件基础样式 */
-.buttons-panel .input-error {
-    border-color: red !important;
+/* 输入校验错误边框：链到 body + 插件根容器，压过主题默认 input 边框（替代 !important） */
+body .modal .buttons-panel input.input-error,
+body .modal .buttons-panel textarea.input-error,
+body .vertical-tab-content .buttons-panel input.input-error,
+body .vertical-tab-content .buttons-panel textarea.input-error {
+    border-color: var(--text-error, #e03131);
 }
-

@@ -1,7 +1,7 @@
 
-/* 全局：通用隐藏样式 */
-.buttons-panel .is-hidden {
-    display: none !important;
+/* 通用隐藏：链到 body 提高特异性（替代 !important） */
+body .buttons-panel .is-hidden {
+    display: none;
 }
 
 /* 全局：给指定的某些svg图标设置样式 */
