@@ -1,14 +1,12 @@
-> 中文 | [English](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.md)
-
-<h1 align="center">Buttons Panel</h1>
-
-<p align="center">
-    <img alt="Release version" src="https://img.shields.io/github/v/release/TracingOrigins/obsidian-buttons-panel-plugin?style=for-the-badge">
-    <img alt="Download count" src="https://img.shields.io/github/downloads/TracingOrigins/obsidian-buttons-panel-plugin/total?style=for-the-badge">
-</p>
-<p align="center">
-    <span>Buttons Panel 是一个现代化的 Obsidian 插件，用于创建自定义按钮面板，快速访问文件、命令、链接和脚本。</span>
-</p>
+<div align="center">
+    <h1>Buttons Panel</h1>
+    <p>
+        <img src="https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22buttons-panel%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json" alt="Obsidian Downloads">
+        <img src="https://img.shields.io/github/downloads/TracingOrigins/obsidian-buttons-panel-plugin/total?logo=github" alt="GitHub Downloads">
+    </p>
+    <p>[中文 | <a href="https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.md">English</a>]</p>
+    <p><a href="https://community.obsidian.md/plugins/buttons-panel" target="_blank">Buttons Panel</a> 是一个现代化的 Obsidian 插件，用于创建自定义按钮面板，快速访问文件、命令、链接和脚本。</p>
+</div>
 
 ## ✨ 功能介绍
 
