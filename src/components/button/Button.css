@@ -120,12 +120,6 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.
     height: 18px;
 }
 
-body > button.buttons-panel.button-move-indicator.icon-left .button-icon svg,
-body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left .button-icon svg {
-    color: var(--text-normal);
-    display: block;
-}
-
 body > button.buttons-panel.button-move-indicator.icon-left .button-text,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left .button-text {
     font-size: 13px;
