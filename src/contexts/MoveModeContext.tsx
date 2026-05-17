@@ -93,6 +93,7 @@ export const MoveModeProvider: React.FC<React.PropsWithChildren<MoveModeProvider
                     });
                 });
 
+                plugin.activeTabCategoryId = targetCategoryId;
                 await plugin.saveSettings();
                 // 通知所有视图刷新
                 activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));

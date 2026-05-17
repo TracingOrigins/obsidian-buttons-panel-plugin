@@ -12,6 +12,17 @@ import { createCategoryMenuHandler } from '@/utils/categoryMenuUtils';
 import { t } from '@/utils/i18n';
 import './TabsModeContent.css';
 
+function resolveActiveTabId(
+    preferredId: string | null | undefined,
+    categories: CategoryConfig[]
+): string | null {
+    if (categories.length === 0) return null;
+    if (preferredId && categories.some((cat) => cat.id === preferredId)) {
+        return preferredId;
+    }
+    return categories[0]?.id ?? null;
+}
+
 interface TabsModeContentProps {
     categories: CategoryConfig[];
     displayStyle: 'default' | 'icon_top';
@@ -39,17 +50,29 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
     const { createButton } = useButtonCreation();
     const tabRefs = React.useRef<Map<string, HTMLDivElement>>(new Map());
 
-    // 默认激活第一个分类
-    const [activeTabId, setActiveTabId] = useState<string | null>(
-        categories.length > 0 ? categories[0]?.id ?? null : null
+    const [activeTabId, setActiveTabId] = useState<string | null>(() =>
+        resolveActiveTabId(plugin.activeTabCategoryId, categories)
     );
 
-    // 当分类列表变化时，更新激活标签
+    const selectActiveTab = React.useCallback(
+        (categoryId: string) => {
+            plugin.activeTabCategoryId = categoryId;
+            setActiveTabId(categoryId);
+        },
+        [plugin]
+    );
+
+    // 当分类列表变化时，校正激活标签（优先保留插件记录或当前选中）
     useEffect(() => {
-        if (categories.length > 0 && (!activeTabId || !categories.some((cat) => cat.id === activeTabId))) {
-            setActiveTabId(categories[0]?.id ?? null);
+        const resolved = resolveActiveTabId(
+            activeTabId ?? plugin.activeTabCategoryId,
+            categories
+        );
+        if (resolved !== activeTabId) {
+            plugin.activeTabCategoryId = resolved;
+            setActiveTabId(resolved);
         }
-    }, [categories, activeTabId]);
+    }, [categories, activeTabId, plugin]);
 
     // 创建分类菜单处理函数的映射（为每个分类创建处理函数）
     const categoryMenuHandlers = React.useMemo(() => {
@@ -156,7 +179,7 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                             void moveMode.moveCategoryTo(category.id);
                             return;
                         }
-                        setActiveTabId(category.id);
+                        selectActiveTab(category.id);
                     };
 
                     return (

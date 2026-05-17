@@ -38,6 +38,8 @@ export default class ButtonsPanelPlugin extends Plugin {
     lastActiveContentLeaf: WorkspaceLeaf | null = null;
     /** 分类展开状态（运行时状态，不持久化） */
     categoryOpenState: Record<string, boolean> = {};
+    /** 标签视图当前激活的分类 ID（运行时状态，不持久化） */
+    activeTabCategoryId: string | null = null;
 
     /**
      * 插件加载时自动调用，完成初始化、视图注册、命令注册、设置页签注册等。

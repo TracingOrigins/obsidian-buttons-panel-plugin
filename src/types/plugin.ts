@@ -25,6 +25,9 @@ export interface ButtonsPanelPlugin extends Plugin {
     /** 分类展开状态（运行时状态，不持久化） */
     categoryOpenState: Record<string, boolean>;
 
+    /** 标签视图当前激活的分类 ID（运行时状态，不持久化） */
+    activeTabCategoryId?: string | null;
+
 	/**
 	 * 记录最后一个激活的内容视图叶子（非按钮面板），用于在执行命令、脚本等动作前恢复焦点。
 	 * 运行时状态，不持久化。
