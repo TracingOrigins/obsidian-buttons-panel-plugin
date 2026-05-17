@@ -3,7 +3,7 @@
 }
 
 .buttons-panel .buttons-panel-container {
-    padding: 0 10px;
+    padding: 0 4px;
 }
 
 /* 按钮面板：按钮移动模式下，面板整体的边框、内边距、背景色样式 */
@@ -15,7 +15,6 @@
 
 .buttons-panel .buttons-panel-container .move-mode-category {
     padding: 12px;
-    background: var(--background-primary);
     border-radius: 16px;
     border: 1px solid var(--background-modifier-border);
     margin-bottom: 16px;
@@ -122,7 +121,6 @@
 /* 按钮面板：分类移动模式下，分类的样式 */
 .buttons-panel .buttons-panel-container .buttons-panel-category.move-category-target {
     padding: 12px;
-    background: var(--background-primary);
     border-radius: 16px;
     border: 1px solid var(--background-modifier-border);
     margin-bottom: 16px;
@@ -130,7 +128,7 @@
 
 /* 按钮面板：分类移动模式下，鼠标悬浮的分类的样式 */
 .buttons-panel .buttons-panel-container .buttons-panel-category.move-category-target:hover {
-    border: 1px dashed var(--interactive-accent);
+    /* border: 1px dashed var(--interactive-accent); */
 }
 
 /* 按钮面板：分类移动模式下，正在被移动的分类的样式 */
@@ -142,4 +140,8 @@ body .buttons-panel
     opacity: 0.5;
 }
 
+
+body .buttons-panel .buttons-panel-container .buttons-panel-list-mode {
+    padding-top: 8px;
+}
 

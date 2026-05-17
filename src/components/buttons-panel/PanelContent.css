@@ -31,8 +31,9 @@
     overflow: visible;
 }
 
-/* 按钮面板加号按钮宽高自适应当前按钮风格（grid 模式） */
-.buttons-panel .buttons-panel-content.icon-top .add-button {
+/* 按钮面板加号按钮宽高自适应当前按钮风格（content / grid 模式） */
+.buttons-panel .buttons-panel-content.icon-top .add-button,
+.buttons-panel .buttons-panel-grid.icon-top .add-button {
     width: 56px;
     height: 56px;
     display: flex;
@@ -41,7 +42,8 @@
     font-size: 24px;
 }
 
-.buttons-panel .buttons-panel-content.icon-left .add-button {
+.buttons-panel .buttons-panel-content.icon-left .add-button,
+.buttons-panel .buttons-panel-grid.icon-left .add-button {
     width: 96px;
     height: 40px;
     display: flex;

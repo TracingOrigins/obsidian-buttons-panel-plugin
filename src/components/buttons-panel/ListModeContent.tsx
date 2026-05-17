@@ -114,13 +114,10 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
     const movingCategoryId =
         moveMode.state.type === 'category' ? moveMode.state.category.id : null;
 
-    // 使用 useMemo 缓存内容类名计算
+    // 列表视图展开内容统一使用 grid 布局（与按钮移动模式一致）
     const contentClass = React.useMemo(
-        () =>
-            isButtonMoveMode
-                ? `buttons-panel-grid ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`
-                : `buttons-panel-content ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`,
-        [isButtonMoveMode, displayStyle]
+        () => `buttons-panel-grid ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`,
+        [displayStyle]
     );
 
     if (categories.length === 0) {
@@ -139,14 +136,16 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         <div className="buttons-panel-list-mode">
             {categories.map((category) => {
                 const isMovingCategory = isCategoryMoveMode && movingCategoryId === category.id;
+                const isOpen =
+                    openByCategoryId.get(category.id) ?? !autoCollapseOnMount;
                 const categoryClassNames = ['buttons-panel-category'];
-                // 按钮移动模式下使用 move-mode-category，复用旧版按钮移动模式的分类卡片样式
                 if (isButtonMoveMode) {
                     categoryClassNames.push('move-mode-category');
-                }
-                // 分类移动模式下使用 move-category-target，复用旧版分类移动模式样式
-                if (isCategoryMoveMode) {
+                } else if (isCategoryMoveMode) {
                     categoryClassNames.push('move-category-target');
+                } else {
+                    // 普通列表：折叠用分类移动模式卡片，展开用按钮移动模式卡片
+                    categoryClassNames.push(isOpen ? 'move-mode-category' : 'move-category-target');
                 }
                 if (isMovingCategory) {
                     categoryClassNames.push('moving-category');
@@ -189,9 +188,7 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                             role={!isButtonMoveMode && !isCategoryMoveMode ? 'button' : undefined}
                             tabIndex={!isButtonMoveMode && !isCategoryMoveMode ? 0 : undefined}
                             aria-expanded={
-                                !isButtonMoveMode && !isCategoryMoveMode
-                                    ? (openByCategoryId.get(category.id) ?? !autoCollapseOnMount)
-                                    : undefined
+                                !isButtonMoveMode && !isCategoryMoveMode ? isOpen : undefined
                             }
                             onClick={
                                 isButtonMoveMode
@@ -205,9 +202,6 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                       ? (e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            const isOpen =
-                                                openByCategoryId.get(category.id) ??
-                                                !autoCollapseOnMount;
                                             setOpenByCategoryId((prev) => {
                                                 const next = new Map(prev);
                                                 next.set(category.id, !isOpen);
@@ -222,9 +216,6 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                           if (e.key !== 'Enter' && e.key !== ' ') return;
                                           e.preventDefault();
                                           e.stopPropagation();
-                                          const isOpen =
-                                              openByCategoryId.get(category.id) ??
-                                              !autoCollapseOnMount;
                                           setOpenByCategoryId((prev) => {
                                               const next = new Map(prev);
                                               next.set(category.id, !isOpen);
@@ -245,18 +236,14 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                         }
 
                                         const isCollapsibleActive = !isButtonMoveMode && !isCategoryMoveMode;
-                                        const isOpen = isCollapsibleActive
-                                            ? openByCategoryId.get(category.id) ?? !autoCollapseOnMount
-                                            : true;
-                                        setIcon(el, isOpen ? 'chevron-down' : 'chevron-right');
+                                        const iconOpen = isCollapsibleActive ? isOpen : true;
+                                        setIcon(el, iconOpen ? 'chevron-down' : 'chevron-right');
                                     }
                                 }}
                             />
                             {category.name}
                         </div>
-                        {!isCategoryMoveMode &&
-                            (isButtonMoveMode ||
-                                (openByCategoryId.get(category.id) ?? !autoCollapseOnMount)) && (
+                        {!isCategoryMoveMode && (isButtonMoveMode || isOpen) && (
                             <div
                                 className={contentClass}
                                 onClick={
