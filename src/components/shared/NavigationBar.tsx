@@ -142,21 +142,19 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
                     onClick={handleSearchButtonClick}
                 />
                 <NavIconButton
-                    icon="view"
+                    icon={panelViewType === 'list' ? 'list-collapse' : 'tabs'}
                     label={
-                        panelViewType === 'tabs'
-                            ? t('list_view')
-                            : t('tabs_view')
+                        panelViewType === 'list' ? t('list_view') : t('tabs_view')
                     }
                     className="view-btn"
                     onClick={onToggleView}
                 />
                 <NavIconButton
-                    icon="aperture"
+                    icon={displayStyle === 'icon_top' ? 'image' : 'type'}
                     label={
                         displayStyle === 'icon_top'
-                            ? t('icon_text_same_line')
-                            : t('icon_top_text_bottom')
+                            ? t('icon_top_text_bottom')
+                            : t('icon_text_same_line')
                     }
                     className="style-btn"
                     onClick={onToggleStyle}
