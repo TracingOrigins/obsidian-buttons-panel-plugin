@@ -31,6 +31,8 @@ interface TabsModeContentProps {
     enableAnimation: boolean;
     enableEditMode: boolean;
     tabsWrap: boolean;
+    /** 是否处于顶部导航栏搜索过滤中（用于空状态文案） */
+    isSearchActive?: boolean;
 }
 
 /**
@@ -45,6 +47,7 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
     enableAnimation,
     enableEditMode,
     tabsWrap,
+    isSearchActive = false,
 }) => {
     const { plugin, app } = usePluginContext();
     const moveMode = useMoveModeContext();
@@ -74,10 +77,11 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
             activeTabId ?? plugin.activeTabCategoryId,
             categories
         );
-        if (resolved !== activeTabId) {
+        if (resolved === activeTabId) return;
+        if (resolved !== null) {
             plugin.activeTabCategoryId = resolved;
-            setActiveTabId(resolved);
         }
+        setActiveTabId(resolved);
     }, [categories, activeTabId, plugin]);
 
     // 创建分类菜单处理函数的映射（为每个分类创建处理函数）
@@ -111,24 +115,6 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
         };
     }, [enableEditMode, categoryMenuHandlers]);
 
-    if (categories.length === 0) {
-        return (
-            <div className="buttons-panel-tabs-mode">
-                {enableEditMode && moveMode.state.type === 'none' ? (
-                    <div className="buttons-panel-empty-hint">
-                        <AddCategoryButton onClick={() => createCategory()} />
-                    </div>
-                ) : (
-                    <div>尚未配置任何分类，请在设置中添加分类和按钮。</div>
-                )}
-            </div>
-        );
-    }
-
-    // 获取当前激活分类的按钮
-    const activeCategory = categories.find((cat) => cat.id === activeTabId);
-    const activeButtons = activeCategory?.buttons ?? [];
-
     const handleButtonMoveStart = React.useCallback(
         (button: ButtonConfig) => {
             moveMode.enterButtonMoveMode(button);
@@ -147,11 +133,6 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
     const sortableEnabled =
         (buttonDrag?.enabled ?? false) && !isButtonMoveMode && !isCategoryMoveMode;
 
-    const orderedActiveButtons =
-        activeCategory && sortableEnabled
-            ? buttonDrag!.getOrderedButtons(activeCategory)
-            : activeButtons;
-
     // 使用 useMemo 缓存类名计算
     const tabBarClass = React.useMemo(
         () => `buttons-panel-tab-bar${tabsWrap ? ' tabs-wrap' : ''}`,
@@ -165,6 +146,30 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                 : `buttons-panel-content ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`,
         [isButtonMoveMode, sortableEnabled, displayStyle]
     );
+
+    if (categories.length === 0) {
+        return (
+            <div className="buttons-panel-tabs-mode">
+                {enableEditMode && moveMode.state.type === 'none' && !isSearchActive ? (
+                    <div className="buttons-panel-empty-hint">
+                        <AddCategoryButton onClick={() => createCategory()} />
+                    </div>
+                ) : (
+                    <div className="buttons-panel-empty-hint">
+                        {isSearchActive ? '无匹配结果。' : '尚未配置任何分类，请在设置中添加分类和按钮。'}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    const activeCategory = categories.find((cat) => cat.id === activeTabId);
+    const activeButtons = activeCategory?.buttons ?? [];
+
+    const orderedActiveButtons =
+        activeCategory && sortableEnabled
+            ? buttonDrag!.getOrderedButtons(activeCategory)
+            : activeButtons;
 
     const renderSortableCategoryGrid = (category: CategoryConfig, visible: boolean) => (
         <div

@@ -20,6 +20,8 @@ interface ListModeContentProps {
     enableEditMode: boolean;
     /** 列表视图：是否在组件 mount 时默认折叠所有分类（按钮移动模式等场景应传 false） */
     autoCollapseOnMount?: boolean;
+    /** 是否处于顶部导航栏搜索过滤中（用于空状态文案） */
+    isSearchActive?: boolean;
 }
 
 /**
@@ -34,6 +36,7 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
     enableAnimation,
     enableEditMode,
     autoCollapseOnMount = false,
+    isSearchActive = false,
 }) => {
     const { plugin, app } = usePluginContext();
     const moveMode = useMoveModeContext();
@@ -157,10 +160,14 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
     if (categories.length === 0) {
         return (
             <div className="buttons-panel-list-mode">
-                {enableEditMode && moveMode.state.type === 'none' ? (
-                    <AddCategoryButton onClick={() => createCategory()} />
+                {enableEditMode && moveMode.state.type === 'none' && !isSearchActive ? (
+                    <div className="buttons-panel-empty-hint">
+                        <AddCategoryButton onClick={() => createCategory()} />
+                    </div>
                 ) : (
-                    <div>尚未配置任何分类，请在设置中添加分类和按钮。</div>
+                    <div className="buttons-panel-empty-hint">
+                        {isSearchActive ? '无匹配结果。' : '尚未配置任何分类，请在设置中添加分类和按钮。'}
+                    </div>
                 )}
             </div>
         );
