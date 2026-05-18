@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
 import type { ButtonConfig, CategoryConfig } from '@/types';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
 
@@ -173,22 +173,30 @@ export const MoveModeProvider: React.FC<React.PropsWithChildren<MoveModeProvider
         };
     }, [state.type, exitMoveMode]);
 
-    return (
-        <MoveModeContext.Provider
-            value={{
-                state,
-                enterButtonMoveMode,
-                enterCategoryMoveMode,
-                exitMoveMode,
-                isMovingButton,
-                isMovingCategory,
-                moveButtonTo,
-                moveCategoryTo,
-            }}
-        >
-            {children}
-        </MoveModeContext.Provider>
+    const value = useMemo<MoveModeContextValue>(
+        () => ({
+            state,
+            enterButtonMoveMode,
+            enterCategoryMoveMode,
+            exitMoveMode,
+            isMovingButton,
+            isMovingCategory,
+            moveButtonTo,
+            moveCategoryTo,
+        }),
+        [
+            state,
+            enterButtonMoveMode,
+            enterCategoryMoveMode,
+            exitMoveMode,
+            isMovingButton,
+            isMovingCategory,
+            moveButtonTo,
+            moveCategoryTo,
+        ]
     );
+
+    return <MoveModeContext.Provider value={value}>{children}</MoveModeContext.Provider>;
 };
 
 export function useMoveModeContext(): MoveModeContextValue {

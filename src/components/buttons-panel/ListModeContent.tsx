@@ -1,9 +1,11 @@
 import React from 'react';
 import type { CategoryConfig, ButtonConfig } from '@/types';
 import { setIcon } from 'obsidian';
-import { ButtonItem } from '@/components/button/ButtonItem';
 import { usePluginContext } from '@/contexts/PluginContext';
 import { useMoveModeContext } from '@/contexts/MoveModeContext';
+import { useButtonDragOptional } from '@/contexts/ButtonDragContext';
+import { CategoryButtonGrid } from '@/components/buttons-panel/CategoryButtonGrid';
+import { CategoryTitleDropTarget } from '@/components/buttons-panel/CategoryTitleDropTarget';
 import { useCategoryCreation, useButtonCreation } from '@/hooks';
 import { AddButton } from '@/components/shared/AddButton';
 import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
@@ -35,12 +37,29 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
 }) => {
     const { plugin, app } = usePluginContext();
     const moveMode = useMoveModeContext();
+    const buttonDrag = useButtonDragOptional();
     const { createCategory } = useCategoryCreation();
     const { createButton } = useButtonCreation();
-    // 分类标题 DOM 引用（用于绑定右键菜单等），不再使用 heading 标签，改为普通块级元素
     const titleRefs = React.useRef<Map<string, HTMLDivElement>>(new Map());
+    const titleRefCallbacks = React.useRef(
+        new Map<string, (el: HTMLDivElement | null) => void>()
+    );
 
-    // 列表视图折叠状态（仅在"非移动模式"下生效；移动模式强制展开便于操作）
+    const getTitleRef = React.useCallback((categoryId: string) => {
+        let callback = titleRefCallbacks.current.get(categoryId);
+        if (!callback) {
+            callback = (el: HTMLDivElement | null) => {
+                if (el) {
+                    titleRefs.current.set(categoryId, el);
+                } else {
+                    titleRefs.current.delete(categoryId);
+                }
+            };
+            titleRefCallbacks.current.set(categoryId, callback);
+        }
+        return callback;
+    }, []);
+
     const [openByCategoryId, setOpenByCategoryId] = React.useState<Map<string, boolean>>(() => {
         const map = new Map<string, boolean>();
         const defaultOpen = !autoCollapseOnMount;
@@ -48,27 +67,41 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         return map;
     });
 
-    // categories 变更时补齐新分类，并清理已删除分类
     React.useEffect(() => {
         setOpenByCategoryId((prev) => {
             const next = new Map(prev);
             const defaultOpen = !autoCollapseOnMount;
+            let changed = false;
 
             for (const c of categories) {
                 if (!next.has(c.id)) {
                     next.set(c.id, defaultOpen);
+                    changed = true;
                 }
             }
             for (const key of Array.from(next.keys())) {
                 if (!categories.some((c) => c.id === key)) {
                     next.delete(key);
+                    changed = true;
                 }
             }
-            return next;
+            return changed ? next : prev;
         });
     }, [categories, autoCollapseOnMount]);
 
-    // 创建分类菜单处理函数的映射（为每个分类创建处理函数）
+    React.useEffect(() => {
+        if (!buttonDrag?.enabled) return;
+        buttonDrag.registerCategoryHover((categoryId) => {
+            setOpenByCategoryId((prev) => {
+                if (prev.get(categoryId)) return prev;
+                const next = new Map(prev);
+                next.set(categoryId, true);
+                return next;
+            });
+        });
+        return () => buttonDrag.registerCategoryHover(null);
+    }, [buttonDrag]);
+
     const categoryMenuHandlers = React.useMemo(() => {
         const handlers = new Map<string, (e: MouseEvent) => void>();
         categories.forEach((category) => {
@@ -78,7 +111,6 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         return handlers;
     }, [categories, plugin, app, moveMode]);
 
-    // 绑定分类标题右键菜单
     React.useEffect(() => {
         if (!enableEditMode) return;
 
@@ -114,7 +146,9 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
     const movingCategoryId =
         moveMode.state.type === 'category' ? moveMode.state.category.id : null;
 
-    // 列表视图展开内容统一使用 grid 布局（与按钮移动模式一致）
+    const sortableEnabled =
+        (buttonDrag?.enabled ?? false) && !isButtonMoveMode && !isCategoryMoveMode;
+
     const contentClass = React.useMemo(
         () => `buttons-panel-grid ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`,
         [displayStyle]
@@ -138,21 +172,34 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                 const isMovingCategory = isCategoryMoveMode && movingCategoryId === category.id;
                 const isOpen =
                     openByCategoryId.get(category.id) ?? !autoCollapseOnMount;
+                const orderedButtons = sortableEnabled
+                    ? buttonDrag!.getOrderedButtons(category)
+                    : category.buttons;
+                const showButtonGrid =
+                    !isCategoryMoveMode &&
+                    (isButtonMoveMode || isOpen || sortableEnabled);
+                const hideButtonGridWhileCollapsed =
+                    sortableEnabled &&
+                    !isButtonMoveMode &&
+                    !isOpen &&
+                    !buttonDrag?.isDragging;
+                const isVisuallyOpen =
+                    isOpen || (sortableEnabled && !!buttonDrag?.isDragging);
                 const categoryClassNames = ['buttons-panel-category'];
                 if (isButtonMoveMode) {
                     categoryClassNames.push('move-mode-category');
                 } else if (isCategoryMoveMode) {
                     categoryClassNames.push('move-category-target');
                 } else {
-                    // 普通列表：折叠用分类移动模式卡片，展开用按钮移动模式卡片
-                    categoryClassNames.push(isOpen ? 'move-mode-category' : 'move-category-target');
+                    categoryClassNames.push(
+                        isVisuallyOpen ? 'move-mode-category' : 'move-category-target'
+                    );
                 }
                 if (isMovingCategory) {
                     categoryClassNames.push('moving-category');
                 }
 
                 const handleCategoryClick = () => {
-                    // 分类移动模式下，点击分类整体 => 移动到该分类位置
                     if (isCategoryMoveMode) {
                         if (!movingCategoryId) return;
                         void moveMode.moveCategoryTo(category.id);
@@ -173,33 +220,33 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                 : undefined
                         }
                     >
-                        <div
-                            ref={(el) => {
-                                if (el) {
-                                    titleRefs.current.set(category.id, el);
-                                } else {
-                                    titleRefs.current.delete(category.id);
-                                }
-                            }}
-                            className={
+                        {(() => {
+                            const titleClassName =
                                 'buttons-panel-category-title' +
-                                (!isButtonMoveMode && !isCategoryMoveMode ? ' is-collapsible' : '')
-                            }
-                            role={!isButtonMoveMode && !isCategoryMoveMode ? 'button' : undefined}
-                            tabIndex={!isButtonMoveMode && !isCategoryMoveMode ? 0 : undefined}
-                            aria-expanded={
-                                !isButtonMoveMode && !isCategoryMoveMode ? isOpen : undefined
-                            }
-                            onClick={
-                                isButtonMoveMode
-                                    ? (e) => {
-                                          // 按钮移动模式下，点击分类标题 => 移动到该分类最后一个位置
+                                (!isButtonMoveMode && !isCategoryMoveMode
+                                    ? ' is-collapsible'
+                                    : '');
+                            const bindTitleRef = getTitleRef(category.id);
+                            const titleHandlers = {
+                                role: !isButtonMoveMode && !isCategoryMoveMode
+                                    ? ('button' as const)
+                                    : undefined,
+                                tabIndex: !isButtonMoveMode && !isCategoryMoveMode ? 0 : undefined,
+                                'aria-expanded':
+                                    !isButtonMoveMode && !isCategoryMoveMode
+                                        ? isVisuallyOpen
+                                        : undefined,
+                                onClick: isButtonMoveMode
+                                    ? (e: React.MouseEvent) => {
                                           e.preventDefault();
                                           e.stopPropagation();
-                                          void moveMode.moveButtonTo(category.id, category.buttons.length);
+                                          void moveMode.moveButtonTo(
+                                              category.id,
+                                              category.buttons.length
+                                          );
                                       }
                                     : !isCategoryMoveMode
-                                      ? (e) => {
+                                      ? (e: React.MouseEvent) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             setOpenByCategoryId((prev) => {
@@ -208,11 +255,9 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                                 return next;
                                             });
                                         }
-                                      : undefined
-                            }
-                            onKeyDown={
-                                !isButtonMoveMode && !isCategoryMoveMode
-                                    ? (e) => {
+                                      : undefined,
+                                onKeyDown: !isButtonMoveMode && !isCategoryMoveMode
+                                    ? (e: React.KeyboardEvent) => {
                                           if (e.key !== 'Enter' && e.key !== ' ') return;
                                           e.preventDefault();
                                           e.stopPropagation();
@@ -222,44 +267,66 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                               return next;
                                           });
                                       }
-                                    : undefined
-                            }
-                        >
+                                    : undefined,
+                            };
+                            const titleContent = (
+                                <>
                             <span
                                 className="category-icon"
                                 ref={(el) => {
                                     if (el) {
-                                        // 分类移动模式：所有分类都显示“折叠”样式（只展示图标 + 名称）
                                         if (isCategoryMoveMode) {
                                             setIcon(el, 'chevron-right');
                                             return;
                                         }
-
-                                        const isCollapsibleActive = !isButtonMoveMode && !isCategoryMoveMode;
-                                        const iconOpen = isCollapsibleActive ? isOpen : true;
+                                        const isCollapsibleActive =
+                                            !isButtonMoveMode && !isCategoryMoveMode;
+                                        const iconOpen = isCollapsibleActive
+                                            ? isVisuallyOpen
+                                            : true;
                                         setIcon(el, iconOpen ? 'chevron-down' : 'chevron-right');
                                     }
                                 }}
                             />
-                            {category.name}
-                        </div>
-                        {!isCategoryMoveMode && (isButtonMoveMode || isOpen) && (
-                            <div
-                                className={contentClass}
-                                onClick={
-                                    isButtonMoveMode
-                                        ? (e) => {
-                                              // 仅在点击“按钮容器背景空白处”时，移动到该分类末尾
-                                              if (e.target !== e.currentTarget) return;
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              void moveMode.moveButtonTo(category.id, category.buttons.length);
-                                          }
-                                        : undefined
-                                }
-                            >
-                                {category.buttons.length === 0 ? (
-                                    isButtonMoveMode ? (
+                                    {category.name}
+                                </>
+                            );
+
+                            if (sortableEnabled) {
+                                return (
+                                    <CategoryTitleDropTarget
+                                        innerRef={bindTitleRef}
+                                        categoryId={category.id}
+                                        className={titleClassName}
+                                        {...titleHandlers}
+                                    >
+                                        {titleContent}
+                                    </CategoryTitleDropTarget>
+                                );
+                            }
+
+                            return (
+                                <div
+                                    ref={bindTitleRef}
+                                    className={titleClassName}
+                                    {...titleHandlers}
+                                >
+                                    {titleContent}
+                                </div>
+                            );
+                        })()}
+                        {showButtonGrid &&
+                            (category.buttons.length === 0 && !sortableEnabled ? (
+                                isButtonMoveMode ? (
+                                    <div
+                                        className={contentClass}
+                                        onClick={(e) => {
+                                            if (e.target !== e.currentTarget) return;
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            void moveMode.moveButtonTo(category.id, 0);
+                                        }}
+                                    >
                                         <div
                                             className="empty-category-placeholder"
                                             onClick={(e) => {
@@ -275,41 +342,57 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                                 </div>
                                             </div>
                                         </div>
-                                    ) : enableEditMode && moveMode.state.type === 'none' ? (
+                                    </div>
+                                ) : enableEditMode && moveMode.state.type === 'none' ? (
+                                    <div className={contentClass}>
                                         <AddButton onClick={() => createButton(category)} />
-                                    ) : (
-                                        <div className="buttons-panel-empty-hint">该分类下暂无按钮。</div>
-                                    )
+                                    </div>
                                 ) : (
-                                    <>
-                                        {category.buttons.map((button, index) => {
-                                            const isMovingButton =
-                                                isButtonMoveMode && movingButtonId === button.id;
-
-                                            return (
-                                                <ButtonItem
-                                                    key={button.id}
-                                                    button={button}
-                                                    category={category}
-                                                    index={index}
-                                                    displayStyle={displayStyle}
-                                                    enableAnimation={enableAnimation}
-                                                    enableEditMode={enableEditMode}
-                                                    plugin={plugin}
-                                                    app={app}
-                                                    onMoveStart={handleButtonMoveStart}
-                                                    isInButtonMoveMode={isButtonMoveMode}
-                                                    isMovingButton={isMovingButton}
-                                                />
-                                            );
-                                        })}
+                                    <div className="buttons-panel-empty-hint">
+                                        该分类下暂无按钮。
+                                    </div>
+                                )
+                            ) : (
+                                <div
+                                    style={
+                                        hideButtonGridWhileCollapsed
+                                            ? { display: 'none' }
+                                            : undefined
+                                    }
+                                >
+                                    <CategoryButtonGrid
+                                        category={category}
+                                        orderedButtons={orderedButtons}
+                                        contentClass={contentClass}
+                                        displayStyle={displayStyle}
+                                        enableAnimation={enableAnimation}
+                                        enableEditMode={enableEditMode}
+                                        plugin={plugin}
+                                        app={app}
+                                        sortableEnabled={sortableEnabled}
+                                        onMoveStart={handleButtonMoveStart}
+                                        isInButtonMoveMode={isButtonMoveMode}
+                                        movingButtonId={movingButtonId}
+                                        onEmptyAreaClick={
+                                            isButtonMoveMode
+                                                ? (e) => {
+                                                      if (e.target !== e.currentTarget) return;
+                                                      e.preventDefault();
+                                                      e.stopPropagation();
+                                                      void moveMode.moveButtonTo(
+                                                          category.id,
+                                                          category.buttons.length
+                                                      );
+                                                  }
+                                                : undefined
+                                        }
+                                    >
                                         {enableEditMode && moveMode.state.type === 'none' && (
                                             <AddButton onClick={() => createButton(category)} />
                                         )}
-                                    </>
-                                )}
-                            </div>
-                        )}
+                                    </CategoryButtonGrid>
+                                </div>
+                            ))}
                     </div>
                 );
             })}

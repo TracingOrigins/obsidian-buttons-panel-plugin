@@ -20,6 +20,7 @@ interface SimpleButtonProps {
     isInButtonMoveMode?: boolean;
     /** 是否当前正在被移动的按钮，用于添加 moving 样式 */
     isMovingButton?: boolean;
+    className?: string;
 }
 
 /**
@@ -39,6 +40,7 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
     onMoveStart,
     isInButtonMoveMode,
     isMovingButton,
+    className,
 }) => {
     const iconRef = React.useRef<HTMLSpanElement>(null);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -84,8 +86,11 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
         if (enableAnimation) {
             names.push('with-animation');
         }
+        if (className) {
+            names.push(className);
+        }
         return names.join(' ');
-    }, [displayStyle, isInButtonMoveMode, isMovingButton, enableAnimation]);
+    }, [displayStyle, isInButtonMoveMode, isMovingButton, enableAnimation, className]);
 
     return (
         <button
