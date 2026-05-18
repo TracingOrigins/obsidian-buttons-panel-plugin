@@ -2,6 +2,7 @@ import React from 'react';
 import type { CategoryConfig } from '@/types';
 import { useConfigContext } from '@/contexts/ConfigContext';
 import { useMoveModeContext } from '@/contexts/MoveModeContext';
+import { ButtonDragProvider } from '@/contexts/ButtonDragContext';
 import { TabsModeContent } from '@/components/buttons-panel/TabsModeContent';
 import { ListModeContent } from '@/components/buttons-panel/ListModeContent';
 import './PanelContent.css';
@@ -32,59 +33,68 @@ export const PanelContent: React.FC<PanelContentProps> = ({
     const tabsWrap = panelConfig.tabsWrap ?? false;
     const autoCollapseListView = panelConfig.autoCollapseListView ?? false;
 
-    // 按 order 排序分类
-    const sortedCategories = [...categories].sort((a, b) => a.order - b.order);
-
     // 顶部导航栏搜索：在内存中按按钮 / 分类名称做一次过滤
     const normalizedQuery = searchQuery?.trim().toLowerCase() ?? '';
 
-    const filteredCategories =
-        normalizedQuery.length > 0
-            ? sortedCategories
-                  .map((category) => {
-                      const nameMatched = category.name
-                          .toLowerCase()
-                          .includes(normalizedQuery);
+    const filteredCategories = React.useMemo(() => {
+        const sorted = [...categories].sort((a, b) => a.order - b.order);
+        if (normalizedQuery.length === 0) {
+            return sorted;
+        }
 
-                      const filteredButtons = category.buttons.filter((button) => {
-                          const buttonName = button.name ?? '';
-                          return buttonName.toLowerCase().includes(normalizedQuery);
-                      });
+        return sorted
+            .map((category) => {
+                const nameMatched = category.name.toLowerCase().includes(normalizedQuery);
 
-                      // 分类名和按钮名的匹配策略：
-                      // - 如果分类名命中：保留该分类，并显示该分类下的全部按钮（便于“按分类名查找并使用”）
-                      // - 如果分类名未命中，但有按钮命中：仅保留命中的按钮
-                      // - 两者都未命中：丢弃该分类
-                      if (!nameMatched && filteredButtons.length === 0) {
-                          return null;
-                      }
+                const filteredButtons = category.buttons.filter((button) => {
+                    const buttonName = button.name ?? '';
+                    return buttonName.toLowerCase().includes(normalizedQuery);
+                });
 
-                      return {
-                          ...category,
-                          buttons: nameMatched ? category.buttons : filteredButtons,
-                      };
-                  })
-                  .filter(
-                      (c): c is CategoryConfig =>
-                          c !== null
-                  )
-            : sortedCategories;
+                // 分类名和按钮名的匹配策略：
+                // - 如果分类名命中：保留该分类，并显示该分类下的全部按钮（便于“按分类名查找并使用”）
+                // - 如果分类名未命中，但有按钮命中：仅保留命中的按钮
+                // - 两者都未命中：丢弃该分类
+                if (!nameMatched && filteredButtons.length === 0) {
+                    return null;
+                }
+
+                return {
+                    ...category,
+                    buttons: nameMatched ? category.buttons : filteredButtons,
+                };
+            })
+            .filter((c): c is CategoryConfig => c !== null);
+    }, [categories, normalizedQuery]);
+
+    // 长按拖拽仅非编辑模式；编辑模式沿用右键菜单「移动」的点击式移动
+    const buttonDragEnabled =
+        !enableEditMode &&
+        normalizedQuery.length === 0 &&
+        moveMode.state.type === 'none';
 
     // 按钮移动模式下，统一使用列表视图样式，并按照分类分隔显示
     if (moveMode.state.type === 'button') {
         return (
-            <ListModeContent
+            <ButtonDragProvider
                 categories={filteredCategories}
+                enabled={false}
                 displayStyle={displayStyle}
                 enableAnimation={enableAnimation}
-                enableEditMode={enableEditMode}
-                autoCollapseOnMount={false}
-            />
+            >
+                <ListModeContent
+                    categories={filteredCategories}
+                    displayStyle={displayStyle}
+                    enableAnimation={enableAnimation}
+                    enableEditMode={enableEditMode}
+                    autoCollapseOnMount={false}
+                />
+            </ButtonDragProvider>
         );
     }
 
-    if (viewType === 'tabs') {
-        return (
+    const panelContent =
+        viewType === 'tabs' ? (
             <TabsModeContent
                 categories={filteredCategories}
                 displayStyle={displayStyle}
@@ -92,17 +102,25 @@ export const PanelContent: React.FC<PanelContentProps> = ({
                 enableEditMode={enableEditMode}
                 tabsWrap={tabsWrap}
             />
+        ) : (
+            <ListModeContent
+                categories={filteredCategories}
+                displayStyle={displayStyle}
+                enableAnimation={enableAnimation}
+                enableEditMode={enableEditMode}
+                autoCollapseOnMount={autoCollapseListView}
+            />
         );
-    }
 
     return (
-        <ListModeContent
+        <ButtonDragProvider
             categories={filteredCategories}
+            enabled={buttonDragEnabled}
             displayStyle={displayStyle}
             enableAnimation={enableAnimation}
-            enableEditMode={enableEditMode}
-            autoCollapseOnMount={autoCollapseListView}
-        />
+        >
+            {panelContent}
+        </ButtonDragProvider>
     );
 };
 

@@ -1,3 +1,13 @@
+/* 列表视图：隐藏 view-content 右侧纵向滚动条，保留滚动 */
+body .view-content.buttons-panel:has(.buttons-panel-list-mode) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+body .view-content.buttons-panel:has(.buttons-panel-list-mode)::-webkit-scrollbar {
+    display: none;
+}
+
 .buttons-panel .buttons-panel-category {
     margin-bottom: 16px;
 }

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import type { CategoryConfig, ButtonConfig } from '@/types';
 import { setIcon } from 'obsidian';
-import { ButtonItem } from '@/components/button/ButtonItem';
 import { usePluginContext } from '@/contexts/PluginContext';
 import { useMoveModeContext } from '@/contexts/MoveModeContext';
+import { useButtonDragOptional } from '@/contexts/ButtonDragContext';
+import { CategoryButtonGrid } from '@/components/buttons-panel/CategoryButtonGrid';
+import { TabDropTarget } from '@/components/buttons-panel/TabDropTarget';
 import { useCategoryCreation, useButtonCreation } from '@/hooks';
 import { AddButton } from '@/components/shared/AddButton';
 import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
@@ -46,6 +48,7 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
 }) => {
     const { plugin, app } = usePluginContext();
     const moveMode = useMoveModeContext();
+    const buttonDrag = useButtonDragOptional();
     const { createCategory } = useCategoryCreation();
     const { createButton } = useButtonCreation();
     const tabRefs = React.useRef<Map<string, HTMLDivElement>>(new Map());
@@ -53,9 +56,12 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
     const [activeTabId, setActiveTabId] = useState<string | null>(() =>
         resolveActiveTabId(plugin.activeTabCategoryId, categories)
     );
+    const activeTabIdRef = React.useRef(activeTabId);
+    activeTabIdRef.current = activeTabId;
 
     const selectActiveTab = React.useCallback(
         (categoryId: string) => {
+            if (categoryId === activeTabIdRef.current) return;
             plugin.activeTabCategoryId = categoryId;
             setActiveTabId(categoryId);
         },
@@ -138,6 +144,14 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
     const movingCategoryId =
         moveMode.state.type === 'category' ? moveMode.state.category.id : null;
 
+    const sortableEnabled =
+        (buttonDrag?.enabled ?? false) && !isButtonMoveMode && !isCategoryMoveMode;
+
+    const orderedActiveButtons =
+        activeCategory && sortableEnabled
+            ? buttonDrag!.getOrderedButtons(activeCategory)
+            : activeButtons;
+
     // 使用 useMemo 缓存类名计算
     const tabBarClass = React.useMemo(
         () => `buttons-panel-tab-bar${tabsWrap ? ' tabs-wrap' : ''}`,
@@ -146,10 +160,38 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
 
     const contentClass = React.useMemo(
         () =>
-            isButtonMoveMode
+            isButtonMoveMode || sortableEnabled
                 ? `buttons-panel-grid ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`
                 : `buttons-panel-content ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`,
-        [isButtonMoveMode, displayStyle]
+        [isButtonMoveMode, sortableEnabled, displayStyle]
+    );
+
+    const renderSortableCategoryGrid = (category: CategoryConfig, visible: boolean) => (
+        <div
+            key={category.id}
+            className={visible ? undefined : 'buttons-panel-tab-drag-pool'}
+            style={visible ? undefined : { display: 'none' }}
+            aria-hidden={!visible}
+        >
+            <CategoryButtonGrid
+                category={category}
+                orderedButtons={buttonDrag!.getOrderedButtons(category)}
+                contentClass={contentClass}
+                displayStyle={displayStyle}
+                enableAnimation={enableAnimation && visible}
+                enableEditMode={enableEditMode}
+                plugin={plugin}
+                app={app}
+                sortableEnabled={sortableEnabled}
+                onMoveStart={handleButtonMoveStart}
+                isInButtonMoveMode={isButtonMoveMode}
+                movingButtonId={movingButtonId}
+            >
+                {enableEditMode && moveMode.state.type === 'none' && visible && (
+                    <AddButton onClick={() => createButton(category)} />
+                )}
+            </CategoryButtonGrid>
+        </div>
     );
 
     return (
@@ -182,6 +224,34 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                         selectActiveTab(category.id);
                     };
 
+                    const tabInner = (
+                        <>
+                            <span
+                                className="tab-icon"
+                                ref={(el) => {
+                                    if (el) {
+                                        setIcon(el, 'layout-grid');
+                                    }
+                                }}
+                            />
+                            <span className="tab-label">{category.name}</span>
+                        </>
+                    );
+
+                    if (sortableEnabled) {
+                        return (
+                            <TabDropTarget
+                                key={category.id}
+                                categoryId={category.id}
+                                className={tabClassNames}
+                                onClick={handleTabClick}
+                                onDragTabHoverActivate={selectActiveTab}
+                            >
+                                {tabInner}
+                            </TabDropTarget>
+                        );
+                    }
+
                     return (
                         <div
                             key={category.id}
@@ -196,15 +266,7 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                             onClick={handleTabClick}
                             style={{ cursor: 'pointer' }}
                         >
-                            <span
-                                className="tab-icon"
-                                ref={(el) => {
-                                    if (el) {
-                                        setIcon(el, 'layout-grid');
-                                    }
-                                }}
-                            />
-                            <span className="tab-label">{category.name}</span>
+                            {tabInner}
                         </div>
                     );
                 })}
@@ -222,7 +284,14 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
             <div className="buttons-panel-tab-content">
                 {!isCategoryMoveMode && (
                     <>
-                        {activeButtons.length === 0 ? (
+                        {sortableEnabled ? (
+                            categories.map((category) =>
+                                renderSortableCategoryGrid(
+                                    category,
+                                    category.id === activeTabId
+                                )
+                            )
+                        ) : activeButtons.length === 0 ? (
                             isButtonMoveMode && activeCategory ? (
                                 <div
                                     className={contentClass}
@@ -258,45 +327,39 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                                 <div className="buttons-panel-empty-hint">该分类下暂无按钮。</div>
                             )
                         ) : (
-                            <div
-                                className={contentClass}
-                                onClick={
-                                    isButtonMoveMode && activeCategory
-                                        ? (e) => {
-                                              // 仅在点击“按钮容器背景空白处”时，移动到该分类末尾
-                                              if (e.target !== e.currentTarget) return;
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              void moveMode.moveButtonTo(activeCategory.id, activeButtons.length);
-                                          }
-                                        : undefined
-                                }
-                            >
-                                {activeButtons.map((button, index) => {
-                                    const isMovingButton =
-                                        isButtonMoveMode && movingButtonId === button.id;
-
-                                    return (
-                                        <ButtonItem
-                                            key={button.id}
-                                            button={button}
-                                            category={activeCategory!}
-                                            index={index}
-                                            displayStyle={displayStyle}
-                                            enableAnimation={enableAnimation}
-                                            enableEditMode={enableEditMode}
-                                            plugin={plugin}
-                                            app={app}
-                                            onMoveStart={handleButtonMoveStart}
-                                            isInButtonMoveMode={isButtonMoveMode}
-                                            isMovingButton={isMovingButton}
-                                        />
-                                    );
-                                })}
-                                {enableEditMode && moveMode.state.type === 'none' && activeCategory && (
-                                    <AddButton onClick={() => createButton(activeCategory)} />
-                                )}
-                            </div>
+                            activeCategory && (
+                                <CategoryButtonGrid
+                                    category={activeCategory}
+                                    orderedButtons={orderedActiveButtons}
+                                    contentClass={contentClass}
+                                    displayStyle={displayStyle}
+                                    enableAnimation={enableAnimation}
+                                    enableEditMode={enableEditMode}
+                                    plugin={plugin}
+                                    app={app}
+                                    sortableEnabled={sortableEnabled}
+                                    onMoveStart={handleButtonMoveStart}
+                                    isInButtonMoveMode={isButtonMoveMode}
+                                    movingButtonId={movingButtonId}
+                                    onEmptyAreaClick={
+                                        isButtonMoveMode
+                                            ? (e) => {
+                                                  if (e.target !== e.currentTarget) return;
+                                                  e.preventDefault();
+                                                  e.stopPropagation();
+                                                  void moveMode.moveButtonTo(
+                                                      activeCategory.id,
+                                                      activeButtons.length
+                                                  );
+                                              }
+                                            : undefined
+                                    }
+                                >
+                                    {enableEditMode && moveMode.state.type === 'none' && (
+                                        <AddButton onClick={() => createButton(activeCategory)} />
+                                    )}
+                                </CategoryButtonGrid>
+                            )
                         )}
                     </>
                 )}
