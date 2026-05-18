@@ -101,6 +101,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
                 enableAnimation={enableAnimation}
                 enableEditMode={enableEditMode}
                 tabsWrap={tabsWrap}
+                isSearchActive={normalizedQuery.length > 0}
             />
         ) : (
             <ListModeContent
@@ -109,6 +110,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
                 enableAnimation={enableAnimation}
                 enableEditMode={enableEditMode}
                 autoCollapseOnMount={autoCollapseListView}
+                isSearchActive={normalizedQuery.length > 0}
             />
         );
 
