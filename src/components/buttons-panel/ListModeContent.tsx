@@ -5,7 +5,6 @@ import { usePluginContext } from '@/contexts/PluginContext';
 import { useMoveModeContext } from '@/contexts/MoveModeContext';
 import { useButtonDragOptional } from '@/contexts/ButtonDragContext';
 import { CategoryButtonGrid } from '@/components/buttons-panel/CategoryButtonGrid';
-import { CategoryTitleDropTarget } from '@/components/buttons-panel/CategoryTitleDropTarget';
 import { useCategoryCreation, useButtonCreation } from '@/hooks';
 import { AddButton } from '@/components/shared/AddButton';
 import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
@@ -298,19 +297,6 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                                     {category.name}
                                 </>
                             );
-
-                            if (sortableEnabled) {
-                                return (
-                                    <CategoryTitleDropTarget
-                                        innerRef={bindTitleRef}
-                                        categoryId={category.id}
-                                        className={titleClassName}
-                                        {...titleHandlers}
-                                    >
-                                        {titleContent}
-                                    </CategoryTitleDropTarget>
-                                );
-                            }
 
                             return (
                                 <div

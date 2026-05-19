@@ -1,16 +1,8 @@
 import { pointerWithin, type Collision, type CollisionDetection } from '@dnd-kit/core';
-import {
-    CONTAINER_PREFIX,
-    TAB_PREFIX,
-    TITLE_PREFIX,
-} from '@/utils/buttonDragItems';
+import { CONTAINER_PREFIX, TAB_PREFIX } from '@/utils/buttonDragItems';
 
 function isZoneDroppableId(id: string): boolean {
-    return (
-        id.startsWith(CONTAINER_PREFIX) ||
-        id.startsWith(TAB_PREFIX) ||
-        id.startsWith(TITLE_PREFIX)
-    );
+    return id.startsWith(CONTAINER_PREFIX) || id.startsWith(TAB_PREFIX);
 }
 
 /** 只保留一个碰撞目标，避免多目标交替触发换位闪烁 */
@@ -21,9 +13,6 @@ function pickPrimaryCollision(collisions: Collision[]): Collision[] {
     if (overButtons.length > 0) {
         return [overButtons[0]];
     }
-
-    const title = collisions.find((c) => String(c.id).startsWith(TITLE_PREFIX));
-    if (title) return [title];
 
     const tab = collisions.find((c) => String(c.id).startsWith(TAB_PREFIX));
     if (tab) return [tab];

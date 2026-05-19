@@ -5,7 +5,6 @@ export type ButtonDragItems = Record<string, string[]>;
 
 export const CONTAINER_PREFIX = 'container:';
 export const TAB_PREFIX = 'tab:';
-export const TITLE_PREFIX = 'title:';
 
 export function containerDroppableId(categoryId: string): string {
     return `${CONTAINER_PREFIX}${categoryId}`;
@@ -15,22 +14,17 @@ export function tabDroppableId(categoryId: string): string {
     return `${TAB_PREFIX}${categoryId}`;
 }
 
-export function titleDroppableId(categoryId: string): string {
-    return `${TITLE_PREFIX}${categoryId}`;
-}
-
 export function isContainerZoneOverId(overId: string | number): boolean {
     return String(overId).startsWith(CONTAINER_PREFIX);
 }
 
-export function isTitleOrTabZoneOverId(overId: string | number): boolean {
-    const id = String(overId);
-    return id.startsWith(TAB_PREFIX) || id.startsWith(TITLE_PREFIX);
+export function isTabZoneOverId(overId: string | number): boolean {
+    return String(overId).startsWith(TAB_PREFIX);
 }
 
-/** 拖放到分类区域末尾（容器 / 标签 / 列表标题行） */
+/** 拖放到分类区域末尾（容器 / 标签） */
 export function isAppendToCategoryEndOverId(overId: string | number): boolean {
-    return isContainerZoneOverId(overId) || isTitleOrTabZoneOverId(overId);
+    return isContainerZoneOverId(overId) || isTabZoneOverId(overId);
 }
 
 export function buildButtonDragItems(categories: CategoryConfig[]): ButtonDragItems {
@@ -59,9 +53,6 @@ export function resolveOverContainerId(
     }
     if (id.startsWith(TAB_PREFIX)) {
         return id.slice(TAB_PREFIX.length);
-    }
-    if (id.startsWith(TITLE_PREFIX)) {
-        return id.slice(TITLE_PREFIX.length);
     }
     return findContainerForButtonId(id, items) ?? null;
 }
@@ -126,7 +117,7 @@ export function applyDragOverToItems(
         if (isContainerZoneOverId(overId)) {
             return prev;
         }
-        if (isTitleOrTabZoneOverId(overId)) {
+        if (isTabZoneOverId(overId)) {
             const lastIndex = overItems.length - 1;
             if (activeIndex === lastIndex) return prev;
             return withContainerItems(
