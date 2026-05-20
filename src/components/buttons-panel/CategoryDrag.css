@@ -1,0 +1,102 @@
+.buttons-panel .sortable-category-item {
+    touch-action: none;
+}
+
+.buttons-panel .sortable-category-item--dragging {
+    pointer-events: none;
+}
+
+.buttons-panel .category-drag-list-placeholder {
+    pointer-events: none;
+    opacity: 0.45;
+}
+
+.buttons-panel .category-drag-list-placeholder .buttons-panel-category-title {
+    pointer-events: none;
+    cursor: grabbing;
+}
+
+/* 标签：transform 仅平移（不用 scale），避免换位时文字被横向挤压 */
+.buttons-panel .sortable-category-tab-wrapper {
+    flex-shrink: 0;
+    width: max-content;
+    min-width: max-content;
+}
+
+.buttons-panel .sortable-category-tab {
+    touch-action: none;
+}
+
+.buttons-panel .sortable-category-tab--dragging {
+    pointer-events: none;
+}
+
+.buttons-panel .sortable-category-tab--dragging {
+    visibility: hidden;
+}
+
+.buttons-panel .sortable-category-tab--dragging > .tab-icon,
+.buttons-panel .sortable-category-tab--dragging > .tab-label {
+    pointer-events: none;
+}
+
+.buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .sortable-category-tab-wrapper,
+.buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .buttons-panel-tab {
+    transition: none;
+}
+
+.buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .buttons-panel-tab .tab-label {
+    white-space: nowrap;
+}
+
+.buttons-panel .buttons-panel-category-title.category-drag-handle {
+    cursor: grab;
+    touch-action: none;
+}
+
+.buttons-panel .buttons-panel-category-title.category-drag-handle:active {
+    cursor: grabbing;
+}
+
+.buttons-panel .buttons-panel-tab.category-drag-handle {
+    cursor: grab;
+    touch-action: none;
+}
+
+.buttons-panel .buttons-panel-tab.category-drag-handle:active {
+    cursor: grabbing;
+}
+
+.buttons-panel .category-drag-overlay-list {
+    margin-bottom: 0;
+    cursor: grabbing;
+    opacity: 0.92;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.buttons-panel .category-drag-overlay-list .buttons-panel-category-title {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+    color: var(--text-muted);
+}
+
+/* 拖拽预览挂到 body，需显式继承 tab 栏排版，避免换行导致宽度/字形变化 */
+.buttons-panel .category-drag-overlay-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    cursor: grabbing;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.buttons-panel .category-drag-overlay-tab:not(.is-active) {
+    opacity: 0.5;
+}
+
+.buttons-panel .category-drag-overlay-tab.is-active {
+    opacity: 1;
+}
+
+.buttons-panel .category-drag-overlay-tab .tab-label {
+    white-space: nowrap;
+}

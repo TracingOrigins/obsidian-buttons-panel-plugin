@@ -19,10 +19,6 @@ interface CategoryButtonGridProps {
     plugin: ButtonsPanelPlugin;
     app: App;
     sortableEnabled: boolean;
-    onMoveStart?: (button: ButtonConfig) => void;
-    isInButtonMoveMode?: boolean;
-    movingButtonId?: string | null;
-    onEmptyAreaClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
     children?: React.ReactNode;
 }
 
@@ -36,10 +32,6 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
     plugin,
     app,
     sortableEnabled,
-    onMoveStart,
-    isInButtonMoveMode,
-    movingButtonId,
-    onEmptyAreaClick,
     children,
 }) => {
     const buttonDrag = useButtonDragOptional();
@@ -60,8 +52,6 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
 
     const renderButtons = () =>
         orderedButtons.map((button, index) => {
-            const isMovingButton = isInButtonMoveMode && movingButtonId === button.id;
-
             if (sortableEnabled) {
                 return (
                     <SortableButtonItem
@@ -89,16 +79,13 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
                     enableEditMode={enableEditMode}
                     plugin={plugin}
                     app={app}
-                    onMoveStart={onMoveStart}
-                    isInButtonMoveMode={isInButtonMoveMode}
-                    isMovingButton={isMovingButton}
                 />
             );
         });
 
     if (!sortableEnabled) {
         return (
-            <div className={contentClass} onClick={onEmptyAreaClick}>
+            <div className={contentClass}>
                 {orderedButtons.length === 0 ? (
                     children
                 ) : (
@@ -112,7 +99,7 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
     }
 
     return (
-        <div ref={setNodeRef} className={gridClassName} onClick={onEmptyAreaClick}>
+        <div ref={setNodeRef} className={gridClassName}>
             <SortableContext items={buttonIds} strategy={rectSortingStrategy}>
                 {orderedButtons.length === 0 ? (
                     <div className="button-drag-empty-slot" />

@@ -15,11 +15,6 @@ interface SimpleButtonProps {
     plugin: ButtonsPanelPlugin;
     app: App;
     onClick?: () => void;
-    onMoveStart?: (button: ButtonConfig) => void;
-    /** 是否处于按钮移动模式，用于添加 move-button-target 等样式 */
-    isInButtonMoveMode?: boolean;
-    /** 是否当前正在被移动的按钮，用于添加 moving 样式 */
-    isMovingButton?: boolean;
     className?: string;
 }
 
@@ -37,9 +32,6 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
     plugin,
     app,
     onClick,
-    onMoveStart,
-    isInButtonMoveMode,
-    isMovingButton,
     className,
 }) => {
     const iconRef = React.useRef<HTMLSpanElement>(null);
@@ -59,7 +51,7 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
     }, [button.icon]);
 
     // 使用 hook 获取右键菜单处理函数
-    const handleContextMenu = useButtonMenu(button, category, onMoveStart);
+    const handleContextMenu = useButtonMenu(button, category);
 
     // 绑定右键菜单
     React.useEffect(() => {
@@ -77,12 +69,6 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
     const classNames = React.useMemo(() => {
         const layoutClass = displayStyle === 'icon_top' ? 'icon-top' : 'icon-left';
         const names = ['buttons-panel-simple-button', layoutClass];
-        if (isInButtonMoveMode) {
-            names.push('move-button-target');
-        }
-        if (isMovingButton) {
-            names.push('moving');
-        }
         if (enableAnimation) {
             names.push('with-animation');
         }
@@ -90,7 +76,7 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
             names.push(className);
         }
         return names.join(' ');
-    }, [displayStyle, isInButtonMoveMode, isMovingButton, enableAnimation, className]);
+    }, [displayStyle, enableAnimation, className]);
 
     return (
         <button

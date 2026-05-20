@@ -31,7 +31,7 @@ export const SortableButtonItem: React.FC<SortableButtonItemProps> = React.memo(
         app,
     }) => {
         const buttonDrag = useButtonDragOptional();
-        const handleButtonClick = useButtonClickHandler(button, category, index);
+        const handleButtonClick = useButtonClickHandler(button);
 
         const panelDragging = buttonDrag?.isDragging ?? false;
 
