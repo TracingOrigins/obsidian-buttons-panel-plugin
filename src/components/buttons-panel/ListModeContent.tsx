@@ -1,15 +1,15 @@
 import React from 'react';
-import type { CategoryConfig, ButtonConfig } from '@/types';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import type { CategoryConfig } from '@/types';
 import { setIcon } from 'obsidian';
 import { usePluginContext } from '@/contexts/PluginContext';
-import { useMoveModeContext } from '@/contexts/MoveModeContext';
-import { useButtonDragOptional } from '@/contexts/ButtonDragContext';
+import { useButtonDragOptional, useCategoryDragOptional } from '@/contexts/ButtonDragContext';
 import { CategoryButtonGrid } from '@/components/buttons-panel/CategoryButtonGrid';
+import { SortableCategoryBlock } from '@/components/buttons-panel/SortableCategoryBlock';
 import { useCategoryCreation, useButtonCreation } from '@/hooks';
 import { AddButton } from '@/components/shared/AddButton';
 import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
 import { createCategoryMenuHandler } from '@/utils/categoryMenuUtils';
-import { t } from '@/utils/i18n';
 import './ListModeContent.css';
 
 interface ListModeContentProps {
@@ -17,18 +17,10 @@ interface ListModeContentProps {
     displayStyle: 'default' | 'icon_top';
     enableAnimation: boolean;
     enableEditMode: boolean;
-    /** 列表视图：是否在组件 mount 时默认折叠所有分类（按钮移动模式等场景应传 false） */
     autoCollapseOnMount?: boolean;
-    /** 是否处于顶部导航栏搜索过滤中（用于空状态文案） */
     isSearchActive?: boolean;
 }
 
-/**
- * ListModeContent
- * 列表视图：
- * - 显示每个分类的标题
- * - 显示每个分类下的按钮列表
- */
 export const ListModeContent: React.FC<ListModeContentProps> = ({
     categories,
     displayStyle,
@@ -38,8 +30,8 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
     isSearchActive = false,
 }) => {
     const { plugin, app } = usePluginContext();
-    const moveMode = useMoveModeContext();
     const buttonDrag = useButtonDragOptional();
+    const categoryDrag = useCategoryDragOptional();
     const { createCategory } = useCategoryCreation();
     const { createButton } = useButtonCreation();
     const titleRefs = React.useRef<Map<string, HTMLDivElement>>(new Map());
@@ -107,11 +99,11 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
     const categoryMenuHandlers = React.useMemo(() => {
         const handlers = new Map<string, (e: MouseEvent) => void>();
         categories.forEach((category) => {
-            const handler = createCategoryMenuHandler(category, categories, plugin, app, moveMode);
+            const handler = createCategoryMenuHandler(category, categories, plugin, app);
             handlers.set(category.id, handler);
         });
         return handlers;
-    }, [categories, plugin, app, moveMode]);
+    }, [categories, plugin, app]);
 
     React.useEffect(() => {
         if (!enableEditMode) return;
@@ -133,23 +125,41 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         };
     }, [enableEditMode, categoryMenuHandlers]);
 
-    const handleButtonMoveStart = React.useCallback(
-        (button: ButtonConfig) => {
-            moveMode.enterButtonMoveMode(button);
-        },
-        [moveMode]
-    );
+    const sortableEnabled = buttonDrag?.enabled ?? false;
+    const isCategoryDragging = categoryDrag?.isDragging ?? false;
+    const categorySortEnabled =
+        ((categoryDrag?.enabled ?? false) || isCategoryDragging) &&
+        !(buttonDrag?.isDragging ?? false);
 
-    const isButtonMoveMode = moveMode.state.type === 'button';
-    const movingButtonId =
-        moveMode.state.type === 'button' ? moveMode.state.button.id : null;
+    const openBeforeCategoryDragRef = React.useRef<Map<string, boolean> | null>(null);
 
-    const isCategoryMoveMode = moveMode.state.type === 'category';
-    const movingCategoryId =
-        moveMode.state.type === 'category' ? moveMode.state.category.id : null;
+    React.useEffect(() => {
+        if (!isCategoryDragging) {
+            if (openBeforeCategoryDragRef.current !== null) {
+                setOpenByCategoryId(new Map(openBeforeCategoryDragRef.current));
+                openBeforeCategoryDragRef.current = null;
+            }
+            return;
+        }
 
-    const sortableEnabled =
-        (buttonDrag?.enabled ?? false) && !isButtonMoveMode && !isCategoryMoveMode;
+        setOpenByCategoryId((prev) => {
+            if (openBeforeCategoryDragRef.current === null) {
+                openBeforeCategoryDragRef.current = new Map(prev);
+            }
+            const allClosed = categories.every((c) => prev.get(c.id) === false);
+            if (allClosed) return prev;
+
+            const next = new Map<string, boolean>();
+            for (const c of categories) {
+                next.set(c.id, false);
+            }
+            return next;
+        });
+    }, [isCategoryDragging, categories]);
+
+    const orderedCategories = categorySortEnabled
+        ? categoryDrag!.getOrderedCategories(categories)
+        : categories;
 
     const contentClass = React.useMemo(
         () => `buttons-panel-grid ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`,
@@ -159,7 +169,7 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
     if (categories.length === 0) {
         return (
             <div className="buttons-panel-list-mode">
-                {enableEditMode && moveMode.state.type === 'none' && !isSearchActive ? (
+                {enableEditMode && !isSearchActive ? (
                     <div className="buttons-panel-empty-hint">
                         <AddCategoryButton onClick={() => createCategory()} />
                     </div>
@@ -172,226 +182,138 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         );
     }
 
+    const renderCategoryItem = (category: CategoryConfig) => {
+        const isOpen = openByCategoryId.get(category.id) ?? !autoCollapseOnMount;
+        const orderedButtons = sortableEnabled
+            ? buttonDrag!.getOrderedButtons(category)
+            : category.buttons;
+        const isButtonDragging = !!buttonDrag?.isDragging;
+        const showButtonGrid =
+            !isCategoryDragging && (isOpen || sortableEnabled);
+        const hideButtonGridWhileCollapsed =
+            sortableEnabled && !isOpen && !isButtonDragging;
+        const isVisuallyOpen = isCategoryDragging
+            ? false
+            : isOpen || (sortableEnabled && isButtonDragging);
+
+        const titleClassName =
+            'buttons-panel-category-title is-collapsible' +
+            (categorySortEnabled ? ' category-drag-handle' : '');
+        const bindTitleRef = getTitleRef(category.id);
+
+        const titleContent = (
+            <>
+                <span
+                    className="category-icon"
+                    ref={(el) => {
+                        if (el) {
+                            setIcon(el, isVisuallyOpen ? 'chevron-down' : 'chevron-right');
+                        }
+                    }}
+                />
+                {category.name}
+            </>
+        );
+
+        const titleHandlers = {
+            role: 'button' as const,
+            tabIndex: 0,
+            'aria-expanded': isVisuallyOpen,
+            onClick: (e: React.MouseEvent) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (categoryDrag?.isDragging || buttonDrag?.isDragging) return;
+                setOpenByCategoryId((prev) => {
+                    const next = new Map(prev);
+                    next.set(category.id, !isOpen);
+                    return next;
+                });
+            },
+            onKeyDown: (e: React.KeyboardEvent) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                e.preventDefault();
+                e.stopPropagation();
+                setOpenByCategoryId((prev) => {
+                    const next = new Map(prev);
+                    next.set(category.id, !isOpen);
+                    return next;
+                });
+            },
+        };
+
+        const buttonGridSection = showButtonGrid && (
+            <div style={hideButtonGridWhileCollapsed ? { display: 'none' } : undefined}>
+                <CategoryButtonGrid
+                    category={category}
+                    orderedButtons={orderedButtons}
+                    contentClass={contentClass}
+                    displayStyle={displayStyle}
+                    enableAnimation={enableAnimation}
+                    enableEditMode={enableEditMode}
+                    plugin={plugin}
+                    app={app}
+                    sortableEnabled={sortableEnabled}
+                >
+                    {enableEditMode && (
+                        <AddButton onClick={() => createButton(category)} />
+                    )}
+                </CategoryButtonGrid>
+            </div>
+        );
+
+        const categoryClassNames = [
+            'buttons-panel-category',
+            isVisuallyOpen ? 'move-mode-category' : 'move-category-target',
+        ].join(' ');
+
+        if (categorySortEnabled) {
+            return (
+                <SortableCategoryBlock
+                    key={category.id}
+                    categoryId={category.id}
+                    className={categoryClassNames}
+                    renderTitle={({ className, listeners, attributes }) => (
+                        <div
+                            ref={bindTitleRef}
+                            className={`${titleClassName} ${className}`}
+                            {...(attributes ?? {})}
+                            {...(listeners ?? {})}
+                            {...titleHandlers}
+                        >
+                            {titleContent}
+                        </div>
+                    )}
+                >
+                    {buttonGridSection}
+                </SortableCategoryBlock>
+            );
+        }
+
+        return (
+            <div key={category.id} className={categoryClassNames}>
+                <div ref={bindTitleRef} className={titleClassName} {...titleHandlers}>
+                    {titleContent}
+                </div>
+                {buttonGridSection}
+            </div>
+        );
+    };
+
+    const categoryList = orderedCategories.map((category) => renderCategoryItem(category));
+
     return (
         <div className="buttons-panel-list-mode">
-            {categories.map((category) => {
-                const isMovingCategory = isCategoryMoveMode && movingCategoryId === category.id;
-                const isOpen =
-                    openByCategoryId.get(category.id) ?? !autoCollapseOnMount;
-                const orderedButtons = sortableEnabled
-                    ? buttonDrag!.getOrderedButtons(category)
-                    : category.buttons;
-                const showButtonGrid =
-                    !isCategoryMoveMode &&
-                    (isButtonMoveMode || isOpen || sortableEnabled);
-                const hideButtonGridWhileCollapsed =
-                    sortableEnabled &&
-                    !isButtonMoveMode &&
-                    !isOpen &&
-                    !buttonDrag?.isDragging;
-                const isVisuallyOpen =
-                    isOpen || (sortableEnabled && !!buttonDrag?.isDragging);
-                const categoryClassNames = ['buttons-panel-category'];
-                if (isButtonMoveMode) {
-                    categoryClassNames.push('move-mode-category');
-                } else if (isCategoryMoveMode) {
-                    categoryClassNames.push('move-category-target');
-                } else {
-                    categoryClassNames.push(
-                        isVisuallyOpen ? 'move-mode-category' : 'move-category-target'
-                    );
-                }
-                if (isMovingCategory) {
-                    categoryClassNames.push('moving-category');
-                }
-
-                const handleCategoryClick = () => {
-                    if (isCategoryMoveMode) {
-                        if (!movingCategoryId) return;
-                        void moveMode.moveCategoryTo(category.id);
-                    }
-                };
-
-                return (
-                    <div
-                        key={category.id}
-                        className={categoryClassNames.join(' ')}
-                        onClick={
-                            isCategoryMoveMode
-                                ? (e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      handleCategoryClick();
-                                  }
-                                : undefined
-                        }
-                    >
-                        {(() => {
-                            const titleClassName =
-                                'buttons-panel-category-title' +
-                                (!isButtonMoveMode && !isCategoryMoveMode
-                                    ? ' is-collapsible'
-                                    : '');
-                            const bindTitleRef = getTitleRef(category.id);
-                            const titleHandlers = {
-                                role: !isButtonMoveMode && !isCategoryMoveMode
-                                    ? ('button' as const)
-                                    : undefined,
-                                tabIndex: !isButtonMoveMode && !isCategoryMoveMode ? 0 : undefined,
-                                'aria-expanded':
-                                    !isButtonMoveMode && !isCategoryMoveMode
-                                        ? isVisuallyOpen
-                                        : undefined,
-                                onClick: isButtonMoveMode
-                                    ? (e: React.MouseEvent) => {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                          void moveMode.moveButtonTo(
-                                              category.id,
-                                              category.buttons.length
-                                          );
-                                      }
-                                    : !isCategoryMoveMode
-                                      ? (e: React.MouseEvent) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setOpenByCategoryId((prev) => {
-                                                const next = new Map(prev);
-                                                next.set(category.id, !isOpen);
-                                                return next;
-                                            });
-                                        }
-                                      : undefined,
-                                onKeyDown: !isButtonMoveMode && !isCategoryMoveMode
-                                    ? (e: React.KeyboardEvent) => {
-                                          if (e.key !== 'Enter' && e.key !== ' ') return;
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                          setOpenByCategoryId((prev) => {
-                                              const next = new Map(prev);
-                                              next.set(category.id, !isOpen);
-                                              return next;
-                                          });
-                                      }
-                                    : undefined,
-                            };
-                            const titleContent = (
-                                <>
-                            <span
-                                className="category-icon"
-                                ref={(el) => {
-                                    if (el) {
-                                        if (isCategoryMoveMode) {
-                                            setIcon(el, 'chevron-right');
-                                            return;
-                                        }
-                                        const isCollapsibleActive =
-                                            !isButtonMoveMode && !isCategoryMoveMode;
-                                        const iconOpen = isCollapsibleActive
-                                            ? isVisuallyOpen
-                                            : true;
-                                        setIcon(el, iconOpen ? 'chevron-down' : 'chevron-right');
-                                    }
-                                }}
-                            />
-                                    {category.name}
-                                </>
-                            );
-
-                            return (
-                                <div
-                                    ref={bindTitleRef}
-                                    className={titleClassName}
-                                    {...titleHandlers}
-                                >
-                                    {titleContent}
-                                </div>
-                            );
-                        })()}
-                        {showButtonGrid &&
-                            (category.buttons.length === 0 && !sortableEnabled ? (
-                                isButtonMoveMode ? (
-                                    <div
-                                        className={contentClass}
-                                        onClick={(e) => {
-                                            if (e.target !== e.currentTarget) return;
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            void moveMode.moveButtonTo(category.id, 0);
-                                        }}
-                                    >
-                                        <div
-                                            className="empty-category-placeholder"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                void moveMode.moveButtonTo(category.id, 0);
-                                            }}
-                                        >
-                                            <div>
-                                                <div>
-                                                    <div>+</div>
-                                                    <div>{t('empty_category_placeholder')}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : enableEditMode && moveMode.state.type === 'none' ? (
-                                    <div className={contentClass}>
-                                        <AddButton onClick={() => createButton(category)} />
-                                    </div>
-                                ) : (
-                                    <div className="buttons-panel-empty-hint">
-                                        该分类下暂无按钮。
-                                    </div>
-                                )
-                            ) : (
-                                <div
-                                    style={
-                                        hideButtonGridWhileCollapsed
-                                            ? { display: 'none' }
-                                            : undefined
-                                    }
-                                >
-                                    <CategoryButtonGrid
-                                        category={category}
-                                        orderedButtons={orderedButtons}
-                                        contentClass={contentClass}
-                                        displayStyle={displayStyle}
-                                        enableAnimation={enableAnimation}
-                                        enableEditMode={enableEditMode}
-                                        plugin={plugin}
-                                        app={app}
-                                        sortableEnabled={sortableEnabled}
-                                        onMoveStart={handleButtonMoveStart}
-                                        isInButtonMoveMode={isButtonMoveMode}
-                                        movingButtonId={movingButtonId}
-                                        onEmptyAreaClick={
-                                            isButtonMoveMode
-                                                ? (e) => {
-                                                      if (e.target !== e.currentTarget) return;
-                                                      e.preventDefault();
-                                                      e.stopPropagation();
-                                                      void moveMode.moveButtonTo(
-                                                          category.id,
-                                                          category.buttons.length
-                                                      );
-                                                  }
-                                                : undefined
-                                        }
-                                    >
-                                        {enableEditMode && moveMode.state.type === 'none' && (
-                                            <AddButton onClick={() => createButton(category)} />
-                                        )}
-                                    </CategoryButtonGrid>
-                                </div>
-                            ))}
-                    </div>
-                );
-            })}
-            {enableEditMode && moveMode.state.type === 'none' && (
-                <AddCategoryButton onClick={() => createCategory()} />
+            {categorySortEnabled ? (
+                <SortableContext
+                    items={categoryDrag!.categoryIds}
+                    strategy={verticalListSortingStrategy}
+                >
+                    {categoryList}
+                </SortableContext>
+            ) : (
+                categoryList
             )}
+            {enableEditMode && <AddCategoryButton onClick={() => createCategory()} />}
         </div>
     );
 };
