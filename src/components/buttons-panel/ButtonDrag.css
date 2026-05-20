@@ -41,8 +41,40 @@
     outline-offset: -1px;
 }
 
+/* DragOverlay 挂到 body，需与容器内按钮分开写选择器 */
+body button.buttons-panel-simple-button.button-drag-overlay,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.button-drag-overlay {
+    color: var(--interactive-accent);
+    box-sizing: border-box;
     opacity: 0.92;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     cursor: grabbing;
+}
+
+body button.buttons-panel-simple-button.button-drag-overlay .button-text,
+body
+    .buttons-panel
+    .buttons-panel-container
+    button.buttons-panel-simple-button.button-drag-overlay
+    .button-text {
+    color: var(--interactive-accent);
+}
+
+body button.buttons-panel-simple-button.button-drag-overlay .button-icon,
+body
+    .buttons-panel
+    .buttons-panel-container
+    button.buttons-panel-simple-button.button-drag-overlay
+    .button-icon {
+    color: var(--interactive-accent);
+}
+
+body button.buttons-panel-simple-button.button-drag-overlay .button-icon svg,
+body
+    .buttons-panel
+    .buttons-panel-container
+    button.buttons-panel-simple-button.button-drag-overlay
+    .button-icon
+    svg {
+    color: var(--interactive-accent);
 }

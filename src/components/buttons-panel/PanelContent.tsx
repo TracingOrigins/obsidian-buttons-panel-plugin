@@ -90,6 +90,9 @@ export const PanelContent: React.FC<PanelContentProps> = ({
             displayStyle={displayStyle}
             enableAnimation={enableAnimation}
             categoryDragOverlayVariant={viewType === 'tabs' ? 'tabs' : 'list'}
+            categoryDragLayout={
+                viewType === 'tabs' ? (tabsWrap ? 'grid' : 'horizontal') : 'vertical'
+            }
         >
             {panelContent}
         </ButtonDragProvider>

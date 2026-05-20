@@ -9,16 +9,13 @@ interface SortableCategoryBlockProps {
     className?: string;
     onClick?: React.MouseEventHandler<HTMLDivElement>;
     children: React.ReactNode;
-    /** 分类标题行：仅标题携带拖拽监听器 */
-    renderTitle: (dragHandleProps: {
-        className: string;
-        listeners?: ReturnType<typeof useSortable>['listeners'];
-        attributes?: ReturnType<typeof useSortable>['attributes'];
-    }) => React.ReactNode;
+    renderTitle: () => React.ReactNode;
+    /** 拖动时整块占位预览（完整分类内容） */
+    renderDragPreview?: () => React.ReactNode;
 }
 
 /**
- * 列表视图：整块分类容器可排序，长按标题行触发拖拽。
+ * 列表视图：整块分类可排序；长按分类任意非按钮区域触发拖拽（保留展开状态）。
  */
 export const SortableCategoryBlock: React.FC<SortableCategoryBlockProps> = ({
     categoryId,
@@ -26,6 +23,7 @@ export const SortableCategoryBlock: React.FC<SortableCategoryBlockProps> = ({
     onClick,
     children,
     renderTitle,
+    renderDragPreview,
 }) => {
     const categoryDrag = useCategoryDragOptional();
     const panelDragging = categoryDrag?.isDragging ?? false;
@@ -36,33 +34,41 @@ export const SortableCategoryBlock: React.FC<SortableCategoryBlockProps> = ({
     });
 
     const style: React.CSSProperties = {
-        transform: transform ? CSS.Transform.toString(transform) : undefined,
+        transform:
+            isDragging || !transform ? undefined : CSS.Translate.toString(transform),
         transition: panelDragging ? undefined : transition,
     };
 
     const blockClassName = [
-        className,
+        ...(isDragging ? [] : [className]),
         'sortable-category-item',
+        'category-drag-handle',
         isDragging ? 'sortable-category-item--dragging' : '',
     ]
         .filter(Boolean)
         .join(' ');
 
-    const titleProps = {
-        className: 'category-drag-handle',
-        listeners: isDragging ? undefined : listeners,
-        attributes: isDragging ? undefined : attributes,
-    };
-
     return (
-        <div ref={setNodeRef} style={style} className={blockClassName} onClick={onClick}>
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={blockClassName}
+            onClick={onClick}
+            {...(isDragging ? {} : attributes)}
+            {...(isDragging ? {} : listeners)}
+        >
             {isDragging ? (
-                <div className="category-drag-list-placeholder" aria-hidden>
-                    {renderTitle(titleProps)}
-                </div>
+                renderDragPreview ? (
+                    renderDragPreview()
+                ) : (
+                    <>
+                        {renderTitle()}
+                        {children}
+                    </>
+                )
             ) : (
                 <>
-                    {renderTitle(titleProps)}
+                    {renderTitle()}
                     {children}
                 </>
             )}
