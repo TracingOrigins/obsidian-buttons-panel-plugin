@@ -6,6 +6,7 @@ import { usePluginContext } from '@/contexts/PluginContext';
 import { useButtonDragOptional, useCategoryDragOptional } from '@/contexts/ButtonDragContext';
 import { CategoryButtonGrid } from '@/components/buttons-panel/CategoryButtonGrid';
 import { SortableCategoryBlock } from '@/components/buttons-panel/SortableCategoryBlock';
+import { CategoryListDragPreview } from '@/components/buttons-panel/CategoryListDragPreview';
 import { useCategoryCreation, useButtonCreation } from '@/hooks';
 import { AddButton } from '@/components/shared/AddButton';
 import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
@@ -96,6 +97,10 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         return () => buttonDrag.registerCategoryHover(null);
     }, [buttonDrag]);
 
+    React.useEffect(() => {
+        categoryDrag?.setListCategoryOpenById(openByCategoryId);
+    }, [categoryDrag, openByCategoryId]);
+
     const categoryMenuHandlers = React.useMemo(() => {
         const handlers = new Map<string, (e: MouseEvent) => void>();
         categories.forEach((category) => {
@@ -131,32 +136,6 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         ((categoryDrag?.enabled ?? false) || isCategoryDragging) &&
         !(buttonDrag?.isDragging ?? false);
 
-    const openBeforeCategoryDragRef = React.useRef<Map<string, boolean> | null>(null);
-
-    React.useEffect(() => {
-        if (!isCategoryDragging) {
-            if (openBeforeCategoryDragRef.current !== null) {
-                setOpenByCategoryId(new Map(openBeforeCategoryDragRef.current));
-                openBeforeCategoryDragRef.current = null;
-            }
-            return;
-        }
-
-        setOpenByCategoryId((prev) => {
-            if (openBeforeCategoryDragRef.current === null) {
-                openBeforeCategoryDragRef.current = new Map(prev);
-            }
-            const allClosed = categories.every((c) => prev.get(c.id) === false);
-            if (allClosed) return prev;
-
-            const next = new Map<string, boolean>();
-            for (const c of categories) {
-                next.set(c.id, false);
-            }
-            return next;
-        });
-    }, [isCategoryDragging, categories]);
-
     const orderedCategories = categorySortEnabled
         ? categoryDrag!.getOrderedCategories(categories)
         : categories;
@@ -188,17 +167,12 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
             ? buttonDrag!.getOrderedButtons(category)
             : category.buttons;
         const isButtonDragging = !!buttonDrag?.isDragging;
-        const showButtonGrid =
-            !isCategoryDragging && (isOpen || sortableEnabled);
+        const showButtonGrid = isOpen || sortableEnabled;
         const hideButtonGridWhileCollapsed =
             sortableEnabled && !isOpen && !isButtonDragging;
-        const isVisuallyOpen = isCategoryDragging
-            ? false
-            : isOpen || (sortableEnabled && isButtonDragging);
+        const isVisuallyOpen = isOpen || (sortableEnabled && isButtonDragging);
 
-        const titleClassName =
-            'buttons-panel-category-title is-collapsible' +
-            (categorySortEnabled ? ' category-drag-handle' : '');
+        const titleClassName = 'buttons-panel-category-title is-collapsible';
         const bindTitleRef = getTitleRef(category.id);
 
         const titleContent = (
@@ -272,14 +246,23 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                     key={category.id}
                     categoryId={category.id}
                     className={categoryClassNames}
-                    renderTitle={({ className, listeners, attributes }) => (
-                        <div
-                            ref={bindTitleRef}
-                            className={`${titleClassName} ${className}`}
-                            {...(attributes ?? {})}
-                            {...(listeners ?? {})}
-                            {...titleHandlers}
-                        >
+                    renderDragPreview={() => (
+                        <CategoryListDragPreview
+                            category={category}
+                            orderedButtons={orderedButtons}
+                            isOpen={isOpen}
+                            displayStyle={displayStyle}
+                            plugin={plugin}
+                            app={app}
+                            categoryClassName={[
+                                'buttons-panel-category',
+                                isOpen ? 'move-mode-category' : 'move-category-target',
+                            ].join(' ')}
+                            titleClassName={titleClassName}
+                        />
+                    )}
+                    renderTitle={() => (
+                        <div ref={bindTitleRef} className={titleClassName} {...titleHandlers}>
                             {titleContent}
                         </div>
                     )}

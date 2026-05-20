@@ -4,15 +4,21 @@
 
 .buttons-panel .sortable-category-item--dragging {
     pointer-events: none;
-}
-
-.buttons-panel .category-drag-list-placeholder {
-    pointer-events: none;
     opacity: 0.45;
 }
 
-.buttons-panel .category-drag-list-placeholder .buttons-panel-category-title {
+.buttons-panel .sortable-category-item--dragging .buttons-panel-category-title,
+.buttons-panel .sortable-category-item--dragging .buttons-panel-grid,
+.buttons-panel .sortable-category-item--dragging .buttons-panel-content {
     pointer-events: none;
+}
+
+.buttons-panel .sortable-category-item.category-drag-handle {
+    cursor: grab;
+    touch-action: none;
+}
+
+.buttons-panel .sortable-category-item.category-drag-handle:active {
     cursor: grabbing;
 }
 
@@ -31,12 +37,17 @@
     pointer-events: none;
 }
 
-.buttons-panel .sortable-category-tab--dragging {
-    visibility: hidden;
+.buttons-panel .category-drag-tab-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: grabbing;
 }
 
-.buttons-panel .sortable-category-tab--dragging > .tab-icon,
-.buttons-panel .sortable-category-tab--dragging > .tab-label {
+.buttons-panel .category-drag-tab-placeholder .tab-icon,
+.buttons-panel .category-drag-tab-placeholder .tab-label {
     pointer-events: none;
 }
 
@@ -49,15 +60,6 @@
     white-space: nowrap;
 }
 
-.buttons-panel .buttons-panel-category-title.category-drag-handle {
-    cursor: grab;
-    touch-action: none;
-}
-
-.buttons-panel .buttons-panel-category-title.category-drag-handle:active {
-    cursor: grabbing;
-}
-
 .buttons-panel .buttons-panel-tab.category-drag-handle {
     cursor: grab;
     touch-action: none;
@@ -67,18 +69,26 @@
     cursor: grabbing;
 }
 
+/* 跟随预览：沿用列表分类原样式，仅加抓取光标 */
+body .category-drag-overlay-list,
+body .buttons-panel .category-drag-overlay-list,
 .buttons-panel .category-drag-overlay-list {
-    margin-bottom: 0;
     cursor: grabbing;
-    opacity: 0.92;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
 }
 
-.buttons-panel .category-drag-overlay-list .buttons-panel-category-title {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-    color: var(--text-muted);
+body .category-drag-overlay-list .buttons-panel-category.move-category-target,
+body .buttons-panel .category-drag-overlay-list .buttons-panel-category.move-category-target {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+}
+
+body .category-drag-overlay-list .buttons-panel-grid,
+body .category-drag-overlay-list .buttons-panel-content,
+body .buttons-panel .category-drag-overlay-list .buttons-panel-grid,
+body .buttons-panel .category-drag-overlay-list .buttons-panel-content {
+    pointer-events: none;
 }
 
 /* 拖拽预览挂到 body，需显式继承 tab 栏排版，避免换行导致宽度/字形变化 */

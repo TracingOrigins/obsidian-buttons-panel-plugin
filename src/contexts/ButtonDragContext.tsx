@@ -18,11 +18,12 @@ import {
     type DragOverEvent,
     type DragStartEvent,
 } from '@dnd-kit/core';
-import { setIcon } from 'obsidian';
+import { setIcon, type App } from 'obsidian';
 import type { ButtonConfig, CategoryConfig } from '@/types';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
 import { usePluginContext } from '@/contexts/PluginContext';
 import { SimpleButton } from '@/components/button/Button';
+import { CategoryListDragPreview } from '@/components/buttons-panel/CategoryListDragPreview';
 import {
     applyDragOverToItems,
     buildButtonDragItems,
@@ -39,7 +40,10 @@ import {
     getOrderedCategoriesFromIds,
     parseCategorySortableId,
 } from '@/utils/categoryDragItems';
-import { panelDragCollisionDetection } from '@/utils/panelDragCollision';
+import {
+    createPanelDragCollisionDetection,
+    type CategoryDragLayout,
+} from '@/utils/panelDragCollision';
 import { snapCenterToCursor } from '@/utils/dndModifiers';
 import '@/components/buttons-panel/ButtonDrag.css';
 import '@/components/buttons-panel/CategoryDrag.css';
@@ -58,8 +62,11 @@ export interface ButtonDragContextValue {
 export interface CategoryDragContextValue {
     enabled: boolean;
     isDragging: boolean;
+    activeCategoryId: string | null;
     categoryIds: string[];
     getOrderedCategories: (categories: CategoryConfig[]) => CategoryConfig[];
+    setListCategoryOpenById: (openByCategoryId: Map<string, boolean>) => void;
+    getListCategoryOpen: (categoryId: string) => boolean;
 }
 
 const ButtonDragContext = createContext<ButtonDragContextValue | null>(null);
@@ -76,9 +83,12 @@ const disabledButtonContextValue: ButtonDragContextValue = {
 const disabledCategoryContextValue: CategoryDragContextValue = {
     enabled: false,
     isDragging: false,
+    activeCategoryId: null,
     categoryIds: [],
     getOrderedCategories: (categories) =>
         [...categories].sort((a, b) => a.order - b.order),
+    setListCategoryOpenById: () => {},
+    getListCategoryOpen: () => true,
 };
 
 export type CategoryDragOverlayVariant = 'list' | 'tabs';
@@ -89,6 +99,7 @@ interface ButtonDragProviderProps {
     displayStyle: 'default' | 'icon_top';
     enableAnimation: boolean;
     categoryDragOverlayVariant?: CategoryDragOverlayVariant;
+    categoryDragLayout?: CategoryDragLayout;
     children: React.ReactNode;
 }
 
@@ -99,6 +110,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     displayStyle,
     enableAnimation,
     categoryDragOverlayVariant = 'list',
+    categoryDragLayout = 'vertical',
     children,
 }) => {
     const { plugin, app } = usePluginContext();
@@ -112,6 +124,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     const [categoryTabOverlayWidth, setCategoryTabOverlayWidth] = useState<number | null>(
         null
     );
+    const [categoryListDragOpen, setCategoryListDragOpen] = useState(true);
     const itemsRef = useRef(items);
     const categoryIdsRef = useRef(categoryIds);
     const categoryHoverRef = useRef<((categoryId: string) => void) | null>(null);
@@ -122,12 +135,18 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     const lastAppliedCategoryDragOverRef = useRef<{ activeId: string; overId: string } | null>(
         null
     );
+    const listCategoryOpenByIdRef = useRef<Map<string, boolean>>(new Map());
 
     itemsRef.current = items;
     categoryIdsRef.current = categoryIds;
 
     const isCategoryDragActive = activeCategoryId !== null;
     const isButtonDragActive = activeButtonId !== null;
+
+    const collisionDetection = useMemo(
+        () => createPanelDragCollisionDetection(categoryDragLayout),
+        [categoryDragLayout]
+    );
 
     const cancelDragOverFrame = useCallback(() => {
         if (dragOverFrameRef.current !== null) {
@@ -183,6 +202,14 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         (source: CategoryConfig[]) => getOrderedCategoriesFromIds(source, categoryIds),
         [categoryIds]
     );
+
+    const setListCategoryOpenById = useCallback((openByCategoryId: Map<string, boolean>) => {
+        listCategoryOpenByIdRef.current = openByCategoryId;
+    }, []);
+
+    const getListCategoryOpen = useCallback((categoryId: string) => {
+        return listCategoryOpenByIdRef.current.get(categoryId) ?? true;
+    }, []);
 
     const activeButton = useMemo(() => {
         if (!activeButtonId) return null;
@@ -324,6 +351,8 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                 if (categoryDragOverlayVariant === 'tabs') {
                     const initial = event.active.rect.current.initial;
                     setCategoryTabOverlayWidth(initial?.width ?? null);
+                } else {
+                    setCategoryListDragOpen(getListCategoryOpen(categoryId));
                 }
                 setActiveCategoryId(categoryId);
                 setActiveButtonId(null);
@@ -334,7 +363,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             setActiveCategoryId(null);
             setCategoryTabOverlayWidth(null);
         },
-        [categoryDragOverlayVariant, resetButtonDragHoverState]
+        [categoryDragOverlayVariant, getListCategoryOpen, resetButtonDragHoverState]
     );
 
     const handleDragOver = useCallback(
@@ -391,6 +420,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                 setActiveCategoryId(null);
                 lastAppliedCategoryDragOverRef.current = null;
                 setCategoryTabOverlayWidth(null);
+                setCategoryListDragOpen(true);
 
                 if (!categoryIdsEqual(baseline, finalIds)) {
                     try {
@@ -446,6 +476,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         setActiveCategoryId(null);
         lastAppliedCategoryDragOverRef.current = null;
         setCategoryTabOverlayWidth(null);
+        setCategoryListDragOpen(true);
         resetButtonDragHoverState();
         const buttonBaseline = buildButtonDragItems(categories);
         const categoryBaseline = buildCategoryDragIds(categories);
@@ -473,10 +504,21 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         () => ({
             enabled: categoryEnabled,
             isDragging: isCategoryDragActive,
+            activeCategoryId,
             categoryIds,
             getOrderedCategories,
+            setListCategoryOpenById,
+            getListCategoryOpen,
         }),
-        [categoryEnabled, isCategoryDragActive, categoryIds, getOrderedCategories]
+        [
+            categoryEnabled,
+            isCategoryDragActive,
+            activeCategoryId,
+            categoryIds,
+            getOrderedCategories,
+            setListCategoryOpenById,
+            getListCategoryOpen,
+        ]
     );
 
     if (!enabled) {
@@ -494,7 +536,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             <CategoryDragContext.Provider value={categoryContextValue}>
                 <DndContext
                     sensors={sensors}
-                    collisionDetection={panelDragCollisionDetection}
+                    collisionDetection={collisionDetection}
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragEnd={(e) => void handleDragEnd(e)}
@@ -504,10 +546,14 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                     <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
                         {activeCategory ? (
                             <CategoryDragOverlay
-                                name={activeCategory.name}
-                                categoryId={activeCategory.id}
+                                category={activeCategory}
+                                orderedButtons={getOrderedButtons(activeCategory)}
                                 variant={categoryDragOverlayVariant}
                                 tabOverlayWidth={categoryTabOverlayWidth}
+                                displayStyle={displayStyle}
+                                plugin={plugin}
+                                app={app}
+                                listCategoryOpen={categoryListDragOpen}
                             />
                         ) : activeButton && activeButtonCategory ? (
                             <SimpleButton
@@ -528,19 +574,32 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
 };
 
 const CategoryDragOverlay: React.FC<{
-    name: string;
-    categoryId: string;
+    category: CategoryConfig;
+    orderedButtons: ButtonConfig[];
     variant: CategoryDragOverlayVariant;
     tabOverlayWidth: number | null;
-}> = ({ name, categoryId, variant, tabOverlayWidth }) => {
-    const { plugin } = usePluginContext();
+    displayStyle: 'default' | 'icon_top';
+    plugin: ButtonsPanelPlugin;
+    app: App;
+    listCategoryOpen: boolean;
+}> = ({
+    category,
+    orderedButtons,
+    variant,
+    tabOverlayWidth,
+    displayStyle,
+    plugin,
+    app,
+    listCategoryOpen,
+}) => {
+    const { plugin: pluginCtx } = usePluginContext();
     const iconRef = React.useRef<HTMLSpanElement>(null);
     const isActiveTab =
-        variant === 'tabs' && plugin.activeTabCategoryId === categoryId;
+        variant === 'tabs' && pluginCtx.activeTabCategoryId === category.id;
 
     React.useEffect(() => {
-        if (iconRef.current) {
-            setIcon(iconRef.current, variant === 'list' ? 'chevron-right' : 'layout-grid');
+        if (iconRef.current && variant === 'tabs') {
+            setIcon(iconRef.current, 'layout-grid');
         }
     }, [variant]);
 
@@ -565,18 +624,28 @@ const CategoryDragOverlay: React.FC<{
                 style={tabStyle}
             >
                 <span className="tab-icon" ref={iconRef} />
-                <span className="tab-label">{name}</span>
+                <span className="tab-label">{category.name}</span>
             </div>
         );
     }
 
+    const categoryClassName = [
+        'buttons-panel-category',
+        listCategoryOpen ? 'move-mode-category' : 'move-category-target',
+    ].join(' ');
+
     return (
-        <div className="buttons-panel-category move-category-target category-drag-overlay-list">
-            <div className="buttons-panel-category-title">
-                <span className="category-icon" ref={iconRef} />
-                {name}
-            </div>
-        </div>
+        <CategoryListDragPreview
+            category={category}
+            orderedButtons={orderedButtons}
+            isOpen={listCategoryOpen}
+            displayStyle={displayStyle}
+            plugin={plugin}
+            app={app}
+            categoryClassName={categoryClassName}
+            titleClassName="buttons-panel-category-title is-collapsible"
+            className="category-drag-overlay-list"
+        />
     );
 };
 

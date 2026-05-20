@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
+import {
+    SortableContext,
+    horizontalListSortingStrategy,
+    rectSortingStrategy,
+} from '@dnd-kit/sortable';
 import type { CategoryConfig } from '@/types';
 import { setIcon } from 'obsidian';
 import { usePluginContext } from '@/contexts/PluginContext';
@@ -122,6 +126,10 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
         () => `buttons-panel-tab-bar${tabsWrap ? ' tabs-wrap' : ''}`,
         [tabsWrap]
     );
+
+    const categorySortStrategy = tabsWrap
+        ? rectSortingStrategy
+        : horizontalListSortingStrategy;
 
     const contentClass = React.useMemo(
         () =>
@@ -266,7 +274,7 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                 {categorySortEnabled ? (
                     <SortableContext
                         items={categoryDrag!.categoryIds}
-                        strategy={rectSortingStrategy}
+                        strategy={categorySortStrategy}
                     >
                         {tabList}
                     </SortableContext>

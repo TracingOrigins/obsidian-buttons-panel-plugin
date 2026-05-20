@@ -69,7 +69,7 @@
     border-radius: 2px;
 }
 
-.buttons-panel .buttons-panel-tab:hover:not(.is-active) {
+.buttons-panel .buttons-panel-tab:hover {
     opacity: 0.8;
     background: var(--background-modifier-hover);
 }

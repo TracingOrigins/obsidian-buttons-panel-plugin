@@ -1,13 +1,33 @@
 import { type CollisionDetection } from '@dnd-kit/core';
 import { parseCategorySortableId } from '@/utils/categoryDragItems';
 import { buttonDragCollisionDetection } from '@/utils/buttonDragCollision';
-import { categoryDragCollisionDetection } from '@/utils/categoryDragCollision';
+import {
+    categoryDragCollisionDetection,
+    categoryGridTabDragCollision,
+    categoryHorizontalTabDragCollision,
+} from '@/utils/categoryDragCollision';
 
-/** 分类拖拽：指针悬停才换位；按钮拖拽：指针优先策略 */
-export const panelDragCollisionDetection: CollisionDetection = (args) => {
-    const activeId = String(args.active.id);
-    if (parseCategorySortableId(activeId)) {
-        return categoryDragCollisionDetection(args);
-    }
-    return buttonDragCollisionDetection(args);
-};
+export type CategoryDragLayout = 'vertical' | 'horizontal' | 'grid';
+
+export function createPanelDragCollisionDetection(
+    categoryLayout: CategoryDragLayout
+): CollisionDetection {
+    return (args) => {
+        const activeId = String(args.active.id);
+        if (parseCategorySortableId(activeId)) {
+            switch (categoryLayout) {
+                case 'horizontal':
+                    return categoryHorizontalTabDragCollision(args);
+                case 'grid':
+                    return categoryGridTabDragCollision(args);
+                default:
+                    return categoryDragCollisionDetection(args);
+            }
+        }
+        return buttonDragCollisionDetection(args);
+    };
+}
+
+/** @deprecated 使用 createPanelDragCollisionDetection */
+export const panelDragCollisionDetection: CollisionDetection =
+    createPanelDragCollisionDetection('vertical');

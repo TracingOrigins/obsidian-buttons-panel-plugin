@@ -10,6 +10,16 @@ import { useCategoryDragOptional } from '@/contexts/ButtonDragContext';
 /** 拖拽时悬停标签满此时长后才切换激活标签（按钮跨分类拖拽） */
 const TAB_HOVER_ACTIVATE_MS = 400;
 
+function assignRef<T>(ref: React.Ref<T> | undefined, value: T | null): void {
+    if (typeof ref === 'function') {
+        ref(value);
+        return;
+    }
+    if (ref) {
+        ref.current = value;
+    }
+}
+
 interface SortableCategoryTabProps {
     categoryId: string;
     className: string;
@@ -63,12 +73,7 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
         (node: HTMLDivElement | null) => {
             setSortableRef(node);
             setDroppableRef(node);
-            const inner = innerRefRef.current;
-            if (typeof inner === 'function') {
-                inner(node);
-            } else if (inner) {
-                (inner as React.MutableRefObject<HTMLDivElement | null>).current = node;
-            }
+            assignRef(innerRefRef.current, node);
         },
         [setSortableRef, setDroppableRef]
     );
@@ -156,7 +161,13 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
                 {...(isCategoryDragging ? {} : attributes)}
                 {...(isCategoryDragging ? {} : listeners)}
             >
-                {children}
+                {isCategoryDragging ? (
+                    <div className="category-drag-tab-placeholder" aria-hidden>
+                        {children}
+                    </div>
+                ) : (
+                    children
+                )}
             </div>
         </div>
     );
