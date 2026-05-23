@@ -1,15 +1,3 @@
-/* 移动端：未拖拽时允许 view-content 纵滑；拖拽中锁定 */
-@media (hover: none) and (pointer: coarse) {
-    body .view-content.buttons-panel:not(.buttons-panel-is-dragging) {
-        touch-action: pan-y;
-    }
-}
-
-/* 勿设 overflow:hidden，否则会阻止 dnd-kit 在边缘自动 scrollBy */
-body .view-content.buttons-panel.buttons-panel-is-dragging {
-    touch-action: none !important;
-}
-
 /* 列表视图：隐藏 view-content 右侧纵向滚动条，保留滚动 */
 body .view-content.buttons-panel:has(.buttons-panel-list-mode) {
     scrollbar-width: none;

@@ -1,23 +1,14 @@
-.buttons-panel .sortable-category-item {
-    touch-action: none;
+body .buttons-panel .sortable-category-item,
+body .buttons-panel .sortable-category-item.category-drag-handle {
+    touch-action: var(--bp-touch-action-item, none);
 }
 
-@media (hover: none) and (pointer: coarse) {
-    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-category-item,
-    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-category-item.category-drag-handle {
-        touch-action: pan-y;
-    }
-
-    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-category-tab,
-    .buttons-panel:not(.buttons-panel-is-dragging) .buttons-panel-tab.category-drag-handle {
-        touch-action: pan-x;
-    }
+body .buttons-panel .sortable-category-item.category-drag-handle {
+    cursor: grab;
 }
 
-.buttons-panel-is-dragging .sortable-category-item,
-.buttons-panel-is-dragging .sortable-category-tab,
-.buttons-panel-is-dragging .buttons-panel-tab.category-drag-handle {
-    touch-action: none !important;
+body .buttons-panel .sortable-category-item.category-drag-handle:active {
+    cursor: grabbing;
 }
 
 .buttons-panel .sortable-category-item--dragging {
@@ -25,23 +16,14 @@
     opacity: 0.45;
 }
 
-.buttons-panel .sortable-category-item[data-category-drag-source] {
-    visibility: visible !important;
+body .buttons-panel .sortable-category-item[data-category-drag-source] {
+    visibility: visible;
 }
 
 .buttons-panel .sortable-category-item--dragging .buttons-panel-category-title,
 .buttons-panel .sortable-category-item--dragging .buttons-panel-grid,
 .buttons-panel .sortable-category-item--dragging .buttons-panel-content {
     pointer-events: none;
-}
-
-.buttons-panel .sortable-category-item.category-drag-handle {
-    cursor: grab;
-    touch-action: none;
-}
-
-.buttons-panel .sortable-category-item.category-drag-handle:active {
-    cursor: grabbing;
 }
 
 /* 标签：transform 仅平移（不用 scale），避免换位时文字被横向挤压 */
@@ -51,16 +33,17 @@
     min-width: max-content;
 }
 
-/* 拖拽源：覆盖 dnd-kit 对 sortable 节点设置的 opacity/定位，占位须保持到松手 */
-.buttons-panel .sortable-category-tab-wrapper[data-category-drag-source] {
-    opacity: 1 !important;
-    visibility: visible !important;
-    position: relative !important;
+/* 拖拽源：覆盖 dnd-kit 对 draggable 节点可能设置的 opacity/定位，占位须保持到松手 */
+body .buttons-panel .sortable-category-tab-wrapper[data-category-drag-source] {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
     z-index: 0;
 }
 
-.buttons-panel .sortable-category-tab {
-    touch-action: none;
+body .buttons-panel .sortable-category-tab,
+body .buttons-panel .buttons-panel-tab.category-drag-handle {
+    touch-action: var(--bp-touch-action-tab, none);
 }
 
 .buttons-panel .sortable-category-tab--dragging,
@@ -68,10 +51,10 @@
     touch-action: none;
 }
 
-.buttons-panel .sortable-category-tab--dragging {
+body .buttons-panel .sortable-category-tab.sortable-category-tab--dragging {
     pointer-events: none;
-    opacity: 1 !important;
-    visibility: visible !important;
+    opacity: 1;
+    visibility: visible;
 }
 
 .buttons-panel .sortable-category-tab--dragging .category-drag-tab-placeholder {
@@ -94,9 +77,9 @@
 }
 
 /* 分类拖拽中：禁止任何标签位移，布局仅在松手换位后变化 */
-.buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .sortable-category-tab-wrapper {
-    transform: none !important;
-    transition: none !important;
+body .buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .sortable-category-tab-wrapper {
+    transform: none;
+    transition: none;
 }
 
 .buttons-panel .category-drag-tab-placeholder .tab-icon,
@@ -104,8 +87,8 @@
     pointer-events: none;
 }
 
-.buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .sortable-category-tab-wrapper,
-.buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .buttons-panel-tab {
+body .buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .sortable-category-tab-wrapper,
+body .buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .buttons-panel-tab {
     transition: none;
 }
 
@@ -113,12 +96,11 @@
     white-space: nowrap;
 }
 
-.buttons-panel .buttons-panel-tab.category-drag-handle {
+body .buttons-panel .buttons-panel-tab.category-drag-handle {
     cursor: grab;
-    touch-action: none;
 }
 
-.buttons-panel .buttons-panel-tab.category-drag-handle:active {
+body .buttons-panel .buttons-panel-tab.category-drag-handle:active {
     cursor: grabbing;
 }
 

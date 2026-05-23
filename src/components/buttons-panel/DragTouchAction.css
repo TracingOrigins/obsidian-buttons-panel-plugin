@@ -1,0 +1,27 @@
+/* 触摸拖拽 touch-action：用 CSS 变量切换 idle / dragging，避免 !important */
+body .buttons-panel,
+body .view-content.buttons-panel {
+    --bp-touch-action-item: none;
+    --bp-touch-action-tab: none;
+    --bp-touch-action-view: auto;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    body .buttons-panel:not(.buttons-panel-is-dragging),
+    body .view-content.buttons-panel:not(.buttons-panel-is-dragging) {
+        --bp-touch-action-item: pan-y;
+        --bp-touch-action-tab: pan-x;
+        --bp-touch-action-view: pan-y;
+    }
+
+    body .buttons-panel.buttons-panel-is-dragging,
+    body .view-content.buttons-panel.buttons-panel-is-dragging {
+        --bp-touch-action-item: none;
+        --bp-touch-action-tab: none;
+        --bp-touch-action-view: none;
+    }
+}
+
+body .view-content.buttons-panel {
+    touch-action: var(--bp-touch-action-view);
+}
