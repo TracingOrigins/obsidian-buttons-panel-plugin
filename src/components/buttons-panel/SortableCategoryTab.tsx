@@ -153,12 +153,17 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
         onClick();
     };
 
+    const wrapperStyle: React.CSSProperties | undefined = isDragSource
+        ? { opacity: 1, visibility: 'visible', position: 'relative', zIndex: 0 }
+        : undefined;
+
     return (
         <div
             ref={setNodeRef}
             className="sortable-category-tab-wrapper"
             data-category-tab-id={categoryId}
             data-category-drag-source={isDragSource || undefined}
+            style={wrapperStyle}
         >
             <div
                 className={classNames}

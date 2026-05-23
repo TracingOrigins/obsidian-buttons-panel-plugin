@@ -1,21 +1,6 @@
 .buttons-panel .sortable-button-item {
     display: inline-flex;
-    touch-action: none;
-}
-
-/*
- * 移动端 idle：pan-y 让系统在挂有非 passive touchmove 时仍能纵滑面板；
- * 拖拽开始瞬间由 JS 加上 buttons-panel-is-dragging，切为 none 以便纵/横拖按钮。
- */
-@media (hover: none) and (pointer: coarse) {
-    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-button-item {
-        touch-action: pan-y;
-    }
-}
-
-.buttons-panel-is-dragging .sortable-button-item,
-.buttons-panel-is-dragging.buttons-panel .sortable-button-item {
-    touch-action: none !important;
+    touch-action: var(--bp-touch-action-item, none);
 }
 
 /* 占位项不拦截指针，便于悬停到下方按钮并触发换位 */

@@ -44,6 +44,7 @@ export const SortableCategoryBlock: React.FC<SortableCategoryBlockProps> = ({
     const style: React.CSSProperties = {
         transform: transform ? CSS.Translate.toString(transform) : undefined,
         transition: panelDragging ? undefined : transition,
+        ...(isDragSource ? { visibility: 'visible' } : {}),
     };
 
     const blockClassName = [
