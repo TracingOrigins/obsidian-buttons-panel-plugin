@@ -1,7 +1,5 @@
 import React from 'react';
-import { useDroppable } from '@dnd-kit/core';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { tabDroppableId } from '@/utils/buttonDragItems';
 import { categorySortableId } from '@/utils/categoryDragItems';
 import { useButtonDragOptional } from '@/contexts/ButtonDragContext';
@@ -30,7 +28,8 @@ interface SortableCategoryTabProps {
 }
 
 /**
- * 标签视图：分类标签可排序（支持多行换行），同时保留按钮跨标签拖放的 droppable。
+ * 标签视图：分类标签用 Draggable（非 Sortable），拖拽中不改变标签栏布局；
+ * 悬停目标满 0.4s 松手后由 Context 统一换位。同时保留按钮跨标签拖放的 droppable。
  */
 export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
     categoryId,
@@ -48,18 +47,26 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
         ((categoryDrag?.enabled ?? false) || panelCategoryDragging) &&
         !(buttonDrag?.isDragging ?? false);
 
+    const categoryDragId = categorySortableId(categoryId);
+
     const {
         attributes,
         listeners,
-        setNodeRef: setSortableRef,
-        transform,
-        transition,
-        isDragging: isCategoryDragging,
-    } = useSortable({
-        id: categorySortableId(categoryId),
+        setNodeRef: setDraggableRef,
+    } = useDraggable({
+        id: categoryDragId,
         disabled: !categorySortableEnabled,
-        animateLayoutChanges: () => false,
     });
+
+    /** 与 Draggable 同 id，供 pointerWithin 命中以驱动悬停 0.4s / 松手换位 */
+    const { setNodeRef: setCategoryDropRef } = useDroppable({
+        id: categoryDragId,
+        disabled: !categorySortableEnabled,
+    });
+
+    /** 以 Context 为准，避免悬停确认放置后 useSortable.isDragging 提前结束导致占位消失 */
+    const isDragSource =
+        panelCategoryDragging && categoryDrag?.activeCategoryId === categoryId;
 
     const { setNodeRef: setDroppableRef, isOver: isButtonDropOver } = useDroppable({
         id: tabDroppableId(categoryId),
@@ -71,11 +78,12 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
 
     const setNodeRef = React.useCallback(
         (node: HTMLDivElement | null) => {
-            setSortableRef(node);
+            setDraggableRef(node);
+            setCategoryDropRef(node);
             setDroppableRef(node);
             assignRef(innerRefRef.current, node);
         },
-        [setSortableRef, setDroppableRef]
+        [setDraggableRef, setCategoryDropRef, setDroppableRef]
     );
 
     const wasOverRef = React.useRef(false);
@@ -123,19 +131,16 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
 
     React.useEffect(() => () => clearActivateTimer(), [clearActivateTimer]);
 
-    const wrapperStyle: React.CSSProperties = {
-        transform:
-            isCategoryDragging || !transform
-                ? undefined
-                : CSS.Translate.toString(transform),
-        transition: panelCategoryDragging ? undefined : transition,
-    };
+    const isCategoryTabDropTarget =
+        panelCategoryDragging &&
+        categoryDrag?.categoryTabDropTargetId === categoryId;
 
     const classNames = [
         className,
         'sortable-category-tab',
         categorySortableEnabled ? 'category-drag-handle' : '',
-        isCategoryDragging ? 'sortable-category-tab--dragging' : '',
+        isDragSource ? 'sortable-category-tab--dragging' : '',
+        isCategoryTabDropTarget ? 'category-drag-tab-drop-target' : '',
         buttonSortableEnabled && buttonDrag?.isDragging && isButtonDropOver
             ? 'button-drag-tab-over'
             : '',
@@ -151,17 +156,17 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
     return (
         <div
             ref={setNodeRef}
-            style={wrapperStyle}
             className="sortable-category-tab-wrapper"
             data-category-tab-id={categoryId}
+            data-category-drag-source={isDragSource || undefined}
         >
             <div
                 className={classNames}
                 onClick={handleClick}
-                {...(isCategoryDragging ? {} : attributes)}
-                {...(isCategoryDragging ? {} : listeners)}
+                {...(isDragSource ? {} : attributes)}
+                {...(isDragSource ? {} : listeners)}
             >
-                {isCategoryDragging ? (
+                {isDragSource ? (
                     <div className="category-drag-tab-placeholder" aria-hidden>
                         {children}
                     </div>

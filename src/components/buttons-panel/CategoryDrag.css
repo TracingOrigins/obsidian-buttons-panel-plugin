@@ -2,9 +2,31 @@
     touch-action: none;
 }
 
+@media (hover: none) and (pointer: coarse) {
+    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-category-item,
+    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-category-item.category-drag-handle {
+        touch-action: pan-y;
+    }
+
+    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-category-tab,
+    .buttons-panel:not(.buttons-panel-is-dragging) .buttons-panel-tab.category-drag-handle {
+        touch-action: pan-x;
+    }
+}
+
+.buttons-panel-is-dragging .sortable-category-item,
+.buttons-panel-is-dragging .sortable-category-tab,
+.buttons-panel-is-dragging .buttons-panel-tab.category-drag-handle {
+    touch-action: none !important;
+}
+
 .buttons-panel .sortable-category-item--dragging {
     pointer-events: none;
     opacity: 0.45;
+}
+
+.buttons-panel .sortable-category-item[data-category-drag-source] {
+    visibility: visible !important;
 }
 
 .buttons-panel .sortable-category-item--dragging .buttons-panel-category-title,
@@ -29,12 +51,31 @@
     min-width: max-content;
 }
 
+/* 拖拽源：覆盖 dnd-kit 对 sortable 节点设置的 opacity/定位，占位须保持到松手 */
+.buttons-panel .sortable-category-tab-wrapper[data-category-drag-source] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    z-index: 0;
+}
+
 .buttons-panel .sortable-category-tab {
+    touch-action: none;
+}
+
+.buttons-panel .sortable-category-tab--dragging,
+.buttons-panel .sortable-category-item--dragging {
     touch-action: none;
 }
 
 .buttons-panel .sortable-category-tab--dragging {
     pointer-events: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.buttons-panel .sortable-category-tab--dragging .category-drag-tab-placeholder {
+    visibility: visible;
 }
 
 .buttons-panel .category-drag-tab-placeholder {
@@ -44,6 +85,18 @@
     opacity: 0.45;
     pointer-events: none;
     cursor: grabbing;
+    width: 100%;
+    min-height: 100%;
+}
+
+.buttons-panel .sortable-category-tab.category-drag-tab-drop-target:not(.sortable-category-tab--dragging) {
+    box-shadow: inset 0 0 0 2px var(--interactive-accent);
+}
+
+/* 分类拖拽中：禁止任何标签位移，布局仅在松手换位后变化 */
+.buttons-panel .buttons-panel-tab-bar[data-category-sort-dragging] .sortable-category-tab-wrapper {
+    transform: none !important;
+    transition: none !important;
 }
 
 .buttons-panel .category-drag-tab-placeholder .tab-icon,

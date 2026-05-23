@@ -60,7 +60,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
             .filter((c): c is CategoryConfig => c !== null);
     }, [categories, normalizedQuery]);
 
-    const dragReorderEnabled = normalizedQuery.length === 0;
+    const dragReorderEnabled = normalizedQuery.length === 0 && !enableEditMode;
 
     const panelContent =
         viewType === 'tabs' ? (

@@ -10,14 +10,20 @@ import React, {
 import {
     DndContext,
     DragOverlay,
-    PointerSensor,
-    TouchSensor,
     useSensor,
     useSensors,
     type DragEndEvent,
     type DragOverEvent,
     type DragStartEvent,
 } from '@dnd-kit/core';
+import { ScrollAwarePointerSensor } from '@/sensors/ScrollAwarePointerSensor';
+import { ScrollAwareTouchSensor } from '@/sensors/ScrollAwareTouchSensor';
+import {
+    MOBILE_LONG_PRESS_DELAY_MS,
+    SCROLL_CANCEL_DISTANCE_PX,
+} from '@/utils/touchScrollActivation';
+import { isCoarsePointerDevice } from '@/utils/isCoarsePointerDevice';
+import { setPanelTouchDragLock } from '@/utils/touchDragLock';
 import { setIcon, type App } from 'obsidian';
 import type { ButtonConfig, CategoryConfig } from '@/types';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
@@ -37,6 +43,7 @@ import {
     applyCategoryDragOver,
     buildCategoryDragIds,
     categoryIdsEqual,
+    categorySortableId,
     getOrderedCategoriesFromIds,
     parseCategorySortableId,
 } from '@/utils/categoryDragItems';
@@ -48,8 +55,10 @@ import { snapCenterToCursor } from '@/utils/dndModifiers';
 import '@/components/buttons-panel/ButtonDrag.css';
 import '@/components/buttons-panel/CategoryDrag.css';
 
-const LONG_PRESS_DELAY_MS = 400;
-const LONG_PRESS_TOLERANCE_PX = 6;
+const DESKTOP_LONG_PRESS_DELAY_MS = 400;
+const DESKTOP_LONG_PRESS_TOLERANCE_PX = 6;
+/** 标签视图：悬停目标标签满此时长后才视为可放置位置 */
+const CATEGORY_TAB_DROP_HOVER_MS = 400;
 
 export interface ButtonDragContextValue {
     enabled: boolean;
@@ -64,6 +73,8 @@ export interface CategoryDragContextValue {
     isDragging: boolean;
     activeCategoryId: string | null;
     categoryIds: string[];
+    /** 标签视图：悬停满 0.4s 后确认的目标分类 id（用于高亮） */
+    categoryTabDropTargetId: string | null;
     getOrderedCategories: (categories: CategoryConfig[]) => CategoryConfig[];
     setListCategoryOpenById: (openByCategoryId: Map<string, boolean>) => void;
     getListCategoryOpen: (categoryId: string) => boolean;
@@ -85,6 +96,7 @@ const disabledCategoryContextValue: CategoryDragContextValue = {
     isDragging: false,
     activeCategoryId: null,
     categoryIds: [],
+    categoryTabDropTargetId: null,
     getOrderedCategories: (categories) =>
         [...categories].sort((a, b) => a.order - b.order),
     setListCategoryOpenById: () => {},
@@ -124,6 +136,9 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     const [categoryTabOverlayWidth, setCategoryTabOverlayWidth] = useState<number | null>(
         null
     );
+    const [categoryTabDropTargetId, setCategoryTabDropTargetId] = useState<string | null>(
+        null
+    );
     const [categoryListDragOpen, setCategoryListDragOpen] = useState(true);
     const itemsRef = useRef(items);
     const categoryIdsRef = useRef(categoryIds);
@@ -136,6 +151,12 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         null
     );
     const listCategoryOpenByIdRef = useRef<Map<string, boolean>>(new Map());
+    const categoryTabDragStartIdsRef = useRef<string[]>([]);
+    /** 列表视图：拖拽开始时的分类顺序，用于对比是否变更 */
+    const categoryListDragStartIdsRef = useRef<string[]>([]);
+    const categoryTabHoverOverIdRef = useRef<string | null>(null);
+    const categoryTabCommittedOverIdRef = useRef<string | null>(null);
+    const categoryTabHoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     itemsRef.current = items;
     categoryIdsRef.current = categoryIds;
@@ -156,17 +177,23 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         pendingDragOverRef.current = null;
     }, []);
 
+    const useCoarseTouchOnly = isCoarsePointerDevice();
+
     const sensors = useSensors(
-        useSensor(PointerSensor, {
+        ...(useCoarseTouchOnly
+            ? []
+            : [
+                  useSensor(ScrollAwarePointerSensor, {
+                      activationConstraint: {
+                          delay: DESKTOP_LONG_PRESS_DELAY_MS,
+                          tolerance: DESKTOP_LONG_PRESS_TOLERANCE_PX,
+                      },
+                  }),
+              ]),
+        useSensor(ScrollAwareTouchSensor, {
             activationConstraint: {
-                delay: LONG_PRESS_DELAY_MS,
-                tolerance: LONG_PRESS_TOLERANCE_PX,
-            },
-        }),
-        useSensor(TouchSensor, {
-            activationConstraint: {
-                delay: LONG_PRESS_DELAY_MS,
-                tolerance: LONG_PRESS_TOLERANCE_PX,
+                delay: MOBILE_LONG_PRESS_DELAY_MS,
+                tolerance: SCROLL_CANCEL_DISTANCE_PX,
             },
         })
     );
@@ -184,6 +211,16 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     }, [categories, activeCategoryId]);
 
     useEffect(() => () => cancelDragOverFrame(), [cancelDragOverFrame]);
+
+    useEffect(() => {
+        if (isButtonDragActive || isCategoryDragActive) {
+            setPanelTouchDragLock(true);
+            return;
+        }
+        setPanelTouchDragLock(false);
+    }, [isButtonDragActive, isCategoryDragActive]);
+
+    useEffect(() => () => setPanelTouchDragLock(false), []);
 
     const registerCategoryHover = useCallback(
         (handler: ((categoryId: string) => void) | null) => {
@@ -242,6 +279,47 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         lastAppliedDragOverRef.current = null;
         cancelDragOverFrame();
     }, [cancelDragOverFrame]);
+
+    const clearCategoryTabHoverTimer = useCallback(() => {
+        if (categoryTabHoverTimerRef.current !== null) {
+            clearTimeout(categoryTabHoverTimerRef.current);
+            categoryTabHoverTimerRef.current = null;
+        }
+    }, []);
+
+    const resetCategoryTabDragHoverState = useCallback(() => {
+        clearCategoryTabHoverTimer();
+        categoryTabHoverOverIdRef.current = null;
+        categoryTabCommittedOverIdRef.current = null;
+        setCategoryTabDropTargetId(null);
+    }, [clearCategoryTabHoverTimer]);
+
+    const scheduleCategoryTabDropTarget = useCallback(
+        (overSortableId: string) => {
+            if (categoryTabHoverOverIdRef.current === overSortableId) {
+                return;
+            }
+            clearCategoryTabHoverTimer();
+            categoryTabHoverOverIdRef.current = overSortableId;
+            categoryTabCommittedOverIdRef.current = null;
+            setCategoryTabDropTargetId(null);
+
+            categoryTabHoverTimerRef.current = setTimeout(() => {
+                categoryTabHoverTimerRef.current = null;
+                categoryTabCommittedOverIdRef.current = overSortableId;
+                const categoryId = parseCategorySortableId(overSortableId);
+                setCategoryTabDropTargetId(categoryId);
+            }, CATEGORY_TAB_DROP_HOVER_MS);
+        },
+        [clearCategoryTabHoverTimer]
+    );
+
+    useEffect(
+        () => () => {
+            clearCategoryTabHoverTimer();
+        },
+        [clearCategoryTabHoverTimer]
+    );
 
     const persistItems = useCallback(
         async (finalItems: ButtonDragItems, pluginInstance: ButtonsPanelPlugin) => {
@@ -349,9 +427,12 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             if (categoryId) {
                 lastAppliedCategoryDragOverRef.current = null;
                 if (categoryDragOverlayVariant === 'tabs') {
+                    categoryTabDragStartIdsRef.current = [...categoryIdsRef.current];
+                    resetCategoryTabDragHoverState();
                     const initial = event.active.rect.current.initial;
                     setCategoryTabOverlayWidth(initial?.width ?? null);
                 } else {
+                    categoryListDragStartIdsRef.current = [...categoryIdsRef.current];
                     setCategoryListDragOpen(getListCategoryOpen(categoryId));
                 }
                 setActiveCategoryId(categoryId);
@@ -363,7 +444,12 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             setActiveCategoryId(null);
             setCategoryTabOverlayWidth(null);
         },
-        [categoryDragOverlayVariant, getListCategoryOpen, resetButtonDragHoverState]
+        [
+            categoryDragOverlayVariant,
+            getListCategoryOpen,
+            resetButtonDragHoverState,
+            resetCategoryTabDragHoverState,
+        ]
     );
 
     const handleDragOver = useCallback(
@@ -372,10 +458,21 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             const activeId = String(active.id);
 
             if (parseCategorySortableId(activeId)) {
-                if (!over || active.id === over.id) return;
+                if (!over || active.id === over.id) {
+                    if (categoryDragOverlayVariant === 'tabs') {
+                        clearCategoryTabHoverTimer();
+                        categoryTabHoverOverIdRef.current = null;
+                    }
+                    return;
+                }
 
                 const overId = String(over.id);
                 if (!parseCategorySortableId(overId)) return;
+
+                if (categoryDragOverlayVariant === 'tabs') {
+                    scheduleCategoryTabDropTarget(overId);
+                    return;
+                }
 
                 const last = lastAppliedCategoryDragOverRef.current;
                 if (last?.activeId === activeId && last?.overId === overId) {
@@ -395,7 +492,12 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             if (!over || active.id === over.id) return;
             scheduleButtonDragOver(activeId, String(over.id));
         },
-        [scheduleButtonDragOver]
+        [
+            categoryDragOverlayVariant,
+            clearCategoryTabHoverTimer,
+            scheduleButtonDragOver,
+            scheduleCategoryTabDropTarget,
+        ]
     );
 
     const handleDragEnd = useCallback(
@@ -404,22 +506,42 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             const activeId = String(active.id);
 
             if (parseCategorySortableId(activeId)) {
-                if (active && over && active.id !== over.id) {
-                    const overId = String(over.id);
-                    if (parseCategorySortableId(overId)) {
-                        setCategoryIds((prev) => {
-                            const next = applyCategoryDragOver(prev, activeId, overId);
-                            categoryIdsRef.current = next;
-                            return next;
-                        });
+                const isTabsVariant = categoryDragOverlayVariant === 'tabs';
+                const baseline = isTabsVariant
+                    ? categoryTabDragStartIdsRef.current
+                    : categoryListDragStartIdsRef.current.length > 0
+                      ? categoryListDragStartIdsRef.current
+                      : buildCategoryDragIds(categories);
+
+                let finalIds: string[];
+                if (isTabsVariant) {
+                    finalIds = baseline;
+                    const committedOverId =
+                        categoryTabCommittedOverIdRef.current ??
+                        (categoryTabDropTargetId
+                            ? categorySortableId(categoryTabDropTargetId)
+                            : null);
+                    if (committedOverId) {
+                        finalIds = applyCategoryDragOver(baseline, activeId, committedOverId);
+                    }
+                } else {
+                    // 列表视图：以 dragOver 累积的 categoryIdsRef 为准（触屏松手时 over 常为 null）
+                    finalIds = categoryIdsRef.current;
+                    if (active && over && active.id !== over.id) {
+                        const overId = String(over.id);
+                        if (parseCategorySortableId(overId)) {
+                            finalIds = applyCategoryDragOver(finalIds, activeId, overId);
+                        }
                     }
                 }
 
-                const finalIds = categoryIdsRef.current;
-                const baseline = buildCategoryDragIds(categories);
+                categoryIdsRef.current = finalIds;
+                setCategoryIds(finalIds);
                 setActiveCategoryId(null);
                 lastAppliedCategoryDragOverRef.current = null;
+                categoryListDragStartIdsRef.current = [];
                 setCategoryTabOverlayWidth(null);
+                resetCategoryTabDragHoverState();
                 setCategoryListDragOpen(true);
 
                 if (!categoryIdsEqual(baseline, finalIds)) {
@@ -463,10 +585,13 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         [
             cancelDragOverFrame,
             categories,
+            categoryDragOverlayVariant,
+            categoryTabDropTargetId,
             persistCategoryOrder,
             persistItems,
             plugin,
             resetButtonDragHoverState,
+            resetCategoryTabDragHoverState,
         ]
     );
 
@@ -476,15 +601,22 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         setActiveCategoryId(null);
         lastAppliedCategoryDragOverRef.current = null;
         setCategoryTabOverlayWidth(null);
+        resetCategoryTabDragHoverState();
         setCategoryListDragOpen(true);
         resetButtonDragHoverState();
         const buttonBaseline = buildButtonDragItems(categories);
-        const categoryBaseline = buildCategoryDragIds(categories);
+        const categoryBaseline =
+            categoryListDragStartIdsRef.current.length > 0
+                ? categoryListDragStartIdsRef.current
+                : categoryTabDragStartIdsRef.current.length > 0
+                  ? categoryTabDragStartIdsRef.current
+                  : buildCategoryDragIds(categories);
+        categoryListDragStartIdsRef.current = [];
         itemsRef.current = buttonBaseline;
         categoryIdsRef.current = categoryBaseline;
         setItems(buttonBaseline);
         setCategoryIds(categoryBaseline);
-    }, [cancelDragOverFrame, categories, resetButtonDragHoverState]);
+    }, [cancelDragOverFrame, categories, resetButtonDragHoverState, resetCategoryTabDragHoverState]);
 
     const buttonEnabled = enabled && !isCategoryDragActive;
     const categoryEnabled = enabled && !isButtonDragActive;
@@ -506,6 +638,8 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             isDragging: isCategoryDragActive,
             activeCategoryId,
             categoryIds,
+            categoryTabDropTargetId:
+                categoryDragOverlayVariant === 'tabs' ? categoryTabDropTargetId : null,
             getOrderedCategories,
             setListCategoryOpenById,
             getListCategoryOpen,
@@ -515,6 +649,8 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             isCategoryDragActive,
             activeCategoryId,
             categoryIds,
+            categoryDragOverlayVariant,
+            categoryTabDropTargetId,
             getOrderedCategories,
             setListCategoryOpenById,
             getListCategoryOpen,

@@ -1,15 +1,20 @@
 import { pointerWithin, type Collision, type CollisionDetection } from '@dnd-kit/core';
 import { CONTAINER_PREFIX, TAB_PREFIX } from '@/utils/buttonDragItems';
+import { parseCategorySortableId } from '@/utils/categoryDragItems';
 
 function isZoneDroppableId(id: string): boolean {
     return id.startsWith(CONTAINER_PREFIX) || id.startsWith(TAB_PREFIX);
 }
 
-/** 只保留一个碰撞目标，避免多目标交替触发换位闪烁 */
+function isButtonSortableId(id: string): boolean {
+    return !isZoneDroppableId(id) && parseCategorySortableId(id) === null;
+}
+
+/** 按钮 > 标签 > 容器；排除分类排序项，避免与按钮争抢命中 */
 function pickPrimaryCollision(collisions: Collision[]): Collision[] {
     if (collisions.length === 0) return [];
 
-    const overButtons = collisions.filter((c) => !isZoneDroppableId(String(c.id)));
+    const overButtons = collisions.filter((c) => isButtonSortableId(String(c.id)));
     if (overButtons.length > 0) {
         return [overButtons[0]];
     }

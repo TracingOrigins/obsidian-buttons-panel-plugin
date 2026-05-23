@@ -8,6 +8,7 @@ import { SortableButtonItem } from '@/components/button/SortableButtonItem';
 import { ButtonItem } from '@/components/button/ButtonItem';
 import { containerDroppableId } from '@/utils/buttonDragItems';
 import { useButtonDragOptional } from '@/contexts/ButtonDragContext';
+import { ButtonDragEmptySlot } from '@/components/buttons-panel/ButtonDragEmptySlot';
 
 interface CategoryButtonGridProps {
     category: CategoryConfig;
@@ -35,7 +36,10 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
     children,
 }) => {
     const buttonDrag = useButtonDragOptional();
-    const { setNodeRef, isOver } = useDroppable({
+    const showDragEmptySlot =
+        (buttonDrag?.isDragging ?? false) && orderedButtons.length === 0;
+
+    const { setNodeRef } = useDroppable({
         id: containerDroppableId(category.id),
         disabled: !sortableEnabled,
     });
@@ -43,12 +47,7 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
     const buttonIds = orderedButtons.map((b) => b.id);
     const isDragging = buttonDrag?.isDragging ?? false;
 
-    const gridClassName = [
-        contentClass,
-        sortableEnabled && isDragging && isOver ? 'button-drag-container-over' : '',
-    ]
-        .filter(Boolean)
-        .join(' ');
+    const gridClassName = contentClass;
 
     const renderButtons = () =>
         orderedButtons.map((button, index) => {
@@ -87,7 +86,11 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
         return (
             <div className={contentClass}>
                 {orderedButtons.length === 0 ? (
-                    children
+                    showDragEmptySlot ? (
+                        <ButtonDragEmptySlot displayStyle={displayStyle} />
+                    ) : (
+                        children
+                    )
                 ) : (
                     <>
                         {renderButtons()}
@@ -102,7 +105,9 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
         <div ref={setNodeRef} className={gridClassName}>
             <SortableContext items={buttonIds} strategy={rectSortingStrategy}>
                 {orderedButtons.length === 0 ? (
-                    <div className="button-drag-empty-slot" />
+                    showDragEmptySlot ? (
+                        <ButtonDragEmptySlot displayStyle={displayStyle} />
+                    ) : null
                 ) : (
                     renderButtons()
                 )}

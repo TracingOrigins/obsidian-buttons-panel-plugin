@@ -1,9 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-    SortableContext,
-    horizontalListSortingStrategy,
-    rectSortingStrategy,
-} from '@dnd-kit/sortable';
 import type { CategoryConfig } from '@/types';
 import { setIcon } from 'obsidian';
 import { usePluginContext } from '@/contexts/PluginContext';
@@ -118,18 +113,20 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
         ((categoryDrag?.enabled ?? false) || isCategoryDragging) &&
         !(buttonDrag?.isDragging ?? false);
 
-    const orderedCategories = categorySortEnabled
-        ? categoryDrag!.getOrderedCategories(categories)
-        : categories;
+    const orderedCategories = React.useMemo(() => {
+        if (isCategoryDragging) {
+            return [...categories].sort((a, b) => a.order - b.order);
+        }
+        if (categorySortEnabled) {
+            return categoryDrag!.getOrderedCategories(categories);
+        }
+        return categories;
+    }, [categories, isCategoryDragging, categorySortEnabled, categoryDrag]);
 
     const tabBarClass = React.useMemo(
         () => `buttons-panel-tab-bar${tabsWrap ? ' tabs-wrap' : ''}`,
         [tabsWrap]
     );
-
-    const categorySortStrategy = tabsWrap
-        ? rectSortingStrategy
-        : horizontalListSortingStrategy;
 
     const contentClass = React.useMemo(
         () =>
@@ -271,16 +268,7 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                 className={tabBarClass}
                 data-category-sort-dragging={isCategoryDragging || undefined}
             >
-                {categorySortEnabled ? (
-                    <SortableContext
-                        items={categoryDrag!.categoryIds}
-                        strategy={categorySortStrategy}
-                    >
-                        {tabList}
-                    </SortableContext>
-                ) : (
-                    tabList
-                )}
+                {tabList}
                 {enableEditMode && (
                     <div className="add-category">
                         <IconButton

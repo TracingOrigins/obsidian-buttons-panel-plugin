@@ -3,8 +3,7 @@ import { parseCategorySortableId } from '@/utils/categoryDragItems';
 import { buttonDragCollisionDetection } from '@/utils/buttonDragCollision';
 import {
     categoryDragCollisionDetection,
-    categoryGridTabDragCollision,
-    categoryHorizontalTabDragCollision,
+    categoryTabDragCollision,
 } from '@/utils/categoryDragCollision';
 
 export type CategoryDragLayout = 'vertical' | 'horizontal' | 'grid';
@@ -17,9 +16,8 @@ export function createPanelDragCollisionDetection(
         if (parseCategorySortableId(activeId)) {
             switch (categoryLayout) {
                 case 'horizontal':
-                    return categoryHorizontalTabDragCollision(args);
                 case 'grid':
-                    return categoryGridTabDragCollision(args);
+                    return categoryTabDragCollision(args);
                 default:
                     return categoryDragCollisionDetection(args);
             }

@@ -28,22 +28,29 @@ export const SortableCategoryBlock: React.FC<SortableCategoryBlockProps> = ({
     const categoryDrag = useCategoryDragOptional();
     const panelDragging = categoryDrag?.isDragging ?? false;
 
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
         id: categorySortableId(categoryId),
         animateLayoutChanges: () => false,
     });
 
+    /**
+     * 以 Context 的 activeCategoryId 标识拖拽源（不用 useSortable.isDragging），
+     * 并始终应用 sortable 的 transform，占位才能随 categoryIds 实时换位而移动。
+     * 若 isDragging 时强制 transform:none，拖回去时占位会留在上次换位后的 DOM 位置（多在下方）。
+     */
+    const isDragSource =
+        panelDragging && categoryDrag?.activeCategoryId === categoryId;
+
     const style: React.CSSProperties = {
-        transform:
-            isDragging || !transform ? undefined : CSS.Translate.toString(transform),
+        transform: transform ? CSS.Translate.toString(transform) : undefined,
         transition: panelDragging ? undefined : transition,
     };
 
     const blockClassName = [
-        ...(isDragging ? [] : [className]),
+        ...(isDragSource ? [] : [className]),
         'sortable-category-item',
         'category-drag-handle',
-        isDragging ? 'sortable-category-item--dragging' : '',
+        isDragSource ? 'sortable-category-item--dragging' : '',
     ]
         .filter(Boolean)
         .join(' ');
@@ -53,11 +60,12 @@ export const SortableCategoryBlock: React.FC<SortableCategoryBlockProps> = ({
             ref={setNodeRef}
             style={style}
             className={blockClassName}
+            data-category-drag-source={isDragSource || undefined}
             onClick={onClick}
-            {...(isDragging ? {} : attributes)}
-            {...(isDragging ? {} : listeners)}
+            {...(isDragSource ? {} : attributes)}
+            {...(isDragSource ? {} : listeners)}
         >
-            {isDragging ? (
+            {isDragSource ? (
                 renderDragPreview ? (
                     renderDragPreview()
                 ) : (
