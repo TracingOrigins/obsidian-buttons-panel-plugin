@@ -1,10 +1,10 @@
-/* 列表视图：隐藏 view-content 右侧纵向滚动条，保留滚动 */
-body .view-content.buttons-panel:has(.buttons-panel-list-mode) {
+/* 列表视图：隐藏 view-content 右侧纵向滚动条，保留滚动（class 由 PanelContent 同步） */
+body .view-content.buttons-panel.buttons-panel-view-list {
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
-body .view-content.buttons-panel:has(.buttons-panel-list-mode)::-webkit-scrollbar {
+body .view-content.buttons-panel.buttons-panel-view-list::-webkit-scrollbar {
     display: none;
 }
 

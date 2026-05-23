@@ -6,6 +6,9 @@ import { TabsModeContent } from '@/components/buttons-panel/TabsModeContent';
 import { ListModeContent } from '@/components/buttons-panel/ListModeContent';
 import './PanelContent.css';
 
+/** 列表视图时在 Obsidian view-content 上标记，供滚动条样式等使用（避免 CSS :has） */
+const VIEW_CONTENT_LIST_CLASS = 'buttons-panel-view-list';
+
 interface PanelContentProps {
     categories: CategoryConfig[];
     /** 顶部导航栏搜索关键字（用于本地过滤按钮） */
@@ -62,6 +65,19 @@ export const PanelContent: React.FC<PanelContentProps> = ({
 
     const dragReorderEnabled = normalizedQuery.length === 0 && !enableEditMode;
 
+    const panelContentRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const viewContent = panelContentRef.current?.closest('.view-content.buttons-panel');
+        if (!viewContent) {
+            return;
+        }
+        viewContent.classList.toggle(VIEW_CONTENT_LIST_CLASS, viewType === 'list');
+        return () => {
+            viewContent.classList.remove(VIEW_CONTENT_LIST_CLASS);
+        };
+    }, [viewType]);
+
     const panelContent =
         viewType === 'tabs' ? (
             <TabsModeContent
@@ -84,17 +100,19 @@ export const PanelContent: React.FC<PanelContentProps> = ({
         );
 
     return (
-        <ButtonDragProvider
-            categories={filteredCategories}
-            enabled={dragReorderEnabled}
-            displayStyle={displayStyle}
-            enableAnimation={enableAnimation}
-            categoryDragOverlayVariant={viewType === 'tabs' ? 'tabs' : 'list'}
-            categoryDragLayout={
-                viewType === 'tabs' ? (tabsWrap ? 'grid' : 'horizontal') : 'vertical'
-            }
-        >
-            {panelContent}
-        </ButtonDragProvider>
+        <div ref={panelContentRef} className="buttons-panel-panel-content">
+            <ButtonDragProvider
+                categories={filteredCategories}
+                enabled={dragReorderEnabled}
+                displayStyle={displayStyle}
+                enableAnimation={enableAnimation}
+                categoryDragOverlayVariant={viewType === 'tabs' ? 'tabs' : 'list'}
+                categoryDragLayout={
+                    viewType === 'tabs' ? (tabsWrap ? 'grid' : 'horizontal') : 'vertical'
+                }
+            >
+                {panelContent}
+            </ButtonDragProvider>
+        </div>
     );
 };
