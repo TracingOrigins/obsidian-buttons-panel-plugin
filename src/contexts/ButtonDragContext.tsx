@@ -52,6 +52,7 @@ import {
     type CategoryDragLayout,
 } from '@/utils/panelDragCollision';
 import { snapCenterToCursor } from '@/utils/dndModifiers';
+import { PANEL_AUTO_SCROLL_OPTIONS } from '@/utils/panelAutoScroll';
 import '@/components/buttons-panel/ButtonDrag.css';
 import '@/components/buttons-panel/CategoryDrag.css';
 
@@ -673,6 +674,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                 <DndContext
                     sensors={sensors}
                     collisionDetection={collisionDetection}
+                    autoScroll={PANEL_AUTO_SCROLL_OPTIONS}
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragEnd={(e) => void handleDragEnd(e)}
