@@ -5,9 +5,9 @@
     }
 }
 
+/* 勿设 overflow:hidden，否则会阻止 dnd-kit 在边缘自动 scrollBy */
 body .view-content.buttons-panel.buttons-panel-is-dragging {
     touch-action: none !important;
-    overflow: hidden;
 }
 
 /* 列表视图：隐藏 view-content 右侧纵向滚动条，保留滚动 */
