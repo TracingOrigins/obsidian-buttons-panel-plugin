@@ -139,16 +139,7 @@ export class ButtonsPanelView extends ItemView {
         container.empty();
         // 为 Obsidian 的 view-content 添加专用样式类，便于单独控制内边距等布局
         container.addClass('buttons-panel');
-        this.reactRoot.mount(
-            container,
-            <ButtonsPanelApp
-                plugin={this.plugin}
-                app={this.app}
-                categories={this.categories}
-                panelConfig={this.panelConfig}
-                searchQuery={this.searchQuery}
-            />
-        );
+        this.reactRoot.mount(container, this.createAppElement());
 
         // 在 Obsidian 的 view-header 上方渲染顶部操作栏（视图切换 / 样式切换 / 编辑模式 / 设置按钮）
         this.navigationBarRenderer?.createNavigationBar(this.containerEl);
@@ -188,21 +179,41 @@ export class ButtonsPanelView extends ItemView {
                 try {
                     this.reactRoot.unmount();
                     this.reactRoot = new ReactRoot();
-                    this.reactRoot.mount(
-                        this.contentEl,
-                        <ButtonsPanelApp
-                            plugin={this.plugin}
-                            app={this.app}
-                            categories={this.categories}
-                            panelConfig={this.panelConfig}
-                            searchQuery={this.searchQuery}
-                        />
-                    );
+                    this.reactRoot.mount(this.contentEl, this.createAppElement());
                 } catch (remountError) {
                     console.error('重新挂载时出错:', remountError);
                 }
             }
         }
+    }
+
+    /**
+     * 从插件设置同步内存中的分类/面板配置
+     */
+    private syncDataFromPlugin(): void {
+        this.categories = this.plugin.settings.categories;
+        this.panelConfig = this.plugin.settings.panelConfig;
+    }
+
+    /**
+     * 供 React 渲染用的分类列表：浅拷贝数组以触发依赖 categories 引用的子树更新，
+     * 分类对象本身仍与 plugin.settings 共享，保证创建/编辑模态框写入正确数据。
+     */
+    private getCategoriesForRender(): CategoryConfig[] {
+        this.syncDataFromPlugin();
+        return [...this.categories];
+    }
+
+    private createAppElement(): React.ReactElement {
+        return (
+            <ButtonsPanelApp
+                plugin={this.plugin}
+                app={this.app}
+                categories={this.getCategoriesForRender()}
+                panelConfig={this.panelConfig}
+                searchQuery={this.searchQuery}
+            />
+        );
     }
 
     /**
@@ -233,36 +244,16 @@ export class ButtonsPanelView extends ItemView {
             if (this.contentEl) {
                 try {
                     this.reactRoot = new ReactRoot();
-                    this.reactRoot.mount(
-                        this.contentEl,
-                        <ButtonsPanelApp
-                            plugin={this.plugin}
-                            app={this.app}
-                            categories={this.categories}
-                            panelConfig={this.panelConfig}
-                            searchQuery={this.searchQuery}
-                        />
-                    );
+                    this.reactRoot.mount(this.contentEl, this.createAppElement());
                 } catch (error) {
                     console.error('重新初始化 ReactRoot 时出错:', error);
                 }
             }
             return;
         }
-        
-        // 确保 categories 是有效的数组
-        const safeCategories = Array.isArray(this.categories) ? this.categories : [];
-        
+
         try {
-            this.reactRoot.update(
-                <ButtonsPanelApp
-                    plugin={this.plugin}
-                    app={this.app}
-                    categories={safeCategories}
-                    panelConfig={this.panelConfig}
-                    searchQuery={this.searchQuery}
-                />
-            );
+            this.reactRoot.update(this.createAppElement());
         } catch (error) {
             console.error('更新 React 组件时出错:', error);
             // 如果更新失败，尝试重新挂载
@@ -270,16 +261,7 @@ export class ButtonsPanelView extends ItemView {
                 try {
                     this.reactRoot.unmount();
                     this.reactRoot = new ReactRoot();
-                    this.reactRoot.mount(
-                        this.contentEl,
-                        <ButtonsPanelApp
-                            plugin={this.plugin}
-                            app={this.app}
-                            categories={safeCategories}
-                            panelConfig={this.panelConfig}
-                            searchQuery={this.searchQuery}
-                        />
-                    );
+                    this.reactRoot.mount(this.contentEl, this.createAppElement());
                 } catch (remountError) {
                     console.error('重新挂载时出错:', remountError);
                 }

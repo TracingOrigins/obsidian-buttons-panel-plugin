@@ -3,6 +3,21 @@
     touch-action: none;
 }
 
+/*
+ * 移动端 idle：pan-y 让系统在挂有非 passive touchmove 时仍能纵滑面板；
+ * 拖拽开始瞬间由 JS 加上 buttons-panel-is-dragging，切为 none 以便纵/横拖按钮。
+ */
+@media (hover: none) and (pointer: coarse) {
+    .buttons-panel:not(.buttons-panel-is-dragging) .sortable-button-item {
+        touch-action: pan-y;
+    }
+}
+
+.buttons-panel-is-dragging .sortable-button-item,
+.buttons-panel-is-dragging.buttons-panel .sortable-button-item {
+    touch-action: none !important;
+}
+
 /* 占位项不拦截指针，便于悬停到下方按钮并触发换位 */
 .buttons-panel .sortable-button-item--dragging {
     pointer-events: none;
@@ -22,16 +37,26 @@
 }
 
 .buttons-panel .button-drag-empty-slot {
-    min-height: 40px;
-    min-width: 96px;
+    display: inline-flex;
+    flex-shrink: 0;
+    box-sizing: border-box;
     border: 1px dashed var(--background-modifier-border);
     border-radius: 6px;
+    pointer-events: none;
 }
 
-.buttons-panel .button-drag-container-over {
-    outline: 1px dashed var(--interactive-accent);
-    outline-offset: 4px;
-    border-radius: 6px;
+.buttons-panel .button-drag-empty-slot.icon-left {
+    width: 96px;
+    height: 40px;
+    min-width: 96px;
+    min-height: 40px;
+}
+
+.buttons-panel .button-drag-empty-slot.icon-top {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
 }
 
 .buttons-panel .buttons-panel-tab.button-drag-tab-over {

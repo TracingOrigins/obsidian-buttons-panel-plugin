@@ -117,6 +117,20 @@ function pickCategoryCollision(collisions: Collision[]): Collision[] {
     return [filtered[0]];
 }
 
+/**
+ * 标签视图：指针进入标签区域即命中（无中线门槛），用于悬停计时与松手换位。
+ */
+export const categoryTabDragCollision: CollisionDetection = (args) => {
+    const activeId = String(args.active.id);
+    if (!parseCategorySortableId(activeId)) return [];
+
+    const pointerCollisions = pointerWithin(args);
+    if (pointerCollisions.length === 0) return [];
+
+    const withoutActive = pointerCollisions.filter((c) => c.id !== args.active?.id);
+    return pickCategoryCollision(withoutActive);
+};
+
 /** 列表视图：指针进入分类区域即命中 */
 export const categoryDragCollisionDetection: CollisionDetection = (args) => {
     const activeId = String(args.active.id);

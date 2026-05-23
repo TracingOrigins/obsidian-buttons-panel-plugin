@@ -15,7 +15,7 @@
 
 .buttons-panel .buttons-panel-container .move-mode-category {
     padding: 12px;
-    border-radius: 16px;
+    border-radius: 8px;
     border: 1px solid var(--background-modifier-border);
     margin-bottom: 16px;
 }
@@ -121,7 +121,7 @@
 /* 按钮面板：分类移动模式下，分类的样式 */
 .buttons-panel .buttons-panel-container .buttons-panel-category.move-category-target {
     padding: 12px;
-    border-radius: 16px;
+    border-radius: 8px;
     border: 1px solid var(--background-modifier-border);
     margin-bottom: 16px;
 }
