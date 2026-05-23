@@ -13,14 +13,14 @@
 - 🎯 **Quick Access**: Instantly open files, execute commands, visit links, or run scripts with a single click.
 - 🎨 **Icon Picker**: Integrated Lucide icon library with search and live preview.
 - 🏷️ **Tabbed & List Views**: Switch between list and tabbed display modes for flexible organization.
-- 📁 **Category Management**: Organize buttons by category and reorder them via drag-and-drop.
+- 📁 **Category Management**: Organize buttons by category; reorder categories and buttons via long-press drag-and-drop.
 - ⚙️ **Flexible Configuration**: Fully customizable panel layout, button styles, and animation effects.
 - 📱 **Responsive Design**: Optimized for both desktop and mobile devices.
 - 🌙 **Theme Adaptation**: Seamlessly adapts to Obsidian’s light and dark themes.
 - 🎛️ **Dedicated Settings Tab**: Manage all plugin settings in a separate, user-friendly tab.
 - 🔄 **Live Updates**: All changes take effect immediately—no restart required.
 - 🛡️ **Form Validation**: Required fields (button name, file path, command ID, URL, folder, script name) are highlighted in red if empty for intuitive feedback.
-- 🖱️ **Edit Mode**: Enable edit mode to create categories and buttons directly in the panel, and use right-click menus for move, edit, copy, and delete.
+- 🖱️ **Edit Mode**: Create categories and buttons in the panel, and use right-click menus to edit, copy, or delete (reordering uses drag-and-drop when edit mode is off).
 - 🧭 **Top Navigation Bar**: Quickly switch panel view, button style, edit mode, and open settings from the top navigation bar.
 - 🔍 **Search Feature**: The navigation bar includes a search function that filters categories and buttons in real-time for quick access.
 - 🔗 **Action Sequences**: Configure multiple actions for a single button and execute them in order with one click.
@@ -97,25 +97,31 @@
 
 ### 🖱️ Edit Mode
 
-- Enable "Edit Mode" in the panel settings to unlock advanced management features.
-- **In Edit Mode**, categories and buttons support right-click context menus, including:
-    - **Move**: Enter move mode for categories or buttons to quickly change their position.
-    - **Edit**: Open the editor for categories or buttons.
-    - **Copy**: Duplicate the category or button to the end of the same category.
-    - **Delete**: Remove the category or button after confirmation.
-- This feature is optional and can be toggled in the panel configuration section of the settings tab.
+- Turn on **Edit Mode** in panel settings or from the top navigation bar.
+- **While edit mode is on**, you can:
+    - **Add categories** and **add buttons** from controls in the panel
+    - **Right-click** a category title or button for **Edit**, **Copy**, or **Delete**
+- **Drag-and-drop reordering is disabled in edit mode** (to avoid conflicting with editing). Turn **edit mode off** before reordering.
 
-#### 📦 Button Move Mode
+> Tip: Editing and reordering are separate—use edit mode to change content; turn edit mode off and long-press drag to change order.
 
-- **Enter Move Mode**: In edit mode, right-click a button and select "Move" to enter button move mode.
-- **Move Methods**:
-    - **Click another button**: Move the button to that button's position.
-    - **Click category name**: Move the button to the last position of that category (quick move to category end).
-    - **Click button container blank area**: Move the button to the last position of the current category.
-    - **Click empty category placeholder**: Move the button to the first position of that category.
-    - **Click itself**: Exit move mode without changing position.
-    - **Press ESC key**: Exit move mode without changing position.
-- The panel will automatically save and refresh after moving.
+### 🔀 Drag-and-Drop Reordering
+
+When **edit mode is off** and **search is not active**, long-press and drag to reorder (mouse long-press works on desktop too):
+
+| Target | List view | Tabbed view |
+|--------|-----------|-------------|
+| **Buttons** | Long-press a button, then drag to reorder within a category; drag over another category’s tab/zone to move across categories | Same; active tab’s grid supports drag reorder |
+| **Categories** | Long-press the category block (title or non-button area), then drag vertically to reorder | Long-press a tab, hold ~0.4s over another tab to confirm drop target, then release to reorder |
+
+- Order is saved automatically when you release.
+- Reordering is unavailable while **edit mode is on** or **search is active**.
+
+#### 📱 Touch Gestures (Mobile)
+
+- **Scroll the panel**: Swipe up/down on the panel (list view) or left/right on the tab bar (tabbed view) without long-pressing.
+- **Drag to reorder**: Long-press (~0.5s) on a button or category/tab, then drag. While dragging, panel scrolling is locked so the item follows your finger.
+- If a quick swipe is detected before the long-press completes, the gesture is treated as scrolling and drag does not start.
 
 ### 🧭 Top Navigation Bar
 
@@ -125,6 +131,7 @@
     - **Edit Mode Toggle**: Quickly enter or exit edit mode.
     - **Search Feature**: Click the search icon to open the search box and filter categories and button names in real-time.
     - **Panel Settings**: Open the panel settings page with one click.
+- **Tab bar scrolling** (tabbed view, many tabs): On mobile, swipe left/right on the tab bar; on desktop, hover the tab bar, hold **Shift**, and scroll the mouse wheel horizontally.
 - The navigation bar is designed for efficiency and a smooth user experience.
 
 ### 🔍 Search Feature
@@ -186,6 +193,7 @@
 - **Lucide Icons**: Modern icon library (6000+ icons).
 - **CSS Grid & Flexbox**: Responsive layout.
 - **ESBuild**: Fast build tool with TypeScript and React support.
+- **@dnd-kit**: Drag-and-drop for button and category reordering.
 
 ## 📄 License
 
