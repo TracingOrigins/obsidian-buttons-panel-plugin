@@ -14,7 +14,7 @@ function assignRef<T>(ref: React.Ref<T> | undefined, value: T | null): void {
         return;
     }
     if (ref) {
-        ref.current = value;
+        (ref as React.MutableRefObject<T | null>).current = value;
     }
 }
 
@@ -73,17 +73,14 @@ export const SortableCategoryTab: React.FC<SortableCategoryTabProps> = ({
         disabled: !buttonSortableEnabled || panelCategoryDragging,
     });
 
-    const innerRefRef = React.useRef(innerRef);
-    innerRefRef.current = innerRef;
-
     const setNodeRef = React.useCallback(
         (node: HTMLDivElement | null) => {
             setDraggableRef(node);
             setCategoryDropRef(node);
             setDroppableRef(node);
-            assignRef(innerRefRef.current, node);
+            assignRef(innerRef, node);
         },
-        [setDraggableRef, setCategoryDropRef, setDroppableRef]
+        [setDraggableRef, setCategoryDropRef, setDroppableRef, innerRef]
     );
 
     const wasOverRef = React.useRef(false);
