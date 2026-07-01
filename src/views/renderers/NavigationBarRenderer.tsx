@@ -49,22 +49,20 @@ export class NavigationBarRenderer {
             <NavigationBar
                 panelViewType={this.panelConfig.panelViewType}
                 displayStyle={this.panelConfig.displayStyle}
-                enableEditMode={this.panelConfig.enableEditMode}
+                interactionMode={this.panelConfig.interactionMode ?? 'sort'}
                 showTopNavBar={this.panelConfig.showTopNavBar}
-                onToggleView={() => {
-                    this.panelConfig.panelViewType =
-                        this.panelConfig.panelViewType === 'tabs' ? 'list' : 'tabs';
+                onChangeView={(viewType) => {
+                    this.panelConfig.panelViewType = viewType;
                     void this.plugin.saveSettings();
                     activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                 }}
-                onToggleStyle={() => {
-                    this.panelConfig.displayStyle =
-                        this.panelConfig.displayStyle === 'icon_top' ? 'default' : 'icon_top';
+                onChangeStyle={(style) => {
+                    this.panelConfig.displayStyle = style;
                     void this.plugin.saveSettings();
                     activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                 }}
-                onToggleEditMode={() => {
-                    this.panelConfig.enableEditMode = !this.panelConfig.enableEditMode;
+                onChangeInteractionMode={(mode) => {
+                    this.panelConfig.interactionMode = mode;
                     void this.plugin.saveSettings();
                     activeDocument.dispatchEvent(new CustomEvent('buttons-panel-refresh'));
                 }}

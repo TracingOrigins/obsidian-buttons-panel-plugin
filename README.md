@@ -20,8 +20,8 @@
 - 🎛️ **Dedicated Settings Tab**: Manage all plugin settings in a separate, user-friendly tab.
 - 🔄 **Live Updates**: All changes take effect immediately—no restart required.
 - 🛡️ **Form Validation**: Required fields (button name, file path, command ID, URL, folder, script name) are highlighted in red if empty for intuitive feedback.
-- 🖱️ **Edit Mode**: Create categories and buttons in the panel, and use right-click menus to edit, copy, or delete (reordering uses drag-and-drop when edit mode is off).
-- 🧭 **Top Navigation Bar**: Quickly switch panel view, button style, edit mode, and open settings from the top navigation bar.
+- 🖱️ **Interaction Mode**: Three modes — Locked (view only), Sort (drag to reorder), Edit (create/edit/delete via context menu) — switchable from the top navigation bar.
+- 🧭 **Top Navigation Bar**: Dropdown menus to quickly switch panel view, button style, and interaction mode; plus search and settings access.
 - 🔍 **Search Feature**: The navigation bar includes a search function that filters categories and buttons in real-time for quick access.
 - 🔗 **Action Sequences**: Configure multiple actions for a single button and execute them in order with one click.
 
@@ -81,7 +81,7 @@
 - **View Mode**: Choose between list or tabbed view.
 - **Button Style**: Display icon and text on the same line, or icon above text.
 - **Animation**: Enable button hover animation.
-- **Edit Mode**: Enable or disable edit mode.
+- **Interaction Mode**: Choose between Locked (view only), Sort (drag to reorder), or Edit (create/edit/delete).
 - **Top Navigation**: Enable or disable the top navigation bar.
 
 > Example: Choose "Tabbed View" to group buttons by category.
@@ -95,19 +95,23 @@
 
 > Example: Set the template folder to `templates/` and script folder to `scripts/` so that the create file and run script features work properly.
 
-### 🖱️ Edit Mode
+### 🖱️ Interaction Mode
 
-- Turn on **Edit Mode** in panel settings or from the top navigation bar.
-- **While edit mode is on**, you can:
-    - **Add categories** and **add buttons** from controls in the panel
-    - **Right-click** a category title or button for **Edit**, **Copy**, or **Delete**
-- **Drag-and-drop reordering is disabled in edit mode** (to avoid conflicting with editing). Turn **edit mode off** before reordering.
+The navigation bar edit button opens a dropdown with three modes:
 
-> Tip: Editing and reordering are separate—use edit mode to change content; turn edit mode off and long-press drag to change order.
+| Mode | Icon | Behavior |
+|------|------|----------|
+| 🔒 **Locked** | `lock` | View only — all interactions disabled (no drag, no context menu) |
+| ↕️ **Sort** | `arrow-up-down` | Long-press drag to reorder buttons and categories |
+| ✏️ **Edit** | `pencil` | Context menu (right-click / long-press) to add, edit, copy, or delete |
+
+- Switch modes from the top navigation bar dropdown or in **Panel Options** settings.
+- **Drag-and-drop reordering is only available in Sort mode**.
+- **Editing controls and context menus are only available in Edit mode**.
 
 ### 🔀 Drag-and-Drop Reordering
 
-When **edit mode is off** and **search is not active**, long-press and drag to reorder (mouse long-press works on desktop too):
+When **Sort mode** is active and **search is not active**, long-press and drag to reorder (mouse long-press works on desktop too):
 
 | Target | List view | Tabbed view |
 |--------|-----------|-------------|
@@ -115,7 +119,7 @@ When **edit mode is off** and **search is not active**, long-press and drag to r
 | **Categories** | Long-press the category block (title or non-button area), then drag vertically to reorder | Long-press a tab, hold ~0.4s over another tab to confirm drop target, then release to reorder |
 
 - Order is saved automatically when you release.
-- Reordering is unavailable while **edit mode is on** or **search is active**.
+- Reordering is unavailable in **Locked** or **Edit** mode, or while **search is active**.
 
 #### 📱 Touch Gestures (Mobile)
 

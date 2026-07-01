@@ -138,8 +138,8 @@ export function createPanelConfigSection(
         .setDesc(t('button_display_style_desc'))
         .addDropdown((dropdown) => {
             dropdown
-                .addOption('default', t('icon_text_same_line'))
-                .addOption('icon_top', t('icon_top_text_bottom'))
+                .addOption('default', t('icon_left'))
+                .addOption('icon_top', t('icon_top'))
                 .setValue(plugin.settings.panelConfig.displayStyle || 'default')
                 .onChange(async (value: 'default' | 'icon_top') => {
                     plugin.settings.panelConfig.displayStyle = value;
@@ -161,13 +161,16 @@ export function createPanelConfigSection(
         );
 
     new Setting(panel)
-        .setName(t('enable_edit_mode'))
-        .setDesc(t('enable_edit_mode_desc'))
-        .addToggle((toggle) =>
-            toggle
-                .setValue(plugin.settings.panelConfig.enableEditMode ?? false)
-                .onChange(async (value) => {
-                    plugin.settings.panelConfig.enableEditMode = value;
+        .setName(t('interaction_mode'))
+        .setDesc(t('interaction_mode_desc'))
+        .addDropdown((dropdown) =>
+            dropdown
+                .addOption('locked', t('interaction_locked'))
+                .addOption('sort', t('interaction_sort'))
+                .addOption('edit', t('interaction_edit'))
+                .setValue(plugin.settings.panelConfig.interactionMode ?? 'sort')
+                .onChange(async (value: 'locked' | 'sort' | 'edit') => {
+                    plugin.settings.panelConfig.interactionMode = value;
                     await plugin.saveSettings();
                     onDisplayRefresh?.();
                 })

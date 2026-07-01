@@ -42,6 +42,9 @@ export interface CategoryConfig {
     buttons: ButtonConfig[];
 }
 
+/** 交互模式：locked(锁定布局)、sort(排序模式)、edit(编辑模式) */
+export type InteractionMode = 'locked' | 'sort' | 'edit';
+
 /**
  * PanelConfig 面板设置类型。
  * 控制面板的标题、显示方式、布局等。
@@ -57,8 +60,8 @@ export interface PanelConfig {
     panelViewType: 'list' | 'tabs';
     /** 是否启用按钮动画 */
     enableAnimation?: boolean;
-    /** 是否启用编辑模式 */
-    enableEditMode?: boolean;
+    /** 交互模式：locked(锁定布局) / sort(排序) / edit(编辑) */
+    interactionMode?: InteractionMode;
     /** 是否显示顶部导航栏 */
     showTopNavBar?: boolean;
     /** 标签页是否自动换行 */
@@ -103,7 +106,7 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
         displayStyle: 'default',
         panelViewType: 'list',
         enableAnimation: false,
-        enableEditMode: false,
+        interactionMode: 'sort',
         showTopNavBar: true,
         tabsWrap: false,
         autoCollapseListView: false,

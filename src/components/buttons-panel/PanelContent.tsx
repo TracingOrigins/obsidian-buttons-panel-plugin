@@ -30,7 +30,8 @@ export const PanelContent: React.FC<PanelContentProps> = ({
     const viewType = panelConfig.panelViewType ?? 'list';
     const displayStyle = panelConfig.displayStyle ?? 'default';
     const enableAnimation = panelConfig.enableAnimation ?? false;
-    const enableEditMode = panelConfig.enableEditMode ?? false;
+    const interactionMode = panelConfig.interactionMode ?? 'sort';
+    const enableEditMode = interactionMode === 'edit';
     const tabsWrap = panelConfig.tabsWrap ?? false;
     const autoCollapseListView = panelConfig.autoCollapseListView ?? false;
 
@@ -63,7 +64,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
             .filter((c): c is CategoryConfig => c !== null);
     }, [categories, normalizedQuery]);
 
-    const dragReorderEnabled = normalizedQuery.length === 0 && !enableEditMode;
+    const dragReorderEnabled = normalizedQuery.length === 0 && interactionMode === 'sort';
 
     const panelContentRef = React.useRef<HTMLDivElement>(null);
 

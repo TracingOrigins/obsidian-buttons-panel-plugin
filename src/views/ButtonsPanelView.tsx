@@ -133,6 +133,10 @@ export class ButtonsPanelView extends ItemView {
             console.warn('加载最新按钮面板设置时出错，将使用内存中的配置：', error);
         }
 
+        // 同步 NavigationBarRenderer 的 panelConfig 引用，
+        // 避免因 loadSettings 后引用不一致导致首次菜单点击无效
+        this.navigationBarRenderer?.updatePanelConfig(this.panelConfig);
+
         // React 挂载（仅负责 view-content 内部的面板内容）
         this.reactRoot = new ReactRoot();
         const container = this.contentEl;
