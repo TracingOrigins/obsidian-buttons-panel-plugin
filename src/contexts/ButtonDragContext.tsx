@@ -30,6 +30,7 @@ import type { ButtonsPanelPlugin } from '@/types/plugin';
 import { usePluginContext } from '@/contexts/PluginContext';
 import { SimpleButton } from '@/components/button/Button';
 import { CategoryListDragPreview } from '@/components/buttons-panel/CategoryListDragPreview';
+import { CategoryFolderTile } from '@/components/buttons-panel/CategoryFolderTile';
 import {
     applyDragOverToItems,
     buildButtonDragItems,
@@ -37,6 +38,7 @@ import {
     getOrderedButtonsFromAllCategories,
     itemsShallowEqual,
     resolveOverContainerId,
+    TAB_PREFIX,
     type ButtonDragItems,
 } from '@/utils/buttonDragItems';
 import {
@@ -44,6 +46,7 @@ import {
     buildCategoryDragIds,
     categoryIdsEqual,
     categorySortableId,
+    CATEGORY_SORT_PREFIX,
     getOrderedCategoriesFromIds,
     parseCategorySortableId,
 } from '@/utils/categoryDragItems';
@@ -105,7 +108,7 @@ const disabledCategoryContextValue: CategoryDragContextValue = {
     getListCategoryOpen: () => true,
 };
 
-export type CategoryDragOverlayVariant = 'list' | 'tabs';
+export type CategoryDragOverlayVariant = 'list' | 'tabs' | 'folder';
 
 interface ButtonDragProviderProps {
     categories: CategoryConfig[];
@@ -492,7 +495,23 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             }
 
             if (!over || active.id === over.id) return;
-            scheduleButtonDragOver(activeId, String(over.id));
+            const overIdStr = String(over.id);
+
+            // 按钮拖到文件夹磁贴上：派发事件供 FolderModeContent 做自动展开
+            if (overIdStr.startsWith(TAB_PREFIX) || overIdStr.startsWith(CATEGORY_SORT_PREFIX)) {
+                const categoryId = overIdStr.startsWith(TAB_PREFIX)
+                    ? overIdStr.slice(TAB_PREFIX.length)
+                    : overIdStr.slice(CATEGORY_SORT_PREFIX.length);
+                activeDocument.dispatchEvent(
+                    new CustomEvent('buttons-panel-folder-hover', { detail: { categoryId } })
+                );
+            } else {
+                activeDocument.dispatchEvent(
+                    new CustomEvent('buttons-panel-folder-hover', { detail: { categoryId: null } })
+                );
+            }
+
+            scheduleButtonDragOver(activeId, overIdStr);
         },
         [
             categoryDragOverlayVariant,
@@ -527,14 +546,8 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                         finalIds = applyCategoryDragOver(baseline, activeId, committedOverId);
                     }
                 } else {
-                    // 列表视图：以 dragOver 累积的 categoryIdsRef 为准（触屏松手时 over 常为 null）
+                    // 列表/文件夹视图：categoryIdsRef 已在 handleDragOver 中累积为正确顺序
                     finalIds = categoryIdsRef.current;
-                    if (active && over && active.id !== over.id) {
-                        const overId = String(over.id);
-                        if (parseCategorySortableId(overId)) {
-                            finalIds = applyCategoryDragOver(finalIds, activeId, overId);
-                        }
-                    }
                 }
 
                 categoryIdsRef.current = finalIds;
@@ -768,9 +781,20 @@ const CategoryDragOverlay: React.FC<{
         );
     }
 
+    if (variant === 'folder') {
+        return (
+            <div className="category-drag-overlay-folder">
+                <CategoryFolderTile
+                    category={category}
+                    previewButtons={orderedButtons}
+                />
+            </div>
+        );
+    }
+
     const categoryClassName = [
         'buttons-panel-category',
-        listCategoryOpen ? 'move-mode-category' : 'move-category-target',
+        listCategoryOpen ? 'list-category-open' : 'list-category-closed',
     ].join(' ');
 
     return (

@@ -2,6 +2,7 @@ import React from 'react';
 import { setIcon, Menu } from 'obsidian';
 import { t } from '@/utils/i18n';
 import type { InteractionMode } from '@/types';
+import type { PanelViewType } from '@/utils/panelViewType';
 import './NavigationBar.css';
 
 interface NavIconButtonProps {
@@ -118,8 +119,8 @@ function DropdownButton({
 // ---------------------------------------------------------------------------
 
 export interface NavigationBarProps {
-    /** 当前视图模式：tabs 或 list */
-    panelViewType: 'tabs' | 'list';
+    /** 当前视图模式：list、tabs 或 folder */
+    panelViewType: PanelViewType;
     /** 按钮样式：default 或 icon_top */
     displayStyle: 'default' | 'icon_top';
     /** 当前交互模式：locked / sort / edit */
@@ -127,7 +128,7 @@ export interface NavigationBarProps {
     /** 是否显示导航栏（由外层控制） */
     showTopNavBar?: boolean;
     /** 视图切换回调，传入选中的视图类型 */
-    onChangeView: (viewType: 'tabs' | 'list') => void;
+    onChangeView: (viewType: PanelViewType) => void;
     /** 样式切换回调，传入选中的显示样式 */
     onChangeStyle: (style: 'default' | 'icon_top') => void;
     /** 交互模式切换回调 */
@@ -197,7 +198,17 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
     };
 
     // ---- 按钮图标：根据当前模式动态变化 ----
-    const viewIcon = panelViewType === 'tabs' ? 'tabs' : 'list';
+    const viewIconMap: Record<PanelViewType, string> = {
+        list: 'list',
+        tabs: 'tabs',
+        folder: 'folder',
+    };
+    const viewLabelMap: Record<PanelViewType, string> = {
+        list: t('list_view'),
+        tabs: t('tabs_view'),
+        folder: t('folder_view'),
+    };
+    const viewIcon = viewIconMap[panelViewType] ?? 'list';
     const styleIcon = displayStyle === 'icon_top' ? 'layout-panel-top' : 'layout-panel-left';
     // 交互模式图标：locked→lock, sort→arrow-up-down, edit→pencil
     const interactionIcon =
@@ -206,36 +217,40 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
         'arrow-up-down';
 
     // ---- 视图模式下拉选项 ----
-    const viewOptions: MenuOption[] = [
-        {
-            icon: 'list',
-            title: t('list_view'),
-            checked: panelViewType === 'list',
-            onClick: () => onChangeView('list'),
-        },
-        {
-            icon: 'tabs',
-            title: t('tabs_view'),
-            checked: panelViewType === 'tabs',
-            onClick: () => onChangeView('tabs'),
-        },
-    ];
+    const viewTypes: PanelViewType[] = ['list', 'tabs', 'folder'];
+    const viewOptions: MenuOption[] = viewTypes.map((vt) => ({
+        icon: viewIconMap[vt],
+        title: viewLabelMap[vt],
+        checked: panelViewType === vt,
+        onClick: () => onChangeView(vt),
+    }));
 
     // ---- 样式下拉选项 ----
-    const styleOptions: MenuOption[] = [
-        {
-            icon: 'layout-panel-left',
-            title: t('icon_left'),
-            checked: displayStyle === 'default',
-            onClick: () => onChangeStyle('default'),
-        },
-        {
-            icon: 'layout-panel-top',
-            title: t('icon_top'),
-            checked: displayStyle === 'icon_top',
-            onClick: () => onChangeStyle('icon_top'),
-        },
-    ];
+    // 文件夹视图只显示"图标在上"
+    const isFolder = panelViewType === 'folder';
+    const styleOptions: MenuOption[] = isFolder
+        ? [
+              {
+                  icon: 'layout-panel-top',
+                  title: t('icon_top'),
+                  checked: true,
+                  onClick: () => {}, // 文件夹视图强制 icon_top，不允许切换
+              },
+          ]
+        : [
+              {
+                  icon: 'layout-panel-left',
+                  title: t('icon_left'),
+                  checked: displayStyle === 'default',
+                  onClick: () => onChangeStyle('default'),
+              },
+              {
+                  icon: 'layout-panel-top',
+                  title: t('icon_top'),
+                  checked: displayStyle === 'icon_top',
+                  onClick: () => onChangeStyle('icon_top'),
+              },
+          ];
 
     // ---- 交互模式下拉选项 ----
     const interactionOptions: MenuOption[] = [
@@ -260,8 +275,8 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
     ];
 
     // ---- 当前选项的悬浮提示文字 ----
-    const viewLabel = panelViewType === 'list' ? t('list_view') : t('tabs_view');
-    const styleLabel = displayStyle === 'default' ? t('icon_left') : t('icon_top');
+    const viewLabel = viewLabelMap[panelViewType] ?? t('list_view');
+    const styleLabel = isFolder ? t('icon_top') : displayStyle === 'default' ? t('icon_left') : t('icon_top');
     const interactionLabel =
         interactionMode === 'locked' ? t('interaction_locked') :
         interactionMode === 'edit'   ? t('interaction_edit') :

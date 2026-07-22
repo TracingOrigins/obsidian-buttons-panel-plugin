@@ -12,7 +12,8 @@
 
 - 🎯 **Quick Access**: Instantly open files, execute commands, visit links, or run scripts with a single click.
 - 🎨 **Icon Picker**: Integrated Lucide icon library with search and live preview.
-- 🏷️ **Tabbed & List Views**: Switch between list and tabbed display modes for flexible organization.
+- 🏷️ **Three View Modes**: Switch between list, tabbed, and folder views.
+- 📁 **Folder View**: Android-style folder grid with drag-and-drop, auto-expand on hover, pin to keep open, click-to-close, and editable folder names.
 - 📁 **Category Management**: Organize buttons by category; reorder categories and buttons via long-press drag-and-drop.
 - ⚙️ **Flexible Configuration**: Fully customizable panel layout, button styles, and animation effects.
 - 📱 **Responsive Design**: Optimized for both desktop and mobile devices.
@@ -76,10 +77,8 @@
 
 ### 🎛️ Panel Options
 
-- **Panel Title**: Set a custom title for the panel.
-- **Show Title**: Toggle the display of the panel title.
-- **View Mode**: Choose between list or tabbed view.
-- **Button Style**: Display icon and text on the same line, or icon above text.
+- **View Mode**: Choose between list, tabbed, or folder view.
+- **Button Style**: Display icon and text on the same line, or icon above text (folder view always uses icon-top).
 - **Animation**: Enable button hover animation.
 - **Interaction Mode**: Choose between Locked (view only), Sort (drag to reorder), or Edit (create/edit/delete).
 - **Top Navigation**: Enable or disable the top navigation bar.
@@ -109,14 +108,29 @@ The navigation bar edit button opens a dropdown with three modes:
 - **Drag-and-drop reordering is only available in Sort mode**.
 - **Editing controls and context menus are only available in Edit mode**.
 
-### 🔀 Drag-and-Drop Reordering
+### � Folder View
+
+Switch to folder view from the navigation bar or settings. Categories appear as folder tiles in a responsive grid.
+
+| Feature | Description |
+|---------|-------------|
+| **Open/Close** | Click a tile to expand; click outside, press ESC, or click blank space (configurable) to close |
+| **Pin** | Click 📌 to lock — folder stays open until unpinned or you switch folders |
+| **Edit name** | Click folder name to rename (configurable in settings) |
+| **Reorder folders** | Long-press drag in sort mode |
+| **Cross-folder drag** | Drag button out → auto-close → hover 0.6s on another tile → auto-expand → continue sorting |
+| **Auto-scroll** | Drag near edges inside expanded folder to scroll |
+
+**Folder settings**: folder name editable, show button count, close on blank click.
+
+### �🔀 Drag-and-Drop Reordering
 
 When **Sort mode** is active and **search is not active**, long-press and drag to reorder (mouse long-press works on desktop too):
 
-| Target | List view | Tabbed view |
-|--------|-----------|-------------|
-| **Buttons** | Long-press a button, then drag to reorder within a category; drag over another category’s tab/zone to move across categories | Same; active tab’s grid supports drag reorder |
-| **Categories** | Long-press the category block (title or non-button area), then drag vertically to reorder | Long-press a tab, hold ~0.4s over another tab to confirm drop target, then release to reorder |
+| Target | List view | Tabbed view | Folder view |
+|--------|-----------|-------------|-------------|
+| **Buttons** | Long-press a button, then drag to reorder within a category; drag over another category's tab/zone to move across categories | Same; active tab's grid supports drag reorder | Drag within expanded folder or between folders; hover 0.6s over a tile to auto-expand |
+| **Categories** | Long-press the category block (title or non-button area), then drag vertically to reorder | Long-press a tab, hold ~0.4s over another tab to confirm drop target, then release to reorder | Long-press a tile to reorder in grid |
 
 - Order is saved automatically when you release.
 - Reordering is unavailable in **Locked** or **Edit** mode, or while **search is active**.
@@ -132,7 +146,7 @@ When **Sort mode** is active and **search is not active**, long-press and drag t
 - The panel features a top navigation bar with the following functions:
     - **Panel View Switch**: Switch between tabbed and list views.
     - **Button Style Switch**: Instantly change button styles.
-    - **Edit Mode Toggle**: Quickly enter or exit edit mode.
+    - **Interaction Mode**: Switch between Locked, Sort, and Edit modes via dropdown.
     - **Search Feature**: Click the search icon to open the search box and filter categories and button names in real-time.
     - **Panel Settings**: Open the panel settings page with one click.
 - **Tab bar scrolling** (tabbed view, many tabs): On mobile, swipe left/right on the tab bar; on desktop, hover the tab bar, hold **Shift**, and scroll the mouse wheel horizontally.

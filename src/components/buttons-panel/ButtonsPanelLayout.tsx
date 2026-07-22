@@ -1,6 +1,5 @@
 import React from 'react';
 import type { CategoryConfig } from '@/types';
-import { PanelHeader } from '@/components/buttons-panel/PanelHeader';
 import { PanelBody } from '@/components/buttons-panel/PanelBody';
 import './ButtonsPanelLayout.css';
 
@@ -15,7 +14,6 @@ export const ButtonsPanelLayout: React.FC<ButtonsPanelLayoutProps> = ({
 }) => {
     return (
         <div className="buttons-panel-container buttons-panel-react-root">
-            <PanelHeader />
             <PanelBody categories={categories} searchQuery={searchQuery} />
         </div>
     );

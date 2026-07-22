@@ -18,48 +18,6 @@ export function createPanelConfigSection(
 ): void {
     const panel = containerEl.createDiv('settings-panel');
 
-    // 显示标题开关
-    new Setting(panel)
-        .setName(t('show_title'))
-        .setDesc(t('show_title_desc'))
-        .addToggle((toggle) =>
-            toggle.setValue(plugin.settings.panelConfig.showTitle).onChange(async (value) => {
-                plugin.settings.panelConfig.showTitle = value;
-                await plugin.saveSettings();
-                // 更新面板标题设置的显示状态
-                updatePanelTitleSettingVisibility();
-            })
-        );
-
-    // 面板标题设置
-    const panelTitleSetting = new Setting(panel)
-        .setName(t('panel_title_setting'))
-        .setDesc(t('panel_title_desc'))
-        .addText((text) =>
-            text
-                .setPlaceholder(t('panel_title_setting'))
-                .setValue(plugin.settings.panelConfig.title)
-                .onChange(async (value) => {
-                    plugin.settings.panelConfig.title = value;
-                    await plugin.saveSettings();
-                })
-        );
-
-    // 更新面板标题设置显示状态的函数
-    const updatePanelTitleSettingVisibility = () => {
-        const isTitleHidden = !plugin.settings.panelConfig.showTitle;
-        if (isTitleHidden) {
-            panelTitleSetting.settingEl.addClass('is-disabled');
-            panelTitleSetting.settingEl.addClass('is-hidden');
-        } else {
-            panelTitleSetting.settingEl.removeClass('is-disabled');
-            panelTitleSetting.settingEl.removeClass('is-hidden');
-        }
-    };
-
-    // 初始化显示状态
-    updatePanelTitleSettingVisibility();
-
     new Setting(panel)
         .setName(t('button_panel_view'))
         .setDesc(t('button_panel_view_desc'))
@@ -67,14 +25,14 @@ export function createPanelConfigSection(
             dropdown
                 .addOption('list', t('list_view'))
                 .addOption('tabs', t('tabs_view'))
+                .addOption('folder', t('folder_view'))
                 .setValue(plugin.settings.panelConfig.panelViewType || 'list')
-                .onChange(async (value: 'list' | 'tabs') => {
+                .onChange(async (value: 'list' | 'tabs' | 'folder') => {
                     plugin.settings.panelConfig.panelViewType = value;
                     await plugin.saveSettings();
-                    // 更新标签页自动换行选项的显示状态
                     updateTabsWrapSettingVisibility();
-                    // 更新列表视图自动折叠选项的显示状态
                     updateAutoCollapseListViewSettingVisibility();
+                    updateFolderSettingsVisibility();
                     onDisplayRefresh?.();
                 });
         });
@@ -132,6 +90,61 @@ export function createPanelConfigSection(
     // 初始化显示状态
     updateTabsWrapSettingVisibility();
     updateAutoCollapseListViewSettingVisibility();
+
+    // ---- 文件夹视图专有设置 ----
+
+    // 文件夹视图：名称可编辑
+    const folderNameEditableSetting = new Setting(panel)
+        .setName(t('folder_name_editable'))
+        .setDesc(t('folder_name_editable_desc'))
+        .addToggle((toggle) =>
+            toggle
+                .setValue(plugin.settings.panelConfig.folderDetailNameEditable ?? true)
+                .onChange(async (value) => {
+                    plugin.settings.panelConfig.folderDetailNameEditable = value;
+                    await plugin.saveSettings();
+                })
+        );
+
+    // 文件夹视图：显示按钮个数
+    const folderShowBtnCountSetting = new Setting(panel)
+        .setName(t('folder_show_btn_count'))
+        .setDesc(t('folder_show_btn_count_desc'))
+        .addToggle((toggle) =>
+            toggle
+                .setValue(plugin.settings.panelConfig.folderShowBtnCount ?? true)
+                .onChange(async (value) => {
+                    plugin.settings.panelConfig.folderShowBtnCount = value;
+                    await plugin.saveSettings();
+                    onDisplayRefresh?.();
+                })
+        );
+
+    // 文件夹视图：点击空白处关闭
+    const folderCloseOnBlankClickSetting = new Setting(panel)
+        .setName(t('folder_close_on_blank'))
+        .setDesc(t('folder_close_on_blank_desc'))
+        .addToggle((toggle) =>
+            toggle
+                .setValue(plugin.settings.panelConfig.folderCloseOnBlankClick ?? false)
+                .onChange(async (value) => {
+                    plugin.settings.panelConfig.folderCloseOnBlankClick = value;
+                    await plugin.saveSettings();
+                })
+        );
+
+    const updateFolderSettingsVisibility = () => {
+        const isFolderView = plugin.settings.panelConfig.panelViewType === 'folder';
+        const method = isFolderView ? 'removeClass' : 'addClass';
+        folderNameEditableSetting.settingEl[method]('is-disabled');
+        folderNameEditableSetting.settingEl[method]('is-hidden');
+        folderShowBtnCountSetting.settingEl[method]('is-disabled');
+        folderShowBtnCountSetting.settingEl[method]('is-hidden');
+        folderCloseOnBlankClickSetting.settingEl[method]('is-disabled');
+        folderCloseOnBlankClickSetting.settingEl[method]('is-hidden');
+    };
+
+    updateFolderSettingsVisibility();
 
     new Setting(panel)
         .setName(t('button_display_style'))

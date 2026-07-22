@@ -16,8 +16,9 @@ export function createPanelDragCollisionDetection(
         if (parseCategorySortableId(activeId)) {
             switch (categoryLayout) {
                 case 'horizontal':
-                case 'grid':
                     return categoryTabDragCollision(args);
+                case 'grid':
+                    return categoryDragCollisionDetection(args);
                 default:
                     return categoryDragCollisionDetection(args);
             }
@@ -26,6 +27,3 @@ export function createPanelDragCollisionDetection(
     };
 }
 
-/** @deprecated 使用 createPanelDragCollisionDetection */
-export const panelDragCollisionDetection: CollisionDetection =
-    createPanelDragCollisionDetection('vertical');

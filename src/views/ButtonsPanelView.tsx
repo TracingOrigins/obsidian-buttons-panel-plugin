@@ -74,9 +74,9 @@ export class ButtonsPanelView extends ItemView {
      * 设置事件监听器，监听面板刷新等自定义事件
      */
     private setupEventListeners(): void {
-        // 监听面板刷新事件
+        // 监听面板刷新事件（直接触发渲染，不使用防抖，避免异步时序问题）
         this.handleRefreshEvent = () => {
-            this.debouncedRender();
+            this.renderPanel();
         };
         // 使用视图的 registerDomEvent 注册自定义 DOM 事件
         this.registerDomEvent(activeDocument, 'buttons-panel-refresh', this.handleRefreshEvent);

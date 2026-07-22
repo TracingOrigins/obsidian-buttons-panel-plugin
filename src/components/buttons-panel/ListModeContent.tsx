@@ -11,6 +11,7 @@ import { useCategoryCreation, useButtonCreation } from '@/hooks';
 import { AddButton } from '@/components/shared/AddButton';
 import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
 import { createCategoryMenuHandler } from '@/utils/categoryMenuUtils';
+import { t } from '@/utils/i18n';
 import './ListModeContent.css';
 
 interface ListModeContentProps {
@@ -154,7 +155,7 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                     </div>
                 ) : (
                     <div className="buttons-panel-empty-hint">
-                        {isSearchActive ? '无匹配结果。' : '尚未配置任何分类，请在设置中添加分类和按钮。'}
+                        {isSearchActive ? t('no_search_results') : t('no_categories_hint')}
                     </div>
                 )}
             </div>
@@ -217,27 +218,36 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
 
         const buttonGridSection = showButtonGrid && (
             <div style={hideButtonGridWhileCollapsed ? { display: 'none' } : undefined}>
-                <CategoryButtonGrid
-                    category={category}
-                    orderedButtons={orderedButtons}
-                    contentClass={contentClass}
-                    displayStyle={displayStyle}
-                    enableAnimation={enableAnimation}
-                    enableEditMode={enableEditMode}
-                    plugin={plugin}
-                    app={app}
-                    sortableEnabled={sortableEnabled}
-                >
-                    {enableEditMode && (
-                        <AddButton onClick={() => createButton(category)} />
-                    )}
-                </CategoryButtonGrid>
+                {!enableEditMode && orderedButtons.length === 0 && !sortableEnabled ? (
+                    <div className="buttons-panel-empty-hint">{t('no_buttons_in_category')}</div>
+                ) : (
+                    <>
+                        {!enableEditMode && orderedButtons.length === 0 && !(buttonDrag?.isDragging || isCategoryDragging) && (
+                            <div className="buttons-panel-empty-hint">{t('no_buttons_in_category')}</div>
+                        )}
+                        <CategoryButtonGrid
+                            category={category}
+                            orderedButtons={orderedButtons}
+                            contentClass={contentClass}
+                            displayStyle={displayStyle}
+                            enableAnimation={enableAnimation}
+                            enableEditMode={enableEditMode}
+                            plugin={plugin}
+                            app={app}
+                            sortableEnabled={sortableEnabled}
+                        >
+                            {enableEditMode && (
+                                <AddButton onClick={() => createButton(category)} />
+                            )}
+                        </CategoryButtonGrid>
+                    </>
+                )}
             </div>
         );
 
         const categoryClassNames = [
             'buttons-panel-category',
-            isVisuallyOpen ? 'move-mode-category' : 'move-category-target',
+            isVisuallyOpen ? 'list-category-open' : 'list-category-closed',
         ].join(' ');
 
         if (categorySortEnabled) {
@@ -256,7 +266,7 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                             app={app}
                             categoryClassName={[
                                 'buttons-panel-category',
-                                isOpen ? 'move-mode-category' : 'move-category-target',
+                                isOpen ? 'list-category-open' : 'list-category-closed',
                             ].join(' ')}
                             titleClassName={titleClassName}
                         />

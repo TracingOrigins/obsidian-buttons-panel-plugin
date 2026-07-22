@@ -12,7 +12,7 @@ interface CategoryListDragPreviewProps {
     displayStyle: 'default' | 'icon_top';
     plugin: ButtonsPanelPlugin;
     app: App;
-    /** 与列表项一致的分类容器 class（如 move-mode-category） */
+    /** 与列表项一致的分类容器 class（如 list-category-open） */
     categoryClassName: string;
     /** 与列表项一致的标题 class（如 is-collapsible） */
     titleClassName: string;

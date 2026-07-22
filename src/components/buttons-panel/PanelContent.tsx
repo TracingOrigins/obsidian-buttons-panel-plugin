@@ -4,6 +4,7 @@ import { useConfigContext } from '@/contexts/ConfigContext';
 import { ButtonDragProvider } from '@/contexts/ButtonDragContext';
 import { TabsModeContent } from '@/components/buttons-panel/TabsModeContent';
 import { ListModeContent } from '@/components/buttons-panel/ListModeContent';
+import { FolderModeContent } from '@/components/buttons-panel/FolderModeContent';
 import './PanelContent.css';
 
 /** 列表视图时在 Obsidian view-content 上标记，供滚动条样式等使用（避免 CSS :has） */
@@ -79,6 +80,9 @@ export const PanelContent: React.FC<PanelContentProps> = ({
         };
     }, [viewType]);
 
+    // 文件夹视图强制 icon_top，但设置不变
+    const effectiveDisplayStyle = viewType === 'folder' ? 'icon_top' : displayStyle;
+
     const panelContent =
         viewType === 'tabs' ? (
             <TabsModeContent
@@ -87,6 +91,15 @@ export const PanelContent: React.FC<PanelContentProps> = ({
                 enableAnimation={enableAnimation}
                 enableEditMode={enableEditMode}
                 tabsWrap={tabsWrap}
+                isSearchActive={normalizedQuery.length > 0}
+            />
+        ) : viewType === 'folder' ? (
+            <FolderModeContent
+                key={`folder-${filteredCategories.length}`}
+                categories={filteredCategories}
+                displayStyle={effectiveDisplayStyle}
+                enableAnimation={enableAnimation}
+                enableEditMode={enableEditMode}
                 isSearchActive={normalizedQuery.length > 0}
             />
         ) : (
@@ -105,11 +118,19 @@ export const PanelContent: React.FC<PanelContentProps> = ({
             <ButtonDragProvider
                 categories={filteredCategories}
                 enabled={dragReorderEnabled}
-                displayStyle={displayStyle}
+                displayStyle={effectiveDisplayStyle}
                 enableAnimation={enableAnimation}
-                categoryDragOverlayVariant={viewType === 'tabs' ? 'tabs' : 'list'}
+                categoryDragOverlayVariant={
+                    viewType === 'tabs' ? 'tabs' : viewType === 'folder' ? 'folder' : 'list'
+                }
                 categoryDragLayout={
-                    viewType === 'tabs' ? (tabsWrap ? 'grid' : 'horizontal') : 'vertical'
+                    viewType === 'tabs'
+                        ? tabsWrap
+                            ? 'grid'
+                            : 'horizontal'
+                        : viewType === 'folder'
+                          ? 'grid'
+                          : 'vertical'
                 }
             >
                 {panelContent}

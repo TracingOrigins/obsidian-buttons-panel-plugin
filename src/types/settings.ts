@@ -50,14 +50,10 @@ export type InteractionMode = 'locked' | 'sort' | 'edit';
  * 控制面板的标题、显示方式、布局等。
  */
 export interface PanelConfig {
-    /** 面板标题 */
-    title: string;
-    /** 是否显示标题 */
-    showTitle: boolean;
     /** 按钮显示样式（default:图标和文字同一行，icon_top:图标在上文字在下） */
     displayStyle: 'default' | 'icon_top';
-    /** 面板视图类型（列表/标签页） */
-    panelViewType: 'list' | 'tabs';
+    /** 面板视图类型（列表/标签页/文件夹） */
+    panelViewType: 'list' | 'tabs' | 'folder';
     /** 是否启用按钮动画 */
     enableAnimation?: boolean;
     /** 交互模式：locked(锁定布局) / sort(排序) / edit(编辑) */
@@ -68,6 +64,12 @@ export interface PanelConfig {
     tabsWrap?: boolean;
     /** 列表视图：是否在每次打开列表视图时默认折叠所有分类 */
     autoCollapseListView?: boolean;
+    /** 文件夹视图：已展开文件夹名称是否可编辑 */
+    folderDetailNameEditable?: boolean;
+    /** 文件夹视图：是否显示按钮个数 */
+    folderShowBtnCount?: boolean;
+    /** 文件夹视图：点击空白处关闭 */
+    folderCloseOnBlankClick?: boolean;
 }
 
 /**
@@ -101,8 +103,6 @@ export interface ButtonsPanelPluginSettings {
 export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
     categories: [],
     panelConfig: {
-        title: 'Buttons Panel',
-        showTitle: true,
         displayStyle: 'default',
         panelViewType: 'list',
         enableAnimation: false,
@@ -110,6 +110,9 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
         showTopNavBar: true,
         tabsWrap: false,
         autoCollapseListView: false,
+        folderDetailNameEditable: true,
+        folderShowBtnCount: true,
+        folderCloseOnBlankClick: false,
     },
     pathConfig: {
         templateFolderPath: 'templates/',

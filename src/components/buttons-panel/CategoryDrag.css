@@ -112,8 +112,8 @@ body .buttons-panel .category-drag-overlay-list,
     pointer-events: none;
 }
 
-body .category-drag-overlay-list .buttons-panel-category.move-category-target,
-body .buttons-panel .category-drag-overlay-list .buttons-panel-category.move-category-target {
+body .category-drag-overlay-list .buttons-panel-category.list-category-closed,
+body .buttons-panel .category-drag-overlay-list .buttons-panel-category.list-category-closed {
     padding: 0;
     border: none;
     border-radius: 0;

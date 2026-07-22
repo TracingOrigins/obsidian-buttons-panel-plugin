@@ -145,7 +145,7 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
                     </div>
                 ) : (
                     <div className="buttons-panel-empty-hint">
-                        {isSearchActive ? '无匹配结果。' : '尚未配置任何分类，请在设置中添加分类和按钮。'}
+                        {isSearchActive ? t('no_search_results') : t('no_categories_hint')}
                     </div>
                 )}
             </div>
@@ -282,16 +282,21 @@ export const TabsModeContent: React.FC<TabsModeContentProps> = ({
             </div>
             <div className="buttons-panel-tab-content">
                 {sortableEnabled ? (
-                    orderedCategories.map((category) =>
-                        renderSortableCategoryGrid(category, category.id === activeTabId)
-                    )
+                    <>
+                        {orderedCategories.map((category) =>
+                            renderSortableCategoryGrid(category, category.id === activeTabId)
+                        )}
+                        {!enableEditMode && activeCategory && orderedActiveButtons.length === 0 && !(buttonDrag?.isDragging || isCategoryDragging) && (
+                            <div className="buttons-panel-empty-hint">{t('no_buttons_in_category')}</div>
+                        )}
+                    </>
                 ) : activeButtons.length === 0 ? (
                     enableEditMode && activeCategory ? (
                         <div className={contentClass}>
                             <AddButton onClick={() => createButton(activeCategory)} />
                         </div>
                     ) : (
-                        <div className="buttons-panel-empty-hint">该分类下暂无按钮。</div>
+                        <div className="buttons-panel-empty-hint">{t('no_buttons_in_category')}</div>
                     )
                 ) : (
                     activeCategory && (

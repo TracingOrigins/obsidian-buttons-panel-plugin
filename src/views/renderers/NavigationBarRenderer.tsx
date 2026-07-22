@@ -3,6 +3,7 @@
 import React from 'react';
 import { ButtonsPanelPlugin } from '@/types/plugin';
 import { PanelConfig } from '@/types';
+import type { PanelViewType } from '@/utils/panelViewType';
 import { ReactRoot } from '@/utils/ReactRoot';
 import { NavigationBar } from '@/components/shared/NavigationBar';
 
@@ -47,7 +48,7 @@ export class NavigationBarRenderer {
 
         const element = (
             <NavigationBar
-                panelViewType={this.panelConfig.panelViewType}
+                panelViewType={this.panelConfig.panelViewType as PanelViewType}
                 displayStyle={this.panelConfig.displayStyle}
                 interactionMode={this.panelConfig.interactionMode ?? 'sort'}
                 showTopNavBar={this.panelConfig.showTopNavBar}

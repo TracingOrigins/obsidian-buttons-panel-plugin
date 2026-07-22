@@ -75,30 +75,7 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button:
     box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
 }
 
-/* 按钮面板：按钮移动模式下，正在移动的按钮的样式 */
-body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.moving {
-    opacity: 0.5;
-    transform: rotate(5deg);
-    z-index: 1000;
-    border: 1px solid var(--interactive-accent);
-    transform-origin: center center;
-    box-sizing: border-box;
-}
-
-/* 移动指示器：挂到 body 上，用直接子选择器提高特异性 */
-body > button.buttons-panel.button-move-indicator.icon-left,
-body > button.buttons-panel.button-move-indicator.icon-top {
-    position: fixed;
-    z-index: 10000;
-    transition: none;
-    background: transparent;
-    opacity: 0.6;
-    border-radius: 6px;
-    border: 1px solid var(--interactive-accent);
-}
-
-/* 图标在左：移动指示器 + 面板内按钮 */
-body > button.buttons-panel.button-move-indicator.icon-left,
+/* 图标在左：面板内按钮 */
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left {
     width: 96px;
     height: 40px;
@@ -110,7 +87,6 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.
     font-size: 14px;
 }
 
-body > button.buttons-panel.button-move-indicator.icon-left .button-icon,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left .button-icon {
     display: inline-flex;
     align-items: center;
@@ -120,7 +96,6 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.
     height: 18px;
 }
 
-body > button.buttons-panel.button-move-indicator.icon-left .button-text,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-left .button-text {
     font-size: 13px;
     text-align: left;
@@ -130,7 +105,6 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.
 }
 
 /* 图标在上 */
-body > button.buttons-panel.button-move-indicator.icon-top,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top {
     flex-direction: column;
     background-color: transparent;
@@ -142,7 +116,6 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.
     height: 56px;
 }
 
-body > button.buttons-panel.button-move-indicator.icon-top .button-icon,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top .button-icon {
     font-size: 24px;
     margin-bottom: 2px;
@@ -150,13 +123,11 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.
     height: 32px;
 }
 
-body > button.buttons-panel.button-move-indicator.icon-top .button-icon svg,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top .button-icon svg {
     width: 32px;
     height: 32px;
 }
 
-body > button.buttons-panel.button-move-indicator.icon-top .button-text,
 body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.icon-top .button-text {
     font-size: 12px;
     text-align: center;
