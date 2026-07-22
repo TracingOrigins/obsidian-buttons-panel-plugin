@@ -1,4 +1,4 @@
-import { App, Notice, normalizePath } from 'obsidian';
+import * as obsidian from 'obsidian';
 import { ButtonAction } from '@/types/action';
 import { ButtonsPanelPlugin } from '@/types/plugin';
 import { t, tWithParams } from '@/utils/i18n';
@@ -15,7 +15,7 @@ export class ScriptService {
      * @param plugin 插件主类实例（可选）
      */
     constructor(
-        private app: App,
+        private app: obsidian.App,
         private plugin?: ButtonsPanelPlugin
     ) {}
 
@@ -56,7 +56,7 @@ export class ScriptService {
         } catch (error) {
             // 捕获并通知脚本运行异常
             const errorMessage = error instanceof Error ? error.message : String(error);
-            new Notice(t('script_run_failed') + `: ${errorMessage}`);
+            new obsidian.Notice(t('script_run_failed') + `: ${errorMessage}`);
         }
     }
 
@@ -76,13 +76,13 @@ export class ScriptService {
         // 获取脚本文件夹路径（从插件设置中读取）
         let scriptFolderPath = this.plugin?.settings?.pathConfig?.scriptFolderPath ?? '';
         // 使用 normalizePath 清理路径
-        scriptFolderPath = normalizePath(scriptFolderPath);
+        scriptFolderPath = obsidian.normalizePath(scriptFolderPath);
 
         // 拼接完整脚本文件路径
         let scriptFilePath = scriptFolderPath
             ? `${scriptFolderPath}/${scriptFileName}`
             : scriptFileName;
-        scriptFilePath = normalizePath(scriptFilePath);
+        scriptFilePath = obsidian.normalizePath(scriptFilePath);
 
         return { scriptFilePath, scriptFileName };
     }
@@ -100,7 +100,7 @@ export class ScriptService {
         const scriptFile = this.app.vault.getFileByPath(scriptFilePath);
         if (!scriptFile) {
             // 未找到脚本文件，弹出通知
-            new Notice(t('script_file_not_found') + `: ${scriptFilePath}`);
+            new obsidian.Notice(t('script_file_not_found') + `: ${scriptFilePath}`);
             return null;
         }
 
@@ -141,17 +141,24 @@ export class ScriptService {
         );
 
         // 执行脚本内容，让 module.exports 被赋值为脚本导出的函数
+        // 拦截 'obsidian' 走插件注入，其余回退 window.require（Node.js/Electron）
         const requireFromWindow = (
             window as unknown as { require?: (...args: unknown[]) => unknown }
         ).require;
+        const customRequire = (moduleName: string) => {
+            if (moduleName === 'obsidian') return obsidian;
+            if (requireFromWindow) return requireFromWindow(moduleName);
+            throw new Error(`Cannot find module '${moduleName}'`);
+        };
+
         await fn.call(
             { app: this.app, plugin: this.plugin },
             module,
             module.exports,
-            requireFromWindow,
+            customRequire,
             this.app,
             this.plugin,
-            (msg: string) => new Notice(msg),
+            (msg: string) => new obsidian.Notice(msg),
             params
         );
 
@@ -179,7 +186,7 @@ export class ScriptService {
                 params,
                 this.app,
                 this.plugin,
-                (msg: string) => new Notice(msg)
+                (msg: string) => new obsidian.Notice(msg)
             );
         } else if (
             module.exports &&
@@ -196,11 +203,11 @@ export class ScriptService {
                 params,
                 this.app,
                 this.plugin,
-                (msg: string) => new Notice(msg)
+                (msg: string) => new obsidian.Notice(msg)
             );
         } else {
             // 未正确导出函数，弹出通知
-            new Notice(tWithParams('script_invalid_export', { scriptFileName }));
+            new obsidian.Notice(tWithParams('script_invalid_export', { scriptFileName }));
         }
     }
 }
