@@ -204,13 +204,13 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         if (activeButtonId) return;
         const next = buildButtonDragItems(categories);
         setItems((prev) => (itemsShallowEqual(prev, next) ? prev : next));
-    }, [categories, activeButtonId]);
+    }, [categories, activeButtonId, enabled]);
 
     useEffect(() => {
         if (activeCategoryId) return;
         const next = buildCategoryDragIds(categories);
         setCategoryIds((prev) => (categoryIdsEqual(prev, next) ? prev : next));
-    }, [categories, activeCategoryId]);
+    }, [categories, activeCategoryId, enabled]);
 
     useEffect(() => () => cancelDragOverFrame(), [cancelDragOverFrame]);
 
