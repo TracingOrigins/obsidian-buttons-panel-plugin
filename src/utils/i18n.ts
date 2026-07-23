@@ -1,15 +1,17 @@
 // i18n.ts
-// 多语言国际化工具函数，支持中英文翻译。
+// 多语言国际化工具函数，支持中英俄语翻译。
 import zh from '@/locales/zh.json';
 import en from '@/locales/en.json';
+import ru from '@/locales/ru.json';
 import { getLanguage } from 'obsidian';
 
 /**
- * 多语言词典映射，支持中英文。
+ * 多语言词典映射。
  */
 const locales: Record<string, Record<string, string>> = {
     zh,
     en,
+    ru,
 };
 
 /**
@@ -19,11 +21,12 @@ const locales: Record<string, Record<string, string>> = {
  */
 function getCurrentLang(): string {
     try {
-        // 使用Obsidian官方的getLanguage方法获取语言设置
         const obsidianLang = getLanguage();
-        // Obsidian支持的语言代码格式：zh-cn, zh-tw, en, en-gb等
         if (obsidianLang && obsidianLang.startsWith('zh')) {
             return 'zh';
+        }
+        if (obsidianLang && obsidianLang.startsWith('ru')) {
+            return 'ru';
         }
     } catch (error) {
         console.warn('获取Obsidian语言设置失败:', error);
