@@ -135,7 +135,7 @@ export class CreateFileService {
      * @returns 替换后的路径
      */
     private resolveDateVariables(filePath: string): string {
-        return filePath.replace(/{{DATE:(.*?)}}/g, (_match: string, format: string) => {
+        return filePath.replace(/{{DATE:(.*?)}}/g, (_match: string, format: string): string => {
             return moment().format(format);
         });
     }

@@ -123,7 +123,7 @@ export default class ButtonsPanelPlugin extends Plugin {
                 ? ({
                       ...DEFAULT_SETTINGS,
                       ...(rawData as Partial<ButtonsPanelPluginSettings>),
-                  } as ButtonsPanelPluginSettings)
+                  })
                 : DEFAULT_SETTINGS;
         this.settings = merged;
         // 只在初始化时重置运行时状态，避免重复调用时丢失状态

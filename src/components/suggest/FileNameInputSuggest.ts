@@ -43,7 +43,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 渲染每一条日期格式建议（包含预览）。
      */
     renderSuggestion(format: string, el: HTMLElement): void {
-        const preview = moment().format(format);
+        const preview: string = moment().format(format);
         el.addClass('buttons-panel');
         el.addClass('filename-suggestion');
         el.createDiv({ text: `{{DATE:${format}}}` });

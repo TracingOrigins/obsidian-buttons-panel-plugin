@@ -22,25 +22,23 @@ interface SensorLifecycle {
 }
 
 function patchSensorLifecycle(sensor: SensorLifecycle): void {
-    /* eslint-disable @typescript-eslint/unbound-method -- 需要保留原方法引用并用 .call(sensor) 调用以保持 dnd-kit 传感器上下文 */
-    const originalStart = sensor.handleStart;
-    const originalCancel = sensor.handleCancel;
-    const originalEnd = sensor.handleEnd;
-    /* eslint-enable @typescript-eslint/unbound-method */
+    const handleStart = () => sensor.handleStart();
+    const handleCancel = () => sensor.handleCancel();
+    const handleEnd = () => sensor.handleEnd();
 
     sensor.handleStart = () => {
         setPanelTouchDragLock(true);
-        originalStart.call(sensor);
+        handleStart();
     };
 
     sensor.handleCancel = () => {
         setPanelTouchDragLock(false);
-        originalCancel.call(sensor);
+        handleCancel();
     };
 
     sensor.handleEnd = () => {
         setPanelTouchDragLock(false);
-        originalEnd.call(sensor);
+        handleEnd();
     };
 }
 
