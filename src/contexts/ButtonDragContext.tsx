@@ -161,7 +161,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     const categoryListDragStartIdsRef = useRef<string[]>([]);
     const categoryTabHoverOverIdRef = useRef<string | null>(null);
     const categoryTabCommittedOverIdRef = useRef<string | null>(null);
-    const categoryTabHoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const categoryTabHoverTimerRef = useRef<number | null>(null);
 
     itemsRef.current = items;
     categoryIdsRef.current = categoryIds;
@@ -287,7 +287,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
 
     const clearCategoryTabHoverTimer = useCallback(() => {
         if (categoryTabHoverTimerRef.current !== null) {
-            clearTimeout(categoryTabHoverTimerRef.current);
+            window.clearTimeout(categoryTabHoverTimerRef.current);
             categoryTabHoverTimerRef.current = null;
         }
     }, []);
@@ -309,7 +309,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             categoryTabCommittedOverIdRef.current = null;
             setCategoryTabDropTargetId(null);
 
-            categoryTabHoverTimerRef.current = setTimeout(() => {
+            categoryTabHoverTimerRef.current = window.setTimeout(() => {
                 categoryTabHoverTimerRef.current = null;
                 categoryTabCommittedOverIdRef.current = overSortableId;
                 const categoryId = parseCategorySortableId(overSortableId);
@@ -420,7 +420,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             if (dragOverFrameRef.current !== null) {
                 return;
             }
-            dragOverFrameRef.current = requestAnimationFrame(flushButtonDragOver);
+            dragOverFrameRef.current = window.requestAnimationFrame(flushButtonDragOver);
         },
         [flushButtonDragOver]
     );

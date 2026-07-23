@@ -75,11 +75,11 @@ export const FolderDetailOverlay: React.FC<FolderDetailOverlayProps> = ({
                 onClose();
             }
         };
-        const timer = setTimeout(() => {
+        const timer = window.setTimeout(() => {
             activeDocument.addEventListener('click', handleClickOutside);
         }, 0);
         return () => {
-            clearTimeout(timer);
+            window.clearTimeout(timer);
             activeDocument.removeEventListener('click', handleClickOutside);
         };
     }, [onClose, isEditingName, locked]);

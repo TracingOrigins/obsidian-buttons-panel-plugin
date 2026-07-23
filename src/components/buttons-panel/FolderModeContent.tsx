@@ -59,7 +59,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
     // 打开文件夹时计算磁贴位置，使 detail 出现在该位置且不超出容器
     React.useEffect(() => {
         if (!openCategoryId) return;
-        const raf = requestAnimationFrame(() => {
+        const raf = window.requestAnimationFrame(() => {
             const wrapper = activeDocument.querySelector(`[data-folder-id="${openCategoryId}"]`);
             const tileEl = wrapper?.querySelector('.buttons-panel-folder-tile') as HTMLElement | null;
             const container = wrapper?.closest('.buttons-panel-folder-mode');
@@ -99,7 +99,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
     // ---- 拖拽交互优化 ----
     // 1. 鼠标移出展开的文件夹区域 → 自动关闭（仍用 pointermove）
     // 2. 按钮拖到文件夹磁贴上 → 自动展开（通过 ButtonDragContext 派发的自定义事件）
-    const dragHoverTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const dragHoverTimerRef = React.useRef<number | null>(null);
     const hoveredCategoryIdRef = React.useRef<string | null>(null);
     /** 自动展开后的冷却期：展开后短时间内不触发自动关闭，给用户时间移入 detail */
     const autoCloseCooldownRef = React.useRef(false);
@@ -108,7 +108,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
     React.useEffect(() => {
         if (!buttonDrag?.isDragging || !buttonDrag?.activeButtonId) {
             if (dragHoverTimerRef.current) {
-                clearTimeout(dragHoverTimerRef.current);
+                window.clearTimeout(dragHoverTimerRef.current);
                 dragHoverTimerRef.current = null;
             }
             hoveredCategoryIdRef.current = null;
@@ -131,7 +131,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
                     if (!isInside) {
                         setOpenCategoryId(null);
                         if (dragHoverTimerRef.current) {
-                            clearTimeout(dragHoverTimerRef.current);
+                            window.clearTimeout(dragHoverTimerRef.current);
                             dragHoverTimerRef.current = null;
                         }
                         hoveredCategoryIdRef.current = null;
@@ -152,14 +152,14 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
             if (categoryId && categoryId !== hoveredCategoryIdRef.current) {
                 hoveredCategoryIdRef.current = categoryId;
                 if (dragHoverTimerRef.current) {
-                    clearTimeout(dragHoverTimerRef.current);
+                    window.clearTimeout(dragHoverTimerRef.current);
                 }
-                dragHoverTimerRef.current = setTimeout(() => {
+                dragHoverTimerRef.current = window.setTimeout(() => {
                     if (hoveredCategoryIdRef.current === categoryId) {
                         setOpenCategoryId(categoryId);
                         // 展开后 800ms 内不触发自动关闭，给用户时间移入 detail 区域
                         autoCloseCooldownRef.current = true;
-                        setTimeout(() => {
+                        window.setTimeout(() => {
                             autoCloseCooldownRef.current = false;
                         }, 800);
                     }
@@ -168,7 +168,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
             } else if (!categoryId && hoveredCategoryIdRef.current) {
                 hoveredCategoryIdRef.current = null;
                 if (dragHoverTimerRef.current) {
-                    clearTimeout(dragHoverTimerRef.current);
+                    window.clearTimeout(dragHoverTimerRef.current);
                     dragHoverTimerRef.current = null;
                 }
             }
@@ -239,7 +239,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
 
         if (categorySortEnabled) {
             return (
-                <div key={category.id} data-folder-id={category.id} className="folder-tile-wrapper">
+                <div key={category.id} data-folder-id={category.id}>
                     <SortableCategoryFolder
                         categoryId={category.id}
                         onClick={handleOpen}
@@ -254,7 +254,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
 
         if (sortableEnabled) {
             return (
-                <div key={category.id} data-folder-id={category.id} className="folder-tile-wrapper">
+                <div key={category.id} data-folder-id={category.id}>
                     <FolderDropTarget categoryId={category.id} onClick={handleOpen} buttonDropDisabled={isFolderOpen}>
                         {tile}
                     </FolderDropTarget>
@@ -266,7 +266,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
             <div
                 key={category.id}
                 ref={bindFolderRef(category.id)}
-                className="buttons-panel-folder-static folder-tile-wrapper"
+                className="buttons-panel-folder-static"
                 data-folder-id={category.id}
                 onClick={handleOpen}
                 role="button"
@@ -333,7 +333,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
                     <SortableContext items={categorySortIds} strategy={rectSortingStrategy}>
                         {orderedCategories.map((category) => renderFolderTile(category))}
                         {enableEditMode && !isSearchActive && (
-                            <div className="folder-tile-wrapper">
+                            <div>
                                 <AddCategoryButton onClick={() => createCategory()} />
                             </div>
                         )}
@@ -342,7 +342,7 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
                     <>
                         {orderedCategories.map((category) => renderFolderTile(category))}
                         {enableEditMode && !isSearchActive && (
-                            <div className="folder-tile-wrapper">
+                            <div>
                                 <AddCategoryButton onClick={() => createCategory()} />
                             </div>
                         )}

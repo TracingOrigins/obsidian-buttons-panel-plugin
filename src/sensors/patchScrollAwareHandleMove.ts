@@ -22,8 +22,7 @@ interface SensorLifecycle {
 }
 
 function patchSensorLifecycle(sensor: SensorLifecycle): void {
-    /* dnd-kit 传感器需在替换前保留原方法并用 .call(sensor) 调用 */
-    /* eslint-disable @typescript-eslint/unbound-method */
+    /* eslint-disable @typescript-eslint/unbound-method -- 需要保留原方法引用并用 .call(sensor) 调用以保持 dnd-kit 传感器上下文 */
     const originalStart = sensor.handleStart;
     const originalCancel = sensor.handleCancel;
     const originalEnd = sensor.handleEnd;

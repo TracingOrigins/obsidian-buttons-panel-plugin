@@ -29,7 +29,7 @@ function NavIconButton({
 
     React.useEffect(() => {
         if (buttonRef.current) {
-            setIcon(buttonRef.current, icon as unknown as string);
+            setIcon(buttonRef.current, icon);
         }
     }, [icon]);
 
@@ -86,7 +86,7 @@ function DropdownButton({
 
     React.useEffect(() => {
         if (buttonRef.current) {
-            setIcon(buttonRef.current, icon as unknown as string);
+            setIcon(buttonRef.current, icon);
         }
     }, [icon]);
 

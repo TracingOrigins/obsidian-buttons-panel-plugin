@@ -48,19 +48,27 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
             tabEl.setText(tab.label);
             tabEl.toggleClass('is-active', tab.key === this.currentActiveTab);
             tabEl.addEventListener('click', () => {
-                // 切换tab但不保存状态
                 this.currentActiveTab = tab.key;
-                this.display();
+                this.renderContent();
             });
         });
 
-        const content = containerEl.createDiv('settings-tab-content');
+        this.contentEl = containerEl.createDiv('settings-tab-content');
+        this.renderContent();
+    }
+
+    private contentEl: HTMLElement | null = null;
+
+    private renderContent(): void {
+        if (!this.contentEl) return;
+        this.contentEl.empty();
+
         if (this.currentActiveTab === 'panel') {
-            createPanelConfigSection(content, this.plugin, () => this.display());
+            createPanelConfigSection(this.contentEl, this.plugin, () => this.renderContent());
         } else if (this.currentActiveTab === 'paths') {
-            createPathConfigSection(content, this.plugin, this.app);
+            createPathConfigSection(this.contentEl, this.plugin, this.app);
         } else if (this.currentActiveTab === 'help') {
-            createHelpSection(content, this.plugin);
+            createHelpSection(this.contentEl, this.plugin);
         }
     }
 }

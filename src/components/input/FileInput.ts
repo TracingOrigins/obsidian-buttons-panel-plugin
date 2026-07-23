@@ -48,7 +48,7 @@ export class FileInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(activeDocument.createElement('input')).setPlaceholder(
+        this.input = new TextComponent(container.createEl('input')).setPlaceholder(
             options.placeholder
         );
 

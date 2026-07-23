@@ -36,7 +36,7 @@ export class NavigationBarRenderer {
         let actionsWrapper: HTMLElement | null = containerEl.querySelector('.nav-header');
 
         if (!actionsWrapper) {
-            actionsWrapper = activeDocument.createElement('div');
+            actionsWrapper = containerEl.createDiv();
             actionsWrapper.className = 'nav-header';
             const viewHeader = containerEl.querySelector('.view-header');
             if (viewHeader?.parentNode) {
@@ -48,7 +48,7 @@ export class NavigationBarRenderer {
 
         const element = (
             <NavigationBar
-                panelViewType={this.panelConfig.panelViewType as PanelViewType}
+                panelViewType={this.panelConfig.panelViewType ?? 'list'}
                 displayStyle={this.panelConfig.displayStyle}
                 interactionMode={this.panelConfig.interactionMode ?? 'sort'}
                 showTopNavBar={this.panelConfig.showTopNavBar}

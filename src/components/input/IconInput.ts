@@ -61,7 +61,7 @@ export class IconInput {
                 .setTooltip(options.uploadTooltip ?? t('upload_svg_icon_tooltip'))
                 .setIcon('plus')
                 .onClick(() => {
-                    const fileInput = activeDocument.createElement('input');
+                    const fileInput = document.createElement('input');
                     fileInput.type = 'file';
                     fileInput.accept = '.svg';
                     fileInput.onchange = async () => {

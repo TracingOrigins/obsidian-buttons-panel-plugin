@@ -31,11 +31,11 @@ export const TabDropTarget: React.FC<TabDropTargetProps> = ({
     });
 
     const wasOverRef = React.useRef(false);
-    const activateTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const activateTimerRef = React.useRef<number | null>(null);
 
     const clearActivateTimer = React.useCallback(() => {
         if (activateTimerRef.current !== null) {
-            clearTimeout(activateTimerRef.current);
+            window.clearTimeout(activateTimerRef.current);
             activateTimerRef.current = null;
         }
     }, []);
@@ -51,7 +51,7 @@ export const TabDropTarget: React.FC<TabDropTargetProps> = ({
             if (!wasOverRef.current) {
                 wasOverRef.current = true;
                 clearActivateTimer();
-                activateTimerRef.current = setTimeout(() => {
+                activateTimerRef.current = window.setTimeout(() => {
                     activateTimerRef.current = null;
                     onDragTabHoverActivate?.(categoryId);
                 }, TAB_HOVER_ACTIVATE_MS);
