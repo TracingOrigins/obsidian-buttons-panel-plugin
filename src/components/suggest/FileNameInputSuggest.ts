@@ -57,7 +57,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 覆盖 getValue / setValue，可在外部按需使用。
      */
     getDisplayValue(format: string): string {
-        const preview = moment().format(format);
+        const preview: string = moment().format(format);
         return `{{DATE:${format}}} — ${preview}.md`;
     }
 }

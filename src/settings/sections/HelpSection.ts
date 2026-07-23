@@ -11,30 +11,18 @@ export function createHelpSection(containerEl: HTMLElement, _plugin: ButtonsPane
     const help = containerEl.createDiv({ cls: 'settings-help' });
 
     // 标题
-    const titleSpan = help.createEl('span', { cls: 'help-title' });
-    titleSpan.textContent = t('help_title');
+    help.createEl('span', { cls: 'help-title', text: t('help_title') });
 
     // 列表
     const ul = help.createEl('ul', { cls: 'help-list' });
+    ul.createEl('li', { text: t('help_panel_config') });
+    ul.createEl('li', { text: t('help_icon_picker') });
+    ul.createEl('li', { text: t('help_data_storage') });
 
-    const li1 = ul.createEl('li');
-    li1.textContent = t('help_panel_config');
-
-    const li2 = ul.createEl('li');
-    li2.textContent = t('help_icon_picker');
-
-    const li3 = ul.createEl('li');
-    li3.textContent = t('help_data_storage');
-
-    const li4 = ul.createEl('li');
-    li4.textContent = t('help_tab_scroll');
-
+    const li4 = ul.createEl('li', { text: t('help_tab_scroll') });
     const subUl = li4.createEl('ul', { cls: 'help-sub-list' });
-
-    const subLi1 = subUl.createEl('li');
-    subLi1.textContent = t('help_tab_scroll_pc');
-    const subLi2 = subUl.createEl('li');
-    subLi2.textContent = t('help_tab_scroll_mobile');
+    subUl.createEl('li', { text: t('help_tab_scroll_pc') });
+    subUl.createEl('li', { text: t('help_tab_scroll_mobile') });
 
     // 推荐图标库
     const li6 = ul.createEl('li');
@@ -42,14 +30,10 @@ export function createHelpSection(containerEl: HTMLElement, _plugin: ButtonsPane
     li6.createEl('a', {
         text: t('help_icon_library_iconfont'),
         href: 'https://www.iconfont.cn/',
-        attr: {
-            target: '_blank',
-            rel: 'noopener',
-        },
+        attr: { target: '_blank', rel: 'noopener' },
     });
 
     // 推荐图标库的子级提示
     const iconSubUl = li6.createEl('ul', { cls: 'help-sub-list' });
-    const iconSubLi = iconSubUl.createEl('li');
-    iconSubLi.textContent = t('help_icon_library_suggestion');
+    iconSubUl.createEl('li', { text: t('help_icon_library_suggestion') });
 }

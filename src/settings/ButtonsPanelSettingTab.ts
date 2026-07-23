@@ -1,7 +1,6 @@
-import { App, PluginSettingTab } from 'obsidian';
+import { App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/types';
 import { createPanelConfigSection } from '@/settings/sections/PanelConfigSection';
-import { createHelpSection } from '@/settings/sections/HelpSection';
 import { createPathConfigSection } from '@/settings/sections/PathConfigSection';
 import { t } from '@/utils/i18n';
 
@@ -39,18 +38,26 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
         const tabs = [
             { key: 'panel', label: t('panel_config') },
             { key: 'paths', label: t('path_config') },
-            { key: 'help', label: t('help') },
         ];
 
         const tabBar = containerEl.createDiv('settings-tab-bar');
+        const tabEls = new Map<string, HTMLElement>();
+
         tabs.forEach((tab) => {
             const tabEl = tabBar.createDiv('settings-tab');
             tabEl.setText(tab.label);
             tabEl.toggleClass('is-active', tab.key === this.currentActiveTab);
             tabEl.addEventListener('click', () => {
+                if (this.currentActiveTab === tab.key) return;
+                // 更新旧 tab 样式
+                const prevEl = tabEls.get(this.currentActiveTab);
+                if (prevEl) prevEl.toggleClass('is-active', false);
+                // 更新新 tab 样式
                 this.currentActiveTab = tab.key;
+                tabEl.toggleClass('is-active', true);
                 this.renderContent();
             });
+            tabEls.set(tab.key, tabEl);
         });
 
         this.contentEl = containerEl.createDiv('settings-tab-content');
@@ -59,16 +66,18 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
 
     private contentEl: HTMLElement | null = null;
 
+    getSettingDefinitions(): SettingDefinitionItem[] {
+        return [];
+    }
+
     private renderContent(): void {
         if (!this.contentEl) return;
         this.contentEl.empty();
 
         if (this.currentActiveTab === 'panel') {
             createPanelConfigSection(this.contentEl, this.plugin, () => this.renderContent());
-        } else if (this.currentActiveTab === 'paths') {
+        } else {
             createPathConfigSection(this.contentEl, this.plugin, this.app);
-        } else if (this.currentActiveTab === 'help') {
-            createHelpSection(this.contentEl, this.plugin);
         }
     }
 }

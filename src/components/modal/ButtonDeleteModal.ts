@@ -60,7 +60,7 @@ export class ButtonDeleteModal extends Modal {
             .addButton((btn) =>
                 btn
                     .setButtonText(t('delete'))
-                    .setWarning()
+                    .setDestructive()
                     .setCta()
                     .onClick(() => {
                         this.onDelete();

@@ -64,7 +64,7 @@ export class CategoryDeleteModal extends Modal {
             .addButton((button) =>
                 button
                     .setButtonText(t('delete'))
-                    .setWarning()
+                    .setDestructive()
                     .setCta()
                     .onClick(() => this.handleDelete())
             )
