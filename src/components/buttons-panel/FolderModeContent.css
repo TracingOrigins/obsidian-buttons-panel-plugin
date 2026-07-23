@@ -200,9 +200,9 @@ body .buttons-panel .buttons-panel-folder-detail button.folder-detail-lock:hover
     box-shadow: none;
 }
 
-.buttons-panel .folder-detail-lock.is-active {
+.buttons-panel .folder-detail-header .folder-detail-lock.is-active,
+body .buttons-panel .buttons-panel-folder-detail button.folder-detail-lock.is-active {
     color: var(--interactive-accent);
-    /* color: var(--text-accent); */
 }
 
 .buttons-panel .folder-detail-title {

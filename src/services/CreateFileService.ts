@@ -1,4 +1,5 @@
 import { App, Notice, normalizePath, moment } from 'obsidian';
+import type { Moment } from 'moment';
 import { ButtonsPanelPlugin } from '@/types/plugin';
 import { t } from '@/utils/i18n';
 import { FileService } from '@/services/FileService';
@@ -136,7 +137,7 @@ export class CreateFileService {
      */
     private resolveDateVariables(filePath: string): string {
         return filePath.replace(/{{DATE:(.*?)}}/g, (_match: string, format: string): string => {
-            return moment().format(format);
+            return (moment() as Moment).format(format);
         });
     }
 }
