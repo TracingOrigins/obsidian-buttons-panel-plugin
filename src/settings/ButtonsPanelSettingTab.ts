@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
+import { App, PluginSettingTab } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/types';
 import { createPanelConfigSection } from '@/settings/sections/PanelConfigSection';
 import { createPathConfigSection } from '@/settings/sections/PathConfigSection';
@@ -65,10 +65,6 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
     }
 
     private contentEl: HTMLElement | null = null;
-
-    getSettingDefinitions(): SettingDefinitionItem[] {
-        return [];
-    }
 
     private renderContent(): void {
         if (!this.contentEl) return;

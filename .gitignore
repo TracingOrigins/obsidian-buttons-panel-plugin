@@ -25,3 +25,6 @@ data.json
 # other
 *.zip
 .env
+
+# references
+references

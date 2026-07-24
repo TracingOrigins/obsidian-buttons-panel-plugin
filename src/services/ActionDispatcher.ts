@@ -83,7 +83,7 @@ export class ActionDispatcher {
     ): Promise<void> {
         for (let i = 0; i < actions.length; i++) {
             try {
-                await this.executeSingleAction(actions[i]);
+                await this.executeSingleAction(actions[i]!);
                 // 在动作之间添加延迟（最后一个动作后不需要延迟）
                 if (i < actions.length - 1 && delayBetweenActions > 0) {
                     await new Promise((resolve) => window.setTimeout(resolve, delayBetweenActions));

@@ -43,6 +43,23 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
     const openCategoryIdRef = React.useRef(openCategoryId);
     openCategoryIdRef.current = openCategoryId;
 
+    // 拖拽中保留上一个 detail，防止 dnd-kit 传感器元素被移除
+    const prevOpenIdRef = React.useRef<string | null>(null);
+    const [staleCategoryId, setStaleCategoryId] = React.useState<string | null>(null);
+    React.useEffect(() => {
+        const prev = prevOpenIdRef.current;
+        prevOpenIdRef.current = openCategoryId;
+        if (openCategoryId && prev && prev !== openCategoryId) {
+            setStaleCategoryId(prev);
+        }
+    }, [openCategoryId]);
+    React.useEffect(() => {
+        if (!buttonDrag?.isDragging) {
+            setStaleCategoryId(null);
+            prevOpenIdRef.current = null;
+        }
+    }, [buttonDrag?.isDragging]);
+
     const [isFolderLocked, setIsFolderLocked] = React.useState(false);
     const isFolderLockedRef = React.useRef(isFolderLocked);
     isFolderLockedRef.current = isFolderLocked;
@@ -96,87 +113,150 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
         }
     }, [categories, openCategoryId]);
 
-    // ---- 拖拽交互优化 ----
-    // 1. 鼠标移出展开的文件夹区域 → 自动关闭（仍用 pointermove）
-    // 2. 按钮拖到文件夹磁贴上 → 自动展开（通过 ButtonDragContext 派发的自定义事件）
-    const dragHoverTimerRef = React.useRef<number | null>(null);
-    const hoveredCategoryIdRef = React.useRef<string | null>(null);
-    /** 自动展开后的冷却期：展开后短时间内不触发自动关闭，给用户时间移入 detail */
-    const autoCloseCooldownRef = React.useRef(false);
+    // ---- 拖拽交互优化（与标签页视图的 scheduleCategoryTabDropTarget 同模式） ----
+    // autoClose: 移出展开的 detail → 600ms 后自动关闭；移回则取消
+    // hoverExpand: 悬浮磁贴不动 600ms → RAF 轮询 + 时间戳，无 setTimeout 竞态
+    const hoverExpandCategoryRef = React.useRef<string | null>(null);
+    const hoverStartTimeRef = React.useRef<number>(0);
+    const autoCloseTimerRef = React.useRef<number | null>(null);
+    const dragShouldCancelRef = React.useRef(false);
+    const lastPointerRef = React.useRef<{ x: number; y: number } | null>(null);
 
-    // 关闭 + 悬停：仍然用 pointermove（capture 阶段）
+    const clearAutoCloseTimer = React.useCallback(() => {
+        if (autoCloseTimerRef.current) {
+            window.clearTimeout(autoCloseTimerRef.current);
+            autoCloseTimerRef.current = null;
+        }
+    }, []);
+
+    const resetHoverExpand = React.useCallback(() => {
+        hoverExpandCategoryRef.current = null;
+        hoverStartTimeRef.current = 0;
+    }, []);
+
+    // hover-expand RAF 轮询：每帧检查悬浮时长 >= 600ms
     React.useEffect(() => {
         if (!buttonDrag?.isDragging || !buttonDrag?.activeButtonId) {
-            if (dragHoverTimerRef.current) {
-                window.clearTimeout(dragHoverTimerRef.current);
-                dragHoverTimerRef.current = null;
+            resetHoverExpand();
+            return;
+        }
+        let rafId: number;
+        const tick = () => {
+            const cat = hoverExpandCategoryRef.current;
+            const start = hoverStartTimeRef.current;
+            if (cat && start > 0 && Date.now() - start >= 600 && !openCategoryIdRef.current) {
+                setOpenCategoryId(cat);
+                clearAutoCloseTimer();
+                dragShouldCancelRef.current = false;
+                resetHoverExpand();
+                // 等待 React 渲染完成：双重 RAF（render → layout → paint）
+                window.requestAnimationFrame(() => {
+                    window.requestAnimationFrame(() => {
+                        const pos = lastPointerRef.current;
+                        const target = window.__dndSensorTarget;
+                        if (pos && target) {
+                            target.dispatchEvent(new PointerEvent('pointermove', {
+                                bubbles: true,
+                                cancelable: true,
+                                clientX: pos.x,
+                                clientY: pos.y,
+                            }));
+                        }
+                    });
+                });
             }
-            hoveredCategoryIdRef.current = null;
-            autoCloseCooldownRef.current = false;
+            rafId = window.requestAnimationFrame(tick);
+        };
+        rafId = window.requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(rafId);
+    }, [buttonDrag?.isDragging, buttonDrag?.activeButtonId, clearAutoCloseTimer, resetHoverExpand]);
+
+    /** 检测指针下磁贴：新磁贴 → 重置计时起点；离开磁贴 → 归零 */
+    const checkHoverExpand = React.useCallback(() => {
+        const pos = lastPointerRef.current;
+        if (!pos || openCategoryIdRef.current) return;
+        const elements = activeDocument.elementsFromPoint(pos.x, pos.y);
+        const tileEl = elements.find((el) => el.closest('[data-folder-id]'));
+        const categoryId = tileEl?.closest('[data-folder-id]')?.getAttribute('data-folder-id') ?? null;
+        if (categoryId && categoryId !== hoverExpandCategoryRef.current) {
+            hoverExpandCategoryRef.current = categoryId;
+            hoverStartTimeRef.current = Date.now();
+        } else if (!categoryId && hoverExpandCategoryRef.current) {
+            resetHoverExpand();
+        }
+    }, [resetHoverExpand]);
+
+    const resetDragInteraction = React.useCallback(() => {
+        dragShouldCancelRef.current = false;
+        resetHoverExpand();
+        clearAutoCloseTimer();
+        lastPointerRef.current = null;
+    }, [resetHoverExpand, clearAutoCloseTimer]);
+
+    React.useEffect(() => {
+        if (!buttonDrag?.isDragging || !buttonDrag?.activeButtonId) {
+            resetDragInteraction();
             return;
         }
 
         const handleDragMove = (e: PointerEvent) => {
-            // 检查是否在展开的文件夹内
-            if (openCategoryIdRef.current && !autoCloseCooldownRef.current) {
+            lastPointerRef.current = { x: e.clientX, y: e.clientY };
+
+            // 1. 自动关闭：移出 detail 600ms 后关闭；回到 detail 则取消
+            if (openCategoryIdRef.current) {
                 const detailEl = activeDocument.querySelector('.buttons-panel-folder-detail');
                 if (detailEl) {
                     const rect = detailEl.getBoundingClientRect();
-                    const isInside =
-                        e.clientX >= rect.left &&
-                        e.clientX <= rect.right &&
-                        e.clientY >= rect.top &&
-                        e.clientY <= rect.bottom;
+                    const insideDetail =
+                        e.clientX >= rect.left && e.clientX <= rect.right &&
+                        e.clientY >= rect.top && e.clientY <= rect.bottom;
 
-                    if (!isInside) {
-                        setOpenCategoryId(null);
-                        if (dragHoverTimerRef.current) {
-                            window.clearTimeout(dragHoverTimerRef.current);
-                            dragHoverTimerRef.current = null;
+                    if (!insideDetail) {
+                        if (!autoCloseTimerRef.current) {
+                            dragShouldCancelRef.current = true;
+                            autoCloseTimerRef.current = window.setTimeout(() => {
+                                // 关闭文件夹，同步更新 ref（避免等待 React 渲染）
+                                setOpenCategoryId(null);
+                                openCategoryIdRef.current = null;
+                                autoCloseTimerRef.current = null;
+                                dragShouldCancelRef.current = false;
+                                resetHoverExpand();
+                                // 立即检测指针下是否已有磁贴 → 启动 hover-expand
+                                checkHoverExpand();
+                            }, 600);
                         }
-                        hoveredCategoryIdRef.current = null;
+                    } else {
+                        clearAutoCloseTimer();
+                        dragShouldCancelRef.current = false;
                     }
                 }
+            }
+
+            // 2. 悬停展开
+            if (!openCategoryIdRef.current) {
+                checkHoverExpand();
+            } else if (hoverExpandCategoryRef.current) {
+                resetHoverExpand();
             }
         };
 
         activeDocument.addEventListener('pointermove', handleDragMove, true);
         return () => activeDocument.removeEventListener('pointermove', handleDragMove, true);
-    }, [buttonDrag?.isDragging, buttonDrag?.activeButtonId]);
+    }, [buttonDrag?.isDragging, buttonDrag?.activeButtonId, clearAutoCloseTimer, checkHoverExpand, resetDragInteraction, resetHoverExpand]);
 
-    // 悬停自动展开：监听 ButtonDragContext 派发的自定义事件
+    // 拖出文件夹外松手：在 dnd-kit onDragEnd 之前同步取消，防止错误持久化
     React.useEffect(() => {
-        const handleFolderHover = (e: Event) => {
-            const { categoryId } = (e as CustomEvent<{ categoryId: string | null }>).detail;
-
-            if (categoryId && categoryId !== hoveredCategoryIdRef.current) {
-                hoveredCategoryIdRef.current = categoryId;
-                if (dragHoverTimerRef.current) {
-                    window.clearTimeout(dragHoverTimerRef.current);
-                }
-                dragHoverTimerRef.current = window.setTimeout(() => {
-                    if (hoveredCategoryIdRef.current === categoryId) {
-                        setOpenCategoryId(categoryId);
-                        // 展开后 800ms 内不触发自动关闭，给用户时间移入 detail 区域
-                        autoCloseCooldownRef.current = true;
-                        window.setTimeout(() => {
-                            autoCloseCooldownRef.current = false;
-                        }, 800);
-                    }
-                    dragHoverTimerRef.current = null;
-                }, 600);
-            } else if (!categoryId && hoveredCategoryIdRef.current) {
-                hoveredCategoryIdRef.current = null;
-                if (dragHoverTimerRef.current) {
-                    window.clearTimeout(dragHoverTimerRef.current);
-                    dragHoverTimerRef.current = null;
-                }
+        if (!buttonDrag?.isDragging) return;
+        const onPointerUp = () => {
+            if (dragShouldCancelRef.current) {
+                dragShouldCancelRef.current = false;
+                clearAutoCloseTimer();
+                activeDocument.dispatchEvent(new CustomEvent('buttons-panel-folder-drag-cancel'));
             }
         };
-
-        activeDocument.addEventListener('buttons-panel-folder-hover', handleFolderHover);
-        return () => activeDocument.removeEventListener('buttons-panel-folder-hover', handleFolderHover);
-    }, []);
+        activeDocument.addEventListener('pointerup', onPointerUp, true);
+        return () => activeDocument.removeEventListener('pointerup', onPointerUp, true);
+    }, [buttonDrag?.isDragging, clearAutoCloseTimer]);
 
     const sortableEnabled = buttonDrag?.enabled ?? false;
     const isCategoryDragging = categoryDrag?.isDragging ?? false;
@@ -349,6 +429,30 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
                     </>
                 )}
             </div>
+
+            {/* 拖拽中保留旧 detail（不可见 + 不可排序），防止 dnd-kit 传感器元素被移除 */}
+            {staleCategoryId && staleCategoryId !== openCategoryId && (
+                (() => {
+                    const stale = categories.find((c) => c.id === staleCategoryId);
+                    if (!stale) return null;
+                    return (
+                        <FolderDetailOverlay
+                            key={`stale-${staleCategoryId}`}
+                            category={stale}
+                            orderedButtons={[]}
+                            contentClass={contentClass}
+                            enableAnimation={false}
+                            enableEditMode={false}
+                            sortableEnabled={false}
+                            plugin={plugin}
+                            app={app}
+                            onClose={() => {}}
+                            onAddButton={() => {}}
+                            overlayStyle={{ display: 'none' }}
+                        />
+                    );
+                })()
+            )}
 
             {openCategory && (
                 <FolderDetailOverlay

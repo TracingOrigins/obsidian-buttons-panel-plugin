@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDroppable } from '@dnd-kit/core';
 import { setIcon } from 'obsidian';
 import type { CategoryConfig, ButtonConfig } from '@/types';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
@@ -6,6 +7,7 @@ import type { App } from 'obsidian';
 import { CategoryButtonGrid } from '@/components/buttons-panel/CategoryButtonGrid';
 import { AddButton } from '@/components/shared/AddButton';
 import { createCategoryMenuHandler } from '@/utils/categoryMenuUtils';
+import { titleDroppableId } from '@/utils/buttonDragItems';
 import { useButtonDragOptional } from '@/contexts/ButtonDragContext';
 import { t } from '@/utils/i18n';
 
@@ -57,6 +59,12 @@ export const FolderDetailOverlay: React.FC<FolderDetailOverlayProps> = ({
     const [isEditingName, setIsEditingName] = React.useState(false);
     const [editName, setEditName] = React.useState(category.name);
     const buttonDrag = useButtonDragOptional();
+
+    // 标题区作为拖放目标：拖到此处 → 按钮放到该分类末尾
+    const { setNodeRef: setTitleDroppableRef } = useDroppable({
+        id: titleDroppableId(category.id),
+        disabled: !sortableEnabled,
+    });
 
     // 锁定图标
     React.useEffect(() => {
@@ -156,6 +164,7 @@ export const FolderDetailOverlay: React.FC<FolderDetailOverlayProps> = ({
             <div
                 className="buttons-panel-folder-detail"
                 ref={detailRef}
+                data-category-id={category.id}
                 onClick={closeOnBlankClick ? (e: React.MouseEvent) => {
                     if (locked) return;
                     const target = e.target as HTMLElement;
@@ -166,7 +175,7 @@ export const FolderDetailOverlay: React.FC<FolderDetailOverlayProps> = ({
                     onClose();
                 } : undefined}
             >
-                <div className="folder-detail-header">
+                <div className="folder-detail-header" ref={setTitleDroppableRef}>
                     <div
                         ref={titleRef}
                         className="folder-detail-title"

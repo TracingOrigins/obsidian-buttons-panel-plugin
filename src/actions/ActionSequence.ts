@@ -187,13 +187,13 @@ export class ActionSequence {
     private moveAction(index: number, direction: 'up' | 'down') {
         if (direction === 'up' && index > 0) {
             [this.actions[index], this.actions[index - 1]] = [
-                this.actions[index - 1],
-                this.actions[index],
+                this.actions[index - 1]!,
+                this.actions[index]!,
             ];
         } else if (direction === 'down' && index < this.actions.length - 1) {
             [this.actions[index], this.actions[index + 1]] = [
-                this.actions[index + 1],
-                this.actions[index],
+                this.actions[index + 1]!,
+                this.actions[index]!,
             ];
         }
         // 重新渲染以更新顺序

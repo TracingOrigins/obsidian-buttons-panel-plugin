@@ -32,10 +32,10 @@ export interface NameInputOptions {
  */
 export class NameInput {
     private container: HTMLElement;
-    private setting: Setting;
-    private textComponent: TextComponent;
+    private setting!: Setting;
+    private textComponent!: TextComponent;
     private options: NameInputOptions;
-    private inputEl: HTMLInputElement;
+    private inputEl!: HTMLInputElement;
 
     /**
      * 构造函数

@@ -22,23 +22,27 @@ interface SensorLifecycle {
 }
 
 function patchSensorLifecycle(sensor: SensorLifecycle): void {
-    const handleStart = () => sensor.handleStart();
-    const handleCancel = () => sensor.handleCancel();
-    const handleEnd = () => sensor.handleEnd();
+    // 必须直接复制方法引用；闭包捕获会读到被替换后的 wrapper 导致无限递归
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- patching dnd-kit sensor requires saving original method reference
+    const originalStart = sensor.handleStart;
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- patching dnd-kit sensor requires saving original method reference
+    const originalCancel = sensor.handleCancel;
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- patching dnd-kit sensor requires saving original method reference
+    const originalEnd = sensor.handleEnd;
 
     sensor.handleStart = () => {
         setPanelTouchDragLock(true);
-        handleStart();
+        originalStart.call(sensor);
     };
 
     sensor.handleCancel = () => {
         setPanelTouchDragLock(false);
-        handleCancel();
+        originalCancel.call(sensor);
     };
 
     sensor.handleEnd = () => {
         setPanelTouchDragLock(false);
-        handleEnd();
+        originalEnd.call(sensor);
     };
 }
 
@@ -60,7 +64,7 @@ export function patchScrollAwareHandleMove(
         return;
     }
 
-    const [name, oldHandler, options] = entries[index];
+    const [name, oldHandler, options] = entries[index] as ListenerEntry;
     internal.listeners.target.removeEventListener(name, oldHandler, options);
 
     const newHandler: EventListener = (event) => {
@@ -71,5 +75,8 @@ export function patchScrollAwareHandleMove(
     };
 
     internal.listeners.target.addEventListener(name, newHandler, options);
-    entries[index] = [name, newHandler, options];
+    entries[index] = [name, newHandler, options] as ListenerEntry;
+
+    // 保存传感器监听目标，供 hover-expand nudge 使用
+    window.__dndSensorTarget = internal.listeners.target;
 }

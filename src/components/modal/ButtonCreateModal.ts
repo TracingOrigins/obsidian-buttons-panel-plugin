@@ -145,8 +145,8 @@ export class ButtonCreateModal extends Modal {
                 drop.addOption('sequential', t('sequential'));
                 drop.addOption('parallel', t('parallel'));
                 drop.setValue(this.tempButton.executionMode || 'sequential');
-                drop.onChange((value: 'sequential' | 'parallel') => {
-                    this.tempButton.executionMode = value;
+                drop.onChange((value: string) => {
+                    this.tempButton.executionMode = value as 'sequential' | 'parallel';
                     // 触发UI刷新以禁用/启用相关选项
                     container.empty();
                     this.createActionSettings(container);

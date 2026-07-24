@@ -5,6 +5,8 @@ export type ButtonDragItems = Record<string, string[]>;
 
 export const CONTAINER_PREFIX = 'container:';
 export const TAB_PREFIX = 'tab:';
+/** 拖到文件夹标题区 → 始终追加到末尾 */
+export const TITLE_PREFIX = 'title:';
 
 export function containerDroppableId(categoryId: string): string {
     return `${CONTAINER_PREFIX}${categoryId}`;
@@ -12,6 +14,10 @@ export function containerDroppableId(categoryId: string): string {
 
 export function tabDroppableId(categoryId: string): string {
     return `${TAB_PREFIX}${categoryId}`;
+}
+
+export function titleDroppableId(categoryId: string): string {
+    return `${TITLE_PREFIX}${categoryId}`;
 }
 
 export function isContainerZoneOverId(overId: string | number): boolean {
@@ -22,9 +28,13 @@ export function isTabZoneOverId(overId: string | number): boolean {
     return String(overId).startsWith(TAB_PREFIX);
 }
 
-/** 拖放到分类区域末尾（容器 / 标签） */
+export function isTitleZoneOverId(overId: string | number): boolean {
+    return String(overId).startsWith(TITLE_PREFIX);
+}
+
+/** 拖放到分类区域末尾（容器 / 标签 / 标题区） */
 export function isAppendToCategoryEndOverId(overId: string | number): boolean {
-    return isContainerZoneOverId(overId) || isTabZoneOverId(overId);
+    return isContainerZoneOverId(overId) || isTabZoneOverId(overId) || isTitleZoneOverId(overId);
 }
 
 export function buildButtonDragItems(categories: CategoryConfig[]): ButtonDragItems {
@@ -40,7 +50,7 @@ export function findContainerForButtonId(
     buttonId: string,
     items: ButtonDragItems
 ): string | undefined {
-    return Object.keys(items).find((categoryId) => items[categoryId].includes(buttonId));
+    return Object.keys(items).find((categoryId) => items[categoryId]!.includes(buttonId));
 }
 
 export function resolveOverContainerId(
@@ -53,6 +63,9 @@ export function resolveOverContainerId(
     }
     if (id.startsWith(TAB_PREFIX)) {
         return id.slice(TAB_PREFIX.length);
+    }
+    if (id.startsWith(TITLE_PREFIX)) {
+        return id.slice(TITLE_PREFIX.length);
     }
     return findContainerForButtonId(id, items) ?? null;
 }
@@ -74,8 +87,8 @@ export function getOrderedButtonsFromAllCategories(
         .filter((b): b is ButtonConfig => b !== undefined);
 }
 
-function arraysEqual(a: string[], b: string[]): boolean {
-    if (a.length !== b.length) return false;
+function arraysEqual(a: string[] | undefined, b: string[]): boolean {
+    if (!a || a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
         if (a[i] !== b[i]) return false;
     }
@@ -107,12 +120,22 @@ export function applyDragOverToItems(
 
     if (!activeContainer || !overContainer) return prev;
 
-    const activeItems = prev[activeContainer];
-    const overItems = prev[overContainer];
+    const activeItems = prev[activeContainer]!;
+    const overItems = prev[overContainer]!;
     const activeIndex = activeItems.indexOf(activeId);
     if (activeIndex === -1) return prev;
 
     if (activeContainer === overContainer) {
+        // 拖到标题区 → 同一分类末尾
+        if (isTitleZoneOverId(overId)) {
+            const lastIndex = overItems.length - 1;
+            if (activeIndex === lastIndex) return prev;
+            return withContainerItems(
+                prev,
+                overContainer,
+                arrayMove([...overItems] as string[], activeIndex, lastIndex)
+            );
+        }
         // 同分类内：网格 container 铺满按钮区，指针穿透占位符会误命中 container 导致与「末尾」来回跳
         if (isContainerZoneOverId(overId)) {
             return prev;
@@ -123,7 +146,7 @@ export function applyDragOverToItems(
             return withContainerItems(
                 prev,
                 overContainer,
-                arrayMove([...overItems], activeIndex, lastIndex)
+                arrayMove([...overItems] as string[], activeIndex, lastIndex)
             );
         }
         const overIndex = overItems.indexOf(overId);
@@ -131,11 +154,11 @@ export function applyDragOverToItems(
         return withContainerItems(
             prev,
             overContainer,
-            arrayMove([...overItems], activeIndex, overIndex)
+            arrayMove([...overItems] as string[], activeIndex, overIndex)
         );
     }
 
-    const filteredOverItems = overItems.filter((id) => id !== activeId);
+    const filteredOverItems: string[] = overItems.filter((id) => id !== activeId);
 
     let overIndex: number;
     if (isAppendToCategoryEndOverId(overId)) {
@@ -150,7 +173,7 @@ export function applyDragOverToItems(
         activeId,
         ...filteredOverItems.slice(overIndex),
     ];
-    const nextActiveItems = activeItems.filter((id) => id !== activeId);
+    const nextActiveItems: string[] = activeItems.filter((id) => id !== activeId);
 
     const next: ButtonDragItems = {
         ...prev,
@@ -168,7 +191,7 @@ export function itemsShallowEqual(a: ButtonDragItems, b: ButtonDragItems): boole
     for (const key of keysA) {
         const arrA = a[key];
         const arrB = b[key];
-        if (!arrB || arrA.length !== arrB.length) return false;
+        if (!arrA || !arrB || arrA.length !== arrB.length) return false;
         for (let i = 0; i < arrA.length; i++) {
             if (arrA[i] !== arrB[i]) return false;
         }

@@ -29,11 +29,11 @@ export const BUTTONS_PANEL_VIEW_TYPE = 'buttons-panel-view';
  */
 export default class ButtonsPanelPlugin extends Plugin {
     /** 插件设置数据对象 */
-    settings: ButtonsPanelPluginSettings;
+    settings!: ButtonsPanelPluginSettings;
     /** 设置页签对象 */
-    settingTab: ButtonsPanelSettingTab;
+    settingTab!: ButtonsPanelSettingTab;
     /** 按钮动作执行器对象 */
-	actionDispatcher: ButtonsPanelPluginType['actionDispatcher'];
+	actionDispatcher!: ButtonsPanelPluginType['actionDispatcher'];
     /** 记录最后激活的内容标签页（排除按钮面板） */
     lastActiveContentLeaf: WorkspaceLeaf | null = null;
     /** 分类展开状态（运行时状态，不持久化） */
@@ -193,7 +193,7 @@ export default class ButtonsPanelPlugin extends Plugin {
 
         if (leaves.length > 0) {
             // 如果面板已经存在，激活它
-            leaf = leaves[0];
+            leaf = leaves[0]!;
         } else {
             // 创建新的面板在右侧边栏
             leaf = workspace.getRightLeaf(false);

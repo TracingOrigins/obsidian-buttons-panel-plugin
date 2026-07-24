@@ -27,8 +27,8 @@ export function createPanelConfigSection(
                 .addOption('tabs', t('tabs_view'))
                 .addOption('folder', t('folder_view'))
                 .setValue(plugin.settings.panelConfig.panelViewType || 'list')
-                .onChange(async (value: 'list' | 'tabs' | 'folder') => {
-                    plugin.settings.panelConfig.panelViewType = value;
+                .onChange(async (value: string) => {
+                    plugin.settings.panelConfig.panelViewType = value as 'list' | 'tabs' | 'folder';
                     await plugin.saveSettings();
                     updateTabsWrapSettingVisibility();
                     updateAutoCollapseListViewSettingVisibility();
@@ -154,8 +154,8 @@ export function createPanelConfigSection(
                 .addOption('default', t('icon_left'))
                 .addOption('icon_top', t('icon_top'))
                 .setValue(plugin.settings.panelConfig.displayStyle || 'default')
-                .onChange(async (value: 'default' | 'icon_top') => {
-                    plugin.settings.panelConfig.displayStyle = value;
+                .onChange(async (value: string) => {
+                    plugin.settings.panelConfig.displayStyle = value as 'default' | 'icon_top';
                     await plugin.saveSettings();
                     onDisplayRefresh?.();
                 });
@@ -182,8 +182,8 @@ export function createPanelConfigSection(
                 .addOption('sort', t('interaction_sort'))
                 .addOption('edit', t('interaction_edit'))
                 .setValue(plugin.settings.panelConfig.interactionMode ?? 'sort')
-                .onChange(async (value: 'locked' | 'sort' | 'edit') => {
-                    plugin.settings.panelConfig.interactionMode = value;
+                .onChange(async (value: string) => {
+                    plugin.settings.panelConfig.interactionMode = value as 'locked' | 'sort' | 'edit';
                     await plugin.saveSettings();
                     onDisplayRefresh?.();
                 })

@@ -79,7 +79,7 @@ function resolveMidpointCategoryCollision(
     );
 
     const activeContainer = sortableContainers.find((c) => c.id === args.active.id);
-    const overContainer = args.droppableContainers.find((c) => c.id === hits[0].id);
+    const overContainer = args.droppableContainers.find((c) => c.id === hits[0]!.id);
     if (!activeContainer || !overContainer) return [];
 
     const activeIndex = sortableContainers.findIndex((c) => c.id === activeContainer.id);
@@ -105,7 +105,7 @@ function resolveMidpointCategoryCollision(
         }
     }
 
-    return [hits[0]];
+    return [hits[0]!];
 }
 
 function pickCategoryCollision(collisions: Collision[]): Collision[] {
@@ -114,7 +114,7 @@ function pickCategoryCollision(collisions: Collision[]): Collision[] {
         return parseCategorySortableId(id) !== null;
     });
     if (filtered.length === 0) return [];
-    return [filtered[0]];
+    return [filtered[0]!];
 }
 
 /**

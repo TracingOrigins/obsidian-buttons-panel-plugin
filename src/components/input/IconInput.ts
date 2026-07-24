@@ -31,8 +31,8 @@ export interface IconInputOptions {
  * IconInput 类，封装图标输入、SVG 上传、搜索、预览与删除逻辑。
  */
 export class IconInput {
-    private input: TextComponent;
-    private setting: Setting;
+    private input!: TextComponent;
+    private setting!: Setting;
     private svgPreview: HTMLSpanElement | null = null;
     private value: string = '';
     private suggest: IconInputSuggest | null = null;

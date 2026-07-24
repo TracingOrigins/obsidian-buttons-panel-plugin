@@ -44,6 +44,8 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
         disabled: !sortableEnabled,
     });
 
+    const gridRef = React.useRef<HTMLDivElement>(null);
+
     const buttonIds = orderedButtons.map((b) => b.id);
     const isDragging = buttonDrag?.isDragging ?? false;
 
@@ -84,7 +86,7 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
 
     if (!sortableEnabled) {
         return (
-            <div className={contentClass}>
+            <div ref={setNodeRef} className={contentClass}>
                 {orderedButtons.length === 0 ? (
                     showDragEmptySlot ? (
                         <ButtonDragEmptySlot displayStyle={displayStyle} />
@@ -101,8 +103,16 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
         );
     }
 
+    const setRefs = React.useCallback(
+        (node: HTMLDivElement | null) => {
+            setNodeRef(node);
+            (gridRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        },
+        [setNodeRef]
+    );
+
     return (
-        <div ref={setNodeRef} className={gridClassName}>
+        <div ref={setRefs} className={gridClassName}>
             <SortableContext items={buttonIds} strategy={rectSortingStrategy}>
                 {orderedButtons.length === 0 ? (
                     showDragEmptySlot ? (

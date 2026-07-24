@@ -13,7 +13,7 @@
 .buttons-panel .settings-tab {
     cursor: pointer;
     padding: 8px;
-    font-size: 1.12em;
+    font-size: 15px;
     color: var(--text-muted);
     border-radius: 8px 8px 0 0;
     transition:

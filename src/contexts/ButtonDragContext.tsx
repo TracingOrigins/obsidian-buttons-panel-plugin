@@ -10,6 +10,7 @@ import React, {
 import {
     DndContext,
     DragOverlay,
+    MeasuringStrategy,
     useSensor,
     useSensors,
     type DragEndEvent,
@@ -38,7 +39,6 @@ import {
     getOrderedButtonsFromAllCategories,
     itemsShallowEqual,
     resolveOverContainerId,
-    TAB_PREFIX,
     type ButtonDragItems,
 } from '@/utils/buttonDragItems';
 import {
@@ -46,7 +46,6 @@ import {
     buildCategoryDragIds,
     categoryIdsEqual,
     categorySortableId,
-    CATEGORY_SORT_PREFIX,
     getOrderedCategoriesFromIds,
     parseCategorySortableId,
 } from '@/utils/categoryDragItems';
@@ -425,6 +424,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         [flushButtonDragOver]
     );
 
+
     const handleDragStart = useCallback(
         (event: DragStartEvent) => {
             const activeId = String(event.active.id);
@@ -494,26 +494,23 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                 return;
             }
 
-            if (!over || active.id === over.id) return;
-            const overIdStr = String(over.id);
-
-            // 按钮拖到文件夹磁贴上：派发事件供 FolderModeContent 做自动展开
-            if (overIdStr.startsWith(TAB_PREFIX) || overIdStr.startsWith(CATEGORY_SORT_PREFIX)) {
-                const categoryId = overIdStr.startsWith(TAB_PREFIX)
-                    ? overIdStr.slice(TAB_PREFIX.length)
-                    : overIdStr.slice(CATEGORY_SORT_PREFIX.length);
-                activeDocument.dispatchEvent(
-                    new CustomEvent('buttons-panel-folder-hover', { detail: { categoryId } })
-                );
-            } else {
-                activeDocument.dispatchEvent(
-                    new CustomEvent('buttons-panel-folder-hover', { detail: { categoryId: null } })
-                );
+            if (!over || active.id === over.id) {
+                // 指针离开按钮区（如磁贴区）：回退到拖拽开始时的位置
+                if (!over) {
+                    const baseline = buildButtonDragItems(categories);
+                    if (!itemsShallowEqual(baseline, itemsRef.current)) {
+                        itemsRef.current = baseline;
+                        setItems(baseline);
+                        lastAppliedDragOverRef.current = null;
+                    }
+                }
+                return;
             }
-
+            const overIdStr = String(over.id);
             scheduleButtonDragOver(activeId, overIdStr);
         },
         [
+            categories,
             categoryDragOverlayVariant,
             clearCategoryTabHoverTimer,
             scheduleButtonDragOver,
@@ -521,12 +518,16 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         ]
     );
 
+    // 文件夹模式：拖出展开的文件夹外松手时取消拖拽 → 阻止 handleDragEnd 错误持久化
+    const dragForceCancelledRef = useRef(false);
+
     const handleDragEnd = useCallback(
         async (event: DragEndEvent) => {
             const { active, over } = event;
             const activeId = String(active.id);
 
             if (parseCategorySortableId(activeId)) {
+                // ... category drag end logic unchanged ...
                 const isTabsVariant = categoryDragOverlayVariant === 'tabs';
                 const baseline = isTabsVariant
                     ? categoryTabDragStartIdsRef.current
@@ -546,8 +547,14 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                         finalIds = applyCategoryDragOver(baseline, activeId, committedOverId);
                     }
                 } else {
-                    // 列表/文件夹视图：categoryIdsRef 已在 handleDragOver 中累积为正确顺序
+                    // 列表/文件夹视图：以 dragOver 累积的 categoryIdsRef 为准（触屏松手时 over 常为 null）
                     finalIds = categoryIdsRef.current;
+                    if (active && over && active.id !== over.id) {
+                        const overId = String(over.id);
+                        if (parseCategorySortableId(overId)) {
+                            finalIds = applyCategoryDragOver(finalIds, activeId, overId);
+                        }
+                    }
                 }
 
                 categoryIdsRef.current = finalIds;
@@ -572,6 +579,25 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
             }
 
             cancelDragOverFrame();
+
+            // 文件夹拖拽取消：跳过位置应用与持久化
+            if (dragForceCancelledRef.current) {
+                dragForceCancelledRef.current = false;
+                setActiveButtonId(null);
+                resetButtonDragHoverState();
+                return;
+            }
+
+            // 碰撞检测返回空（如拖到磁贴区松手）→ 回退到原始位置
+            if (!over) {
+                const baseline = buildButtonDragItems(categories);
+                itemsRef.current = baseline;
+                setItems(baseline);
+                setActiveButtonId(null);
+                resetButtonDragHoverState();
+                return;
+            }
+
             if (active && over) {
                 const overId = String(over.id);
                 const prev = itemsRef.current;
@@ -611,6 +637,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     );
 
     const handleDragCancel = useCallback(() => {
+        dragForceCancelledRef.current = true;
         cancelDragOverFrame();
         setActiveButtonId(null);
         setActiveCategoryId(null);
@@ -632,6 +659,15 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
         setItems(buttonBaseline);
         setCategoryIds(categoryBaseline);
     }, [cancelDragOverFrame, categories, resetButtonDragHoverState, resetCategoryTabDragHoverState]);
+
+    // 文件夹模式：拖出文件夹外松手时取消拖拽
+    const handleDragCancelRef = useRef(handleDragCancel);
+    handleDragCancelRef.current = handleDragCancel;
+    useEffect(() => {
+        const onFolderDragCancel = () => handleDragCancelRef.current();
+        activeDocument.addEventListener('buttons-panel-folder-drag-cancel', onFolderDragCancel);
+        return () => activeDocument.removeEventListener('buttons-panel-folder-drag-cancel', onFolderDragCancel);
+    }, []);
 
     const buttonEnabled = enabled && !isCategoryDragActive;
     const categoryEnabled = enabled && !isButtonDragActive;
@@ -688,6 +724,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                 <DndContext
                     sensors={sensors}
                     collisionDetection={collisionDetection}
+                    measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
                     autoScroll={PANEL_AUTO_SCROLL_OPTIONS}
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}

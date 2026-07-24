@@ -17,7 +17,7 @@ function stripSvgScriptMarkup(svgMarkup: string): string {
 function removeScriptElementsFromSubtree(root: Element): void {
     const candidates = root.querySelectorAll('*');
     for (let i = candidates.length - 1; i >= 0; i--) {
-        const el = candidates[i];
+        const el = candidates[i]!;
         if (el.localName?.toLowerCase() === SCRIPT_LOCAL) {
             el.remove();
         }
