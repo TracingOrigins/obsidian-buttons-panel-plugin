@@ -4,7 +4,6 @@
  */
 import type { App } from 'obsidian';
 import { AbstractInputSuggest, moment } from 'obsidian';
-import type { Moment } from 'moment';
 
 /**
  * FileNameInputSuggest 为文件名输入框提供日期变量格式的下拉建议。
@@ -44,7 +43,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 渲染每一条日期格式建议（包含预览）。
      */
     renderSuggestion(format: string, el: HTMLElement): void {
-        const preview: string = (moment() as Moment).format(format);
+        const preview: string = moment().format(format);
         el.addClass('buttons-panel');
         el.addClass('filename-suggestion');
         el.createDiv({ text: `{{DATE:${format}}}` });
@@ -58,7 +57,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 覆盖 getValue / setValue，可在外部按需使用。
      */
     getDisplayValue(format: string): string {
-        const preview: string = (moment() as Moment).format(format);
+        const preview: string = moment().format(format);
         return `{{DATE:${format}}} — ${preview}.md`;
     }
 }
