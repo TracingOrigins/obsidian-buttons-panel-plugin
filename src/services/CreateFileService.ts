@@ -1,4 +1,6 @@
 import { App, Notice, normalizePath, moment } from 'obsidian';
+
+type SafeMoment = () => { format(fmt: string): string };
 import { ButtonsPanelPlugin } from '@/types/plugin';
 import { t } from '@/utils/i18n';
 import { FileService } from '@/services/FileService';
@@ -136,8 +138,7 @@ export class CreateFileService {
      */
     private resolveDateVariables(filePath: string): string {
         return filePath.replace(/{{DATE:(.*?)}}/g, (_match: string, format: string): string => {
-            const result: string = moment().format(format);
-            return result;
+            return (moment as unknown as SafeMoment)().format(format);
         });
     }
 }

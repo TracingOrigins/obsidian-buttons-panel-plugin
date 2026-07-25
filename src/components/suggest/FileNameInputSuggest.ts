@@ -5,6 +5,8 @@
 import type { App } from 'obsidian';
 import { AbstractInputSuggest, moment } from 'obsidian';
 
+type SafeMoment = () => { format(fmt: string): string };
+
 /**
  * FileNameInputSuggest 为文件名输入框提供日期变量格式的下拉建议。
  */
@@ -35,7 +37,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      */
     override selectSuggestion(format: string, evt: MouseEvent | KeyboardEvent): void {
         const value = `{{DATE:${format}}}`;
-        void this.setValue(value);
+        this.setValue(value);
         super.selectSuggestion(format, evt);
     }
 
@@ -43,7 +45,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 渲染每一条日期格式建议（包含预览）。
      */
     renderSuggestion(format: string, el: HTMLElement): void {
-        const preview: string = moment().format(format);
+        const preview = (moment as unknown as SafeMoment)().format(format);
         el.addClass('buttons-panel');
         el.addClass('filename-suggestion');
         el.createDiv({ text: `{{DATE:${format}}}` });
@@ -57,7 +59,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 覆盖 getValue / setValue，可在外部按需使用。
      */
     getDisplayValue(format: string): string {
-        const preview: string = moment().format(format);
+        const preview = (moment as unknown as SafeMoment)().format(format);
         return `{{DATE:${format}}} — ${preview}.md`;
     }
 }
