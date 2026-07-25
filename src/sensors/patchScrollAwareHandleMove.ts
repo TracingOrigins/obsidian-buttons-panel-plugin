@@ -22,27 +22,23 @@ interface SensorLifecycle {
 }
 
 function patchSensorLifecycle(sensor: SensorLifecycle): void {
-    // 必须直接复制方法引用；闭包捕获会读到被替换后的 wrapper 导致无限递归
-    // eslint-disable-next-line @typescript-eslint/unbound-method -- patching dnd-kit sensor requires saving original method reference
-    const originalStart = sensor.handleStart;
-    // eslint-disable-next-line @typescript-eslint/unbound-method -- patching dnd-kit sensor requires saving original method reference
-    const originalCancel = sensor.handleCancel;
-    // eslint-disable-next-line @typescript-eslint/unbound-method -- patching dnd-kit sensor requires saving original method reference
-    const originalEnd = sensor.handleEnd;
+    const originalStart = sensor.handleStart.bind(sensor);
+    const originalCancel = sensor.handleCancel.bind(sensor);
+    const originalEnd = sensor.handleEnd.bind(sensor);
 
     sensor.handleStart = () => {
         setPanelTouchDragLock(true);
-        originalStart.call(sensor);
+        originalStart();
     };
 
     sensor.handleCancel = () => {
         setPanelTouchDragLock(false);
-        originalCancel.call(sensor);
+        originalCancel();
     };
 
     sensor.handleEnd = () => {
         setPanelTouchDragLock(false);
-        originalEnd.call(sensor);
+        originalEnd();
     };
 }
 

@@ -35,7 +35,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      */
     override selectSuggestion(format: string, evt: MouseEvent | KeyboardEvent): void {
         const value = `{{DATE:${format}}}`;
-        this.setValue(value);
+        void this.setValue(value);
         super.selectSuggestion(format, evt);
     }
 
@@ -43,7 +43,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 渲染每一条日期格式建议（包含预览）。
      */
     renderSuggestion(format: string, el: HTMLElement): void {
-        const preview = moment().format(format);
+        const preview: string = moment().format(format);
         el.addClass('buttons-panel');
         el.addClass('filename-suggestion');
         el.createDiv({ text: `{{DATE:${format}}}` });
@@ -57,7 +57,7 @@ export class FileNameInputSuggest extends AbstractInputSuggest<string> {
      * 覆盖 getValue / setValue，可在外部按需使用。
      */
     getDisplayValue(format: string): string {
-        const preview = moment().format(format);
+        const preview: string = moment().format(format);
         return `{{DATE:${format}}} — ${preview}.md`;
     }
 }

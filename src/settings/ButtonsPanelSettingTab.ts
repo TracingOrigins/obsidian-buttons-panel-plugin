@@ -1,20 +1,60 @@
-import { App, PluginSettingTab } from 'obsidian';
+import { App, PluginSettingTab, SettingPage } from 'obsidian';
+import type { SettingDefinitionItem } from 'obsidian';
 import { ButtonsPanelPlugin } from '@/types';
 import { createPanelConfigSection } from '@/settings/sections/PanelConfigSection';
 import { createPathConfigSection } from '@/settings/sections/PathConfigSection';
 import { t } from '@/utils/i18n';
 
 /**
+ * 面板设置页面：包装现有的面板配置渲染逻辑。
+ */
+class PanelSettingsPage extends SettingPage {
+    private plugin: ButtonsPanelPlugin;
+
+    constructor(plugin: ButtonsPanelPlugin) {
+        super();
+        this.plugin = plugin;
+        this.title = t('panel_config');
+    }
+
+    display(): void {
+        const { containerEl } = this;
+        containerEl.empty();
+        createPanelConfigSection(containerEl, this.plugin, () => {
+            containerEl.empty();
+            createPanelConfigSection(containerEl, this.plugin, () => {});
+        });
+    }
+}
+
+/**
+ * 路径设置页面：包装现有的路径配置渲染逻辑。
+ */
+class PathSettingsPage extends SettingPage {
+    private plugin: ButtonsPanelPlugin;
+    private app: App;
+
+    constructor(plugin: ButtonsPanelPlugin, app: App) {
+        super();
+        this.plugin = plugin;
+        this.app = app;
+        this.title = t('path_config');
+    }
+
+    display(): void {
+        const { containerEl } = this;
+        containerEl.empty();
+        createPathConfigSection(containerEl, this.plugin, this.app);
+    }
+}
+
+/**
  * ButtonsPanelSettingTab 插件设置页签类。
- * 负责渲染面板设置、路径设置、帮助等设置界面。
+ * 负责渲染面板设置、路径设置等设置界面。
  */
 export class ButtonsPanelSettingTab extends PluginSettingTab {
     /** 插件主类实例 */
     plugin: ButtonsPanelPlugin;
-    /** 设置页签图标 */
-    icon: string = 'mouse';
-    /** 当前选中的tab（不持久化） */
-    private currentActiveTab: string = 'panel';
 
     /**
      * 构造函数，初始化设置页签。
@@ -27,53 +67,21 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
     }
 
     /**
-     * 渲染设置页签主入口，包含tab切换、内容区。
+     * 声明式设置定义（Obsidian 1.13.0+）。
+     * 将设置分为面板配置和路径配置两个页面。
      */
-    display(): void {
-        const { containerEl } = this;
-        containerEl.empty();
-        containerEl.addClass('buttons-panel');
-
-        // 标签页定义
-        const tabs = [
-            { key: 'panel', label: t('panel_config') },
-            { key: 'paths', label: t('path_config') },
+    getSettingDefinitions(): SettingDefinitionItem[] {
+        return [
+            {
+                type: 'page',
+                name: t('panel_config'),
+                page: () => new PanelSettingsPage(this.plugin),
+            },
+            {
+                type: 'page',
+                name: t('path_config'),
+                page: () => new PathSettingsPage(this.plugin, this.app),
+            },
         ];
-
-        const tabBar = containerEl.createDiv('settings-tab-bar');
-        const tabEls = new Map<string, HTMLElement>();
-
-        tabs.forEach((tab) => {
-            const tabEl = tabBar.createDiv('settings-tab');
-            tabEl.setText(tab.label);
-            tabEl.toggleClass('is-active', tab.key === this.currentActiveTab);
-            tabEl.addEventListener('click', () => {
-                if (this.currentActiveTab === tab.key) return;
-                // 更新旧 tab 样式
-                const prevEl = tabEls.get(this.currentActiveTab);
-                if (prevEl) prevEl.toggleClass('is-active', false);
-                // 更新新 tab 样式
-                this.currentActiveTab = tab.key;
-                tabEl.toggleClass('is-active', true);
-                this.renderContent();
-            });
-            tabEls.set(tab.key, tabEl);
-        });
-
-        this.contentEl = containerEl.createDiv('settings-tab-content');
-        this.renderContent();
-    }
-
-    private contentEl: HTMLElement | null = null;
-
-    private renderContent(): void {
-        if (!this.contentEl) return;
-        this.contentEl.empty();
-
-        if (this.currentActiveTab === 'panel') {
-            createPanelConfigSection(this.contentEl, this.plugin, () => this.renderContent());
-        } else {
-            createPathConfigSection(this.contentEl, this.plugin, this.app);
-        }
     }
 }

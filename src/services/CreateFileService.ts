@@ -136,7 +136,8 @@ export class CreateFileService {
      */
     private resolveDateVariables(filePath: string): string {
         return filePath.replace(/{{DATE:(.*?)}}/g, (_match: string, format: string): string => {
-            return moment().format(format);
+            const result: string = moment().format(format);
+            return result;
         });
     }
 }
