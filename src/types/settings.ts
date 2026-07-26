@@ -106,7 +106,7 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
         displayStyle: 'default',
         panelViewType: 'list',
         enableAnimation: false,
-        interactionMode: 'sort',
+        interactionMode: 'edit',
         showTopNavBar: true,
         tabsWrap: false,
         autoCollapseListView: false,
