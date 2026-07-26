@@ -413,18 +413,14 @@ export const FolderModeContent: React.FC<FolderModeContentProps> = ({
                     <SortableContext items={categorySortIds} strategy={rectSortingStrategy}>
                         {orderedCategories.map((category) => renderFolderTile(category))}
                         {enableEditMode && !isSearchActive && (
-                            <div>
-                                <AddCategoryButton onClick={() => createCategory()} />
-                            </div>
+                            <AddCategoryButton onClick={() => createCategory()} />
                         )}
                     </SortableContext>
                 ) : (
                     <>
                         {orderedCategories.map((category) => renderFolderTile(category))}
                         {enableEditMode && !isSearchActive && (
-                            <div>
-                                <AddCategoryButton onClick={() => createCategory()} />
-                            </div>
+                            <AddCategoryButton onClick={() => createCategory()} />
                         )}
                     </>
                 )}
