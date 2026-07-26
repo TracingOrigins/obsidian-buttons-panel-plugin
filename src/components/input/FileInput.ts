@@ -28,7 +28,7 @@ export interface FileInputOptions {
  * FileInput 类，封装文件输入与选择逻辑。
  */
 export class FileInput {
-    private input: TextComponent;
+    private input!: TextComponent;
     private setting: Setting;
     private suggest: FileInputSuggest | null = null;
 
@@ -48,11 +48,10 @@ export class FileInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(container.createEl('input')).setPlaceholder(
-            options.placeholder
-        );
-
-        this.setting.controlEl.appendChild(this.input.inputEl);
+        this.setting.addText((text) => {
+            this.input = text;
+            text.setPlaceholder(options.placeholder);
+        });
 
         // 附加基于 AbstractInputSuggest 的文件下拉建议
         this.suggest = new FileInputSuggest(context.app, this.input.inputEl, {

@@ -20,7 +20,7 @@ export interface UrlInputOptions {
  * UrlInput 类，封装 URL 输入与回调逻辑。
  */
 export class UrlInput {
-    private input: TextComponent;
+    private input!: TextComponent;
     private setting: Setting;
 
     /**
@@ -40,10 +40,10 @@ export class UrlInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(container.createEl('input')).setPlaceholder(
-            options.placeholder || 'https://example.com'
-        );
-        this.setting.controlEl.appendChild(this.input.inputEl);
+        this.setting.addText((text) => {
+            this.input = text;
+            text.setPlaceholder(options.placeholder || 'https://example.com');
+        });
 
         // 输入变化回调
         this.input.onChange((value) => {

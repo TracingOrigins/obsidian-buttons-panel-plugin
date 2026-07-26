@@ -21,7 +21,7 @@ export interface FolderInputOptions {
  * FolderInput 类，封装文件夹输入与选择逻辑。
  */
 export class FolderInput {
-    private input: TextComponent;
+    private input!: TextComponent;
     private setting: Setting;
     private suggest: FolderInputSuggest | null = null;
 
@@ -41,11 +41,10 @@ export class FolderInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(container.createEl('input')).setPlaceholder(
-            options.placeholder
-        );
-
-        this.setting.controlEl.appendChild(this.input.inputEl);
+        this.setting.addText((text) => {
+            this.input = text;
+            text.setPlaceholder(options.placeholder);
+        });
 
         // 附加文件夹路径下拉建议
         this.suggest = new FolderInputSuggest(context.app, this.input.inputEl);

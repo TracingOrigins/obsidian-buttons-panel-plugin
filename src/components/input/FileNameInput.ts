@@ -27,7 +27,7 @@ export interface FileNameInputOptions {
  * FileNameInput 类，封装文件名输入与建议逻辑。
  */
 export class FileNameInput {
-    private input: TextComponent;
+    private input!: TextComponent;
     private setting: Setting;
     private suggest: FileNameInputSuggest | null = null;
 
@@ -47,11 +47,10 @@ export class FileNameInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(container.createEl('input')).setPlaceholder(
-            options.placeholder
-        );
-
-        this.setting.controlEl.appendChild(this.input.inputEl);
+        this.setting.addText((text) => {
+            this.input = text;
+            text.setPlaceholder(options.placeholder);
+        });
 
         // 附加日期变量格式下拉建议
         this.suggest = new FileNameInputSuggest(context.app, this.input.inputEl);

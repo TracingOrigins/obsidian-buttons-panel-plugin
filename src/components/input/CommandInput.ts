@@ -26,7 +26,7 @@ export interface CommandInputOptions {
  * CommandInput 类，封装命令输入与选择逻辑。
  */
 export class CommandInput {
-    private input: TextComponent;
+    private input!: TextComponent;
     private setting: Setting;
     private suggest: CommandInputSuggest | null = null;
 
@@ -46,12 +46,10 @@ export class CommandInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(container.createEl('input')).setPlaceholder(
-            options.placeholder
-        );
-
-        // 将输入框添加到设置控件中
-        this.setting.controlEl.appendChild(this.input.inputEl);
+        this.setting.addText((text) => {
+            this.input = text;
+            text.setPlaceholder(options.placeholder);
+        });
 
         // 附加 Obsidian 原生的输入框下拉建议
         this.suggest = new CommandInputSuggest(context.app, this.input.inputEl);

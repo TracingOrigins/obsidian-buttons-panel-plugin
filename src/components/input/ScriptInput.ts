@@ -27,7 +27,7 @@ export interface ScriptInputOptions {
  * ScriptInput 类，封装脚本文件输入与选择逻辑。
  */
 export class ScriptInput {
-    private input: TextComponent;
+    private input!: TextComponent;
     private setting: Setting;
     private suggest: FileInputSuggest | null = null;
 
@@ -47,10 +47,10 @@ export class ScriptInput {
         this.setting = new Setting(container).setName(options.name).setDesc(options.description);
 
         // 输入框
-        this.input = new TextComponent(container.createEl('input')).setPlaceholder(
-            options.placeholder
-        );
-        this.setting.controlEl.appendChild(this.input.inputEl);
+        this.setting.addText((text) => {
+            this.input = text;
+            text.setPlaceholder(options.placeholder);
+        });
 
         // 附加脚本文件下拉建议（仅 js，列表中只显示文件名）
         this.suggest = new FileInputSuggest(context.app, this.input.inputEl, {
