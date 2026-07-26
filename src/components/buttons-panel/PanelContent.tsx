@@ -132,6 +132,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
                           ? 'grid'
                           : 'vertical'
                 }
+                folderShowBtnCount={panelConfig.folderShowBtnCount ?? true}
             >
                 {panelContent}
             </ButtonDragProvider>

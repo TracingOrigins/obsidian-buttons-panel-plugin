@@ -116,6 +116,7 @@ interface ButtonDragProviderProps {
     enableAnimation: boolean;
     categoryDragOverlayVariant?: CategoryDragOverlayVariant;
     categoryDragLayout?: CategoryDragLayout;
+    folderShowBtnCount?: boolean;
     children: React.ReactNode;
 }
 
@@ -127,6 +128,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     enableAnimation,
     categoryDragOverlayVariant = 'list',
     categoryDragLayout = 'vertical',
+    folderShowBtnCount = true,
     children,
 }) => {
     const { plugin, app } = usePluginContext();
@@ -743,6 +745,7 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
                                 plugin={plugin}
                                 app={app}
                                 listCategoryOpen={categoryListDragOpen}
+                                showCount={folderShowBtnCount}
                             />
                         ) : activeButton && activeButtonCategory ? (
                             <SimpleButton
@@ -768,6 +771,7 @@ const CategoryDragOverlay: React.FC<{
     variant: CategoryDragOverlayVariant;
     tabOverlayWidth: number | null;
     displayStyle: 'default' | 'icon_top';
+    showCount?: boolean;
     plugin: ButtonsPanelPlugin;
     app: App;
     listCategoryOpen: boolean;
@@ -780,6 +784,7 @@ const CategoryDragOverlay: React.FC<{
     plugin,
     app,
     listCategoryOpen,
+    showCount = true,
 }) => {
     const { plugin: pluginCtx } = usePluginContext();
     const iconRef = React.useRef<HTMLSpanElement>(null);
@@ -824,6 +829,7 @@ const CategoryDragOverlay: React.FC<{
                 <CategoryFolderTile
                     category={category}
                     previewButtons={orderedButtons}
+                    showCount={showCount}
                 />
             </div>
         );
