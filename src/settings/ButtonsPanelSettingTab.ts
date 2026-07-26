@@ -20,8 +20,10 @@ class PanelSettingsPage extends SettingPage {
     display(): void {
         const { containerEl } = this;
         containerEl.empty();
+        containerEl.addClass('buttons-panel');
         createPanelConfigSection(containerEl, this.plugin, () => {
             containerEl.empty();
+            containerEl.addClass('buttons-panel');
             createPanelConfigSection(containerEl, this.plugin, () => {});
         });
     }
@@ -44,6 +46,7 @@ class PathSettingsPage extends SettingPage {
     display(): void {
         const { containerEl } = this;
         containerEl.empty();
+        containerEl.addClass('buttons-panel');
         createPathConfigSection(containerEl, this.plugin, this.app);
     }
 }
