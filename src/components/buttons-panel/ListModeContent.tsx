@@ -16,7 +16,7 @@ import './ListModeContent.css';
 
 interface ListModeContentProps {
     categories: CategoryConfig[];
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
     enableAnimation: boolean;
     enableEditMode: boolean;
     autoCollapseOnMount?: boolean;

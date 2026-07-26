@@ -9,7 +9,7 @@ interface ButtonItemProps {
     button: ButtonConfig;
     category: CategoryConfig;
     index: number;
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
     enableAnimation: boolean;
     enableEditMode: boolean;
     plugin: ButtonsPanelPlugin;

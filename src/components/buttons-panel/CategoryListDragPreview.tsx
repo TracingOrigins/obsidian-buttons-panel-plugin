@@ -9,7 +9,7 @@ interface CategoryListDragPreviewProps {
     category: CategoryConfig;
     orderedButtons: ButtonConfig[];
     isOpen: boolean;
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
     plugin: ButtonsPanelPlugin;
     app: App;
     /** 与列表项一致的分类容器 class（如 list-category-open） */

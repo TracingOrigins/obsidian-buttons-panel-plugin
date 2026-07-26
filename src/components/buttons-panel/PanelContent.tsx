@@ -29,7 +29,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
 }) => {
     const { panelConfig } = useConfigContext();
     const viewType = panelConfig.panelViewType ?? 'list';
-    const displayStyle = panelConfig.displayStyle ?? 'default';
+    const displayStyle = panelConfig.displayStyle ?? 'icon_top';
     const enableAnimation = panelConfig.enableAnimation ?? false;
     const interactionMode = panelConfig.interactionMode ?? 'sort';
     const enableEditMode = interactionMode === 'edit';

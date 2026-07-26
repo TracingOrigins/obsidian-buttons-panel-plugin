@@ -121,8 +121,8 @@ function DropdownButton({
 export interface NavigationBarProps {
     /** 当前视图模式：list、tabs 或 folder */
     panelViewType: PanelViewType;
-    /** 按钮样式：default 或 icon_top */
-    displayStyle: 'default' | 'icon_top';
+    /** 按钮样式：icon_left 或 icon_top */
+    displayStyle: 'icon_left' | 'icon_top';
     /** 当前交互模式：locked / sort / edit */
     interactionMode: InteractionMode;
     /** 是否显示导航栏（由外层控制） */
@@ -130,7 +130,7 @@ export interface NavigationBarProps {
     /** 视图切换回调，传入选中的视图类型 */
     onChangeView: (viewType: PanelViewType) => void;
     /** 样式切换回调，传入选中的显示样式 */
-    onChangeStyle: (style: 'default' | 'icon_top') => void;
+    onChangeStyle: (style: 'icon_left' | 'icon_top') => void;
     /** 交互模式切换回调 */
     onChangeInteractionMode: (mode: InteractionMode) => void;
     /** 打开设置回调 */
@@ -241,8 +241,8 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
               {
                   icon: 'layout-panel-left',
                   title: t('icon_left'),
-                  checked: displayStyle === 'default',
-                  onClick: () => onChangeStyle('default'),
+                  checked: displayStyle === 'icon_left',
+                  onClick: () => onChangeStyle('icon_left'),
               },
               {
                   icon: 'layout-panel-top',
@@ -276,7 +276,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
     // ---- 当前选项的悬浮提示文字 ----
     const viewLabel = viewLabelMap[panelViewType] ?? t('list_view');
-    const styleLabel = isFolder ? t('icon_top') : displayStyle === 'default' ? t('icon_left') : t('icon_top');
+    const styleLabel = isFolder ? t('icon_top') : displayStyle === 'icon_left' ? t('icon_left') : t('icon_top');
     const interactionLabel =
         interactionMode === 'locked' ? t('interaction_locked') :
         interactionMode === 'edit'   ? t('interaction_edit') :

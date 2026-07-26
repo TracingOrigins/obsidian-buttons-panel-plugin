@@ -9,7 +9,7 @@ import './Button.css';
 interface SimpleButtonProps {
     button: ButtonConfig;
     category: CategoryConfig;
-    displayStyle?: 'default' | 'icon_top';
+    displayStyle?: 'icon_left' | 'icon_top';
     enableAnimation?: boolean;
     enableEditMode?: boolean;
     plugin: ButtonsPanelPlugin;
@@ -26,7 +26,7 @@ interface SimpleButtonProps {
 export const SimpleButton: React.FC<SimpleButtonProps> = ({
     button,
     category,
-    displayStyle = 'default',
+    displayStyle = 'icon_top',
     enableAnimation,
     enableEditMode = false,
     plugin,

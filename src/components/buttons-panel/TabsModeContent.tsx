@@ -27,7 +27,7 @@ function resolveActiveTabId(
 
 interface TabsModeContentProps {
     categories: CategoryConfig[];
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
     enableAnimation: boolean;
     enableEditMode: boolean;
     tabsWrap: boolean;

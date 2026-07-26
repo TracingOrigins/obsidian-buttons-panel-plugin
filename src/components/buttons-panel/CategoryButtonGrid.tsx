@@ -14,7 +14,7 @@ interface CategoryButtonGridProps {
     category: CategoryConfig;
     orderedButtons: ButtonConfig[];
     contentClass: string;
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
     enableAnimation: boolean;
     enableEditMode: boolean;
     plugin: ButtonsPanelPlugin;

@@ -50,8 +50,8 @@ export type InteractionMode = 'locked' | 'sort' | 'edit';
  * 控制面板的标题、显示方式、布局等。
  */
 export interface PanelConfig {
-    /** 按钮显示样式（default:图标和文字同一行，icon_top:图标在上文字在下） */
-    displayStyle: 'default' | 'icon_top';
+    /** 按钮显示样式（icon_left:图标在左文字在右，icon_top:图标在上文字在下） */
+    displayStyle: 'icon_left' | 'icon_top';
     /** 面板视图类型（列表/标签页/文件夹） */
     panelViewType: 'list' | 'tabs' | 'folder';
     /** 是否启用按钮动画 */
@@ -103,7 +103,7 @@ export interface ButtonsPanelPluginSettings {
 export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
     categories: [],
     panelConfig: {
-        displayStyle: 'default',
+        displayStyle: 'icon_top',
         panelViewType: 'list',
         enableAnimation: false,
         interactionMode: 'edit',

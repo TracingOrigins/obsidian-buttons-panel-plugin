@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface ButtonDragEmptySlotProps {
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
 }
 
 /** 拖拽过程中空分类的按钮轮廓占位（尺寸与 icon-left / icon-top 按钮一致） */

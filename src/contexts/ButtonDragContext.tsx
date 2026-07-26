@@ -112,7 +112,7 @@ export type CategoryDragOverlayVariant = 'list' | 'tabs' | 'folder';
 interface ButtonDragProviderProps {
     categories: CategoryConfig[];
     enabled: boolean;
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
     enableAnimation: boolean;
     categoryDragOverlayVariant?: CategoryDragOverlayVariant;
     categoryDragLayout?: CategoryDragLayout;
@@ -770,7 +770,7 @@ const CategoryDragOverlay: React.FC<{
     orderedButtons: ButtonConfig[];
     variant: CategoryDragOverlayVariant;
     tabOverlayWidth: number | null;
-    displayStyle: 'default' | 'icon_top';
+    displayStyle: 'icon_left' | 'icon_top';
     showCount?: boolean;
     plugin: ButtonsPanelPlugin;
     app: App;

@@ -151,11 +151,11 @@ export function createPanelConfigSection(
         .setDesc(t('button_display_style_desc'))
         .addDropdown((dropdown) => {
             dropdown
-                .addOption('default', t('icon_left'))
+                .addOption('icon_left', t('icon_left'))
                 .addOption('icon_top', t('icon_top'))
-                .setValue(plugin.settings.panelConfig.displayStyle || 'default')
+                .setValue(plugin.settings.panelConfig.displayStyle || 'icon_top')
                 .onChange(async (value: string) => {
-                    plugin.settings.panelConfig.displayStyle = value as 'default' | 'icon_top';
+                    plugin.settings.panelConfig.displayStyle = value as 'icon_left' | 'icon_top';
                     await plugin.saveSettings();
                     onDisplayRefresh?.();
                 });
