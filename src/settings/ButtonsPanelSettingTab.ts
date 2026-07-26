@@ -58,6 +58,7 @@ class PathSettingsPage extends SettingPage {
 export class ButtonsPanelSettingTab extends PluginSettingTab {
     /** 插件主类实例 */
     plugin: ButtonsPanelPlugin;
+    icon: string = "mouse";
 
     /**
      * 构造函数，初始化设置页签。
