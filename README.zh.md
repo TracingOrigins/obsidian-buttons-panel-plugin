@@ -4,7 +4,7 @@
         <img src="https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22buttons-panel%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json" alt="Obsidian Downloads">
         <img src="https://img.shields.io/github/downloads/TracingOrigins/obsidian-buttons-panel-plugin/total?logo=github" alt="GitHub Downloads">
     </p>
-    <p>[中文 | <a href="https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.md">English</a>]</p>
+    <p>[中文 | <a href="https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.md">English</a> | <a href="https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.ru.md">Русский</a>]</p>
     <p><a href="https://community.obsidian.md/plugins/buttons-panel" target="_blank">Buttons Panel</a> 是一个现代化的 Obsidian 插件，用于创建自定义按钮面板，快速访问文件、命令、链接和脚本。</p>
 </div>
 
@@ -27,6 +27,12 @@
 - 🔗 **动作序列**：支持为单个按钮配置多个动作，点击按钮可一键依次执行多个操作。
 
 ## 🚀 下载安装
+
+### 🏪 通过官方插件市场安装（推荐）
+
+1. 打开 Obsidian，进入 **设置 → 第三方插件**。
+2. 点击 **浏览**，搜索「Buttons Panel」。
+3. 点击 **安装**，然后 **启用**。
 
 ### 📦 手动安装
 

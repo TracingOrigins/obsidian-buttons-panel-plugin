@@ -4,7 +4,7 @@
         <img src="https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22buttons-panel%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json" alt="Obsidian Downloads">
         <img src="https://img.shields.io/github/downloads/TracingOrigins/obsidian-buttons-panel-plugin/total?logo=github" alt="GitHub Downloads">
     </p>
-    <p>[<a href="https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.zh.md">中文</a> | English]</p>
+    <p>[<a href="https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.zh.md">中文</a> | English | <a href="https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/blob/master/README.ru.md">Русский</a>]</p>
     <p><a href="https://community.obsidian.md/plugins/buttons-panel" target="_blank">Buttons Panel</a> is a modern Obsidian plugin that lets you create a customizable button panel for quick access to files, commands, links, and scripts.</p>
 </div>
 
@@ -27,6 +27,12 @@
 - 🔗 **Action Sequences**: Configure multiple actions for a single button and execute them in order with one click.
 
 ## 🚀 Installation
+
+### 🏪 Install from Community Plugins (Recommended)
+
+1. Open Obsidian and go to **Settings → Community Plugins**.
+2. Click **Browse** and search for "Buttons Panel".
+3. Click **Install**, then **Enable**.
 
 ### 📦 Manual Installation
 
