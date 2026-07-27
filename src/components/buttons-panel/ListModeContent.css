@@ -45,7 +45,7 @@ body .view-content.buttons-panel.buttons-panel-view-list::-webkit-scrollbar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-right: 4px;
+    margin-left: auto;
     width: 16px;
     height: 16px;
 }

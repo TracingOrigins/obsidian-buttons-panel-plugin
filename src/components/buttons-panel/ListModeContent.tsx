@@ -178,6 +178,7 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
 
         const titleContent = (
             <>
+                {category.name}
                 <span
                     className="category-icon"
                     ref={(el) => {
@@ -186,7 +187,6 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
                         }
                     }}
                 />
-                {category.name}
             </>
         );
 

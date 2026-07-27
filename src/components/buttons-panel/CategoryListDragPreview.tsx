@@ -45,8 +45,8 @@ export const CategoryListDragPreview: React.FC<CategoryListDragPreviewProps> = (
     return (
         <div className={rootClass}>
             <div className={titleClassName}>
-                <span className="category-icon" ref={iconRef} />
                 {category.name}
+                <span className="category-icon" ref={iconRef} />
             </div>
             {isOpen && (
                 <CategoryButtonGrid
