@@ -178,6 +178,14 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
 
         const titleContent = (
             <>
+                <span
+                    className="category-icon-left"
+                    ref={(el) => {
+                        if (el) {
+                            setIcon(el, 'layout-grid');
+                        }
+                    }}
+                />
                 {category.name}
                 <span
                     className="category-icon"

@@ -32,11 +32,15 @@ export const CategoryListDragPreview: React.FC<CategoryListDragPreviewProps> = (
     className,
 }) => {
     const iconRef = React.useRef<HTMLSpanElement>(null);
+    const layoutGridRef = React.useRef<HTMLSpanElement>(null);
     const contentClass = `buttons-panel-grid ${displayStyle === 'icon_top' ? 'icon-top' : 'icon-left'}`;
 
     React.useEffect(() => {
         if (iconRef.current) {
             setIcon(iconRef.current, isOpen ? 'chevron-down' : 'chevron-right');
+        }
+        if (layoutGridRef.current) {
+            setIcon(layoutGridRef.current, 'layout-grid');
         }
     }, [isOpen]);
 
@@ -45,6 +49,7 @@ export const CategoryListDragPreview: React.FC<CategoryListDragPreviewProps> = (
     return (
         <div className={rootClass}>
             <div className={titleClassName}>
+                <span className="category-icon-left" ref={layoutGridRef} />
                 {category.name}
                 <span className="category-icon" ref={iconRef} />
             </div>

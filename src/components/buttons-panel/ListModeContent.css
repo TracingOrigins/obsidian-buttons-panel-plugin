@@ -49,3 +49,13 @@ body .view-content.buttons-panel.buttons-panel-view-list::-webkit-scrollbar {
     width: 16px;
     height: 16px;
 }
+
+.buttons-panel .buttons-panel-category-title .category-icon-left {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
