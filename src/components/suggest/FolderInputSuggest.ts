@@ -54,7 +54,7 @@ export class FolderInputSuggest extends AbstractInputSuggest<string> {
     renderSuggestion(folder: string, el: HTMLElement): void {
         el.addClass('buttons-panel');
         el.createDiv({
-            text: folder,
+            text: folder || '/',
             cls: 'folder-suggestion',
         });
     }
