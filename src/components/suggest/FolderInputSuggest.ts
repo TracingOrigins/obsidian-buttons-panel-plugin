@@ -25,7 +25,8 @@ export class FolderInputSuggest extends AbstractInputSuggest<string> {
         const allFiles = this.app.vault.getAllLoadedFiles();
         for (const file of allFiles) {
             if (file instanceof TFolder) {
-                folders.push(file.path.replace(/\/$/, ''));
+                // 根目录 path 为空字符串，统一规范化为 "/"
+                folders.push(file.path.replace(/\/$/, '') || '/');
             }
         }
         folders.sort((a, b) => a.localeCompare(b));
@@ -54,7 +55,7 @@ export class FolderInputSuggest extends AbstractInputSuggest<string> {
     renderSuggestion(folder: string, el: HTMLElement): void {
         el.addClass('buttons-panel');
         el.createDiv({
-            text: folder || '/',
+            text: folder,
             cls: 'folder-suggestion',
         });
     }
