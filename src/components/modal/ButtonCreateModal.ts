@@ -245,7 +245,8 @@ export class ButtonCreateModal extends Modal {
 
         // 保存按钮（ActionSequence 序列化结果转为 ButtonAction[]）
         this.tempButton.actions = this.actionSequence.toJSON() as ButtonAction[];
-        this.tempButton.order = this.parentCategory.buttons.length;
+        const maxOrder = Math.max(...this.parentCategory.buttons.map(b => b.order), -1);
+        this.tempButton.order = maxOrder + 1;
         this.parentCategory.buttons.push({ ...this.tempButton });
         await this.plugin.saveSettings();
         new Notice(t('button_create_success'));

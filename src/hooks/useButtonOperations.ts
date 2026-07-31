@@ -26,7 +26,7 @@ export function useButtonOperations() {
                 ...button,
                 actions: button.actions?.map((action) => ({ ...action })) ?? [],
                 id: Date.now().toString(),
-                order: category.buttons.length,
+                order: Math.max(...category.buttons.map(b => b.order), -1) + 1,
             };
             category.buttons.push(newButton);
             await plugin.saveSettings();
@@ -48,6 +48,8 @@ export function useButtonOperations() {
                     const index = category.buttons.findIndex((b) => b.id === button.id);
                     if (index !== -1) {
                         category.buttons.splice(index, 1);
+                        // 删除后重排所有按钮的 order 为 0,1,2...
+                        category.buttons.forEach((b, i) => { b.order = i; });
                         await plugin.saveSettings();
                         refresh();
                     }
