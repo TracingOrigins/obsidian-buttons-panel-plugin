@@ -21,11 +21,10 @@ export class ScriptService {
 
     /**
      * 运行用户自定义的脚本文件。
-     * 支持多种脚本导出格式，自动注入 app、plugin、notice、params 等变量。
+     * 支持多种脚本导出格式，自动注入 app、plugin、notice、obsidian 等变量。
      *
      * 支持用户通过按钮一键运行库中的 JS 脚本，实现自定义自动化、批量处理等高级功能。
-     * 支持 QuickAdd 脚本格式（即 module.exports = async function(...) { ... }）。
-     * 支持 Components 脚本格式（即 exports.default = { entry: async function(...) { ... } }）。
+     * 脚本需通过 module.exports 导出函数。
      * 支持脚本通过 notice(msg) 反馈信息到 Obsidian 通知栏。
      * 若脚本导出为函数，则自动调用并传递参数。
      *
@@ -132,7 +131,7 @@ export class ScriptService {
         const fn: (...args: unknown[]) => Promise<unknown> = new AsyncFunctionConstructor(
             'module',
             'exports',
-            'require',
+            'obsidian',
             'app',
             'plugin',
             'notice',
@@ -141,21 +140,11 @@ export class ScriptService {
         );
 
         // 执行脚本内容，让 module.exports 被赋值为脚本导出的函数
-        // 拦截 'obsidian' 走插件注入，其余回退 window.require（Node.js/Electron）
-        const requireFromWindow = (
-            window as unknown as { require?: (...args: unknown[]) => unknown }
-        ).require;
-        const customRequire = (moduleName: string) => {
-            if (moduleName === 'obsidian') return obsidian;
-            if (requireFromWindow) return requireFromWindow(moduleName);
-            throw new Error(`Cannot find module '${moduleName}'`);
-        };
-
         await fn.call(
             { app: this.app, plugin: this.plugin },
             module,
             module.exports,
-            customRequire,
+            obsidian,
             this.app,
             this.plugin,
             (msg: string) => new obsidian.Notice(msg),
@@ -176,34 +165,17 @@ export class ScriptService {
         params: unknown,
         scriptFileName: string
     ): Promise<void> {
-        // 如果脚本导出为函数或对象的 default.entry 是函数，则自动调用
+        // 脚本需导出为函数（module.exports = fn）
         if (typeof module.exports === 'function') {
             const exportedFn = module.exports as (
                 ...args: unknown[]
             ) => Promise<unknown> | void;
             await exportedFn.call(
                 { app: this.app, plugin: this.plugin },
-                params,
                 this.app,
                 this.plugin,
-                (msg: string) => new obsidian.Notice(msg)
-            );
-        } else if (
-            module.exports &&
-            typeof module.exports === 'object' &&
-            (module.exports as { default?: { entry?: unknown } }).default &&
-            typeof (module.exports as { default?: { entry?: unknown } }).default?.entry ===
-                'function'
-        ) {
-            const entry = (module.exports as {
-                default?: { entry?: (...args: unknown[]) => unknown };
-            }).default?.entry;
-            await entry?.call(
-                { app: this.app, plugin: this.plugin },
-                params,
-                this.app,
-                this.plugin,
-                (msg: string) => new obsidian.Notice(msg)
+                (msg: string) => new obsidian.Notice(msg),
+                obsidian
             );
         } else {
             // 未正确导出函数，弹出通知

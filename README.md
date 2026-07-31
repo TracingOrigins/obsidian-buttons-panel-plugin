@@ -11,14 +11,14 @@
 ## ✨ Features
 
 - 🎯 **Quick Access**: Instantly open files, execute commands, visit links, or run scripts with a single click.
-- 🎨 **Icon Picker**: Integrated Lucide icon library with search and live preview.
+- 🎨 **Icon Options**: Search and preview from the Lucide icon library, plus support for custom SVG icons.
 - 🏷️ **Three View Modes**: Switch between list, tabbed, and folder views.
 - 📁 **Folder View**: Android-style folder grid with drag-and-drop, auto-expand on hover, pin to keep open, click-to-close, and editable folder names.
 - 📁 **Category Management**: Organize buttons by category; reorder categories and buttons via long-press drag-and-drop.
 - ⚙️ **Flexible Configuration**: Fully customizable panel layout, button styles, and animation effects.
-- 📱 **Responsive Design**: Optimized for both desktop and mobile devices.
+- 📱 **Cross-Platform**: Works on all platforms supported by Obsidian (Windows, macOS, Linux, iOS, Android).
 - 🌙 **Theme Adaptation**: Seamlessly adapts to Obsidian’s light and dark themes.
-- 🎛️ **Dedicated Settings Tab**: Manage all plugin settings in a separate, user-friendly tab.
+
 - 🔄 **Live Updates**: All changes take effect immediately—no restart required.
 - 🛡️ **Form Validation**: Required fields (button name, file path, command ID, URL, folder, script name) are highlighted in red if empty for intuitive feedback.
 - 🖱️ **Interaction Mode**: Three modes — Locked (view only), Sort (drag to reorder), Edit (create/edit/delete via context menu) — switchable from the top navigation bar.
@@ -36,8 +36,8 @@
 
 ### 📦 Manual Installation
 
-1. Download the latest release from the [Releases](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/releases) page.
-2. Place the plugin folder into your Obsidian plugins directory (usually `.obsidian/plugins/`, e.g. `YourVault/.obsidian/plugins/buttons-panel/`).
+1. Download the latest `main.js`, `manifest.json`, and `styles.css` from [Releases](https://github.com/TracingOrigins/obsidian-buttons-panel-plugin/releases).
+2. Create a `buttons-panel` folder under your Obsidian plugins directory (e.g. `YourVault/.obsidian/plugins/buttons-panel/`) and place the three files inside.
 3. Enable the plugin in Obsidian under Settings → Community Plugins.
 
 ### 🔧 Install via BRAT (Recommended for Beta Users)
@@ -52,18 +52,33 @@
 ### 🎯 Opening the Button Panel
 
 - Use the command palette (Ctrl+P) and run "Open buttons panel (right sidebar)".
-- Click the grid icon in the left ribbon to quickly open the panel and settings.
+- Click the grid icon in the left ribbon to quickly open the panel.
 - The button panel will appear in the right sidebar for fast access.
 
-### ⚙️ Opening the Button Panel Settings
+### ⚙️ Button Panel Settings
 
-- Use the command palette to run "Open buttons panel settings (central content area)".
-- The settings page will open in the main content area for detailed configuration.
-- You can also access settings via the plugin section in Obsidian’s settings.
+- Click the settings button in the navigation bar, or go to **Settings → Community Plugins → Buttons Panel**.
+- Includes two tabs: **Panel Config** and **Path Config**.
 
-### 🔗 Action Sequences
+#### Panel Config
 
-- **Action Sequences**: Configure a button to perform multiple actions in sequence (e.g., create a file, insert a template, run a script). Clicking the button will execute all actions in order. Each action can be of a different type, greatly enhancing automation and batch processing.
+- **View Mode**: List, tabbed, or folder view.
+- **Button Style**: Icon next to text or icon above text.
+- **Animation**: Enable button hover animation.
+- **Show Navigation Bar**: Show or hide the top navigation bar.
+
+#### Path Config
+
+- **Template Folder Path**: Set the folder for template files (e.g., `templates/`). The create file action uses templates from this path.
+- **Script Folder Path**: Set the folder for script files (e.g., `scripts/`). The run script action loads scripts from this path.
+- **Path Validation**: Paths are validated in real-time. Invalid paths are highlighted with a red border.
+- **One-Click Creation**: Click "Create Paths" to automatically create missing folders.
+
+### 🔗 Buttons & Actions
+
+#### Action Sequences
+
+- **Action Sequences**: Configure a button to perform multiple actions in sequence (e.g., create a file, then run a script). Clicking the button executes all actions in order.
     - **How to configure**: In the button editor, click "Add Action" to add multiple actions and drag to reorder them.
     - **Typical use cases**: One-click to create and open a template note, batch execute multiple commands, automate daily routines, and more.
 
@@ -72,33 +87,14 @@
 - **Open File**: Open any file in your vault.
 - **Command**: Execute any Obsidian command.
 - **Open Link**: Open an external web link.
-- **Create File**: Create a new file at a specified location, supporting date variables (e.g. `{{DATE:YYYY-MM-DD}}`) and templates.
-- **Run Script**: Run a custom JS script from your vault (supports both QuickAdd and Components script formats). Scripts must be placed in the configured script folder.
+- **Create File**: Create a new file at a specified location. The file name supports date variables (e.g., `{{DATE:YYYY-MM-DD}}`), and content can use a fixed template.
+- **Run Script**: Run a custom JS script from your vault. Scripts must be placed in the folder specified in Path Config.
 
 ### ✅ Form Validation
 
 - When creating or editing a button, clicking "Save" will automatically validate all required fields.
 - If any required field is empty, the corresponding input will be highlighted in red.
 - The red highlight disappears automatically once the field is filled.
-
-### 🎛️ Panel Options
-
-- **View Mode**: Choose between list, tabbed, or folder view.
-- **Button Style**: Display icon and text on the same line, or icon above text (folder view always uses icon-top).
-- **Animation**: Enable button hover animation.
-- **Interaction Mode**: Choose between Locked (view only), Sort (drag to reorder), or Edit (create/edit/delete).
-- **Top Navigation**: Enable or disable the top navigation bar.
-
-> Example: Choose "Tabbed View" to group buttons by category.
-
-### 📁 Path Management
-
-- **Template Folder Path**: Set the folder path for storing template files (e.g., `templates/`). The create file action will use templates from this path.
-- **Script Folder Path**: Set the folder path for storing script files (e.g., `scripts/`). The run script action will load script files from this path.
-- **Path Validation**: Paths are validated in real-time. Invalid paths are highlighted with a red border.
-- **One-Click Creation**: Click the "Create Paths" button to automatically create any missing folders.
-
-> Example: Set the template folder to `templates/` and script folder to `scripts/` so that the create file and run script features work properly.
 
 ### 🖱️ Interaction Mode
 
@@ -108,11 +104,11 @@ The navigation bar edit button opens a dropdown with three modes:
 |------|------|----------|
 | 🔒 **Locked** | `lock` | View only — all interactions disabled (no drag, no context menu) |
 | ↕️ **Sort** | `arrow-up-down` | Long-press drag to reorder buttons and categories |
-| ✏️ **Edit** | `pencil` | Context menu (right-click / long-press) to add, edit, copy, or delete |
+| ✏️ **Edit** | `pencil` | Right-click / long-press menu to add, edit, copy, or delete |
 
-- Switch modes from the top navigation bar dropdown or in **Panel Options** settings.
-- **Drag-and-drop reordering is only available in Sort mode**.
-- **Editing controls and context menus are only available in Edit mode**.
+- Switch modes from the navigation bar dropdown or in Panel Config settings.
+- **Drag-and-drop is only available in Sort mode**.
+- **Editing controls are only available in Edit mode**.
 
 ### � Folder View
 
@@ -149,55 +145,48 @@ When **Sort mode** is active and **search is not active**, long-press and drag t
 
 ### 🧭 Top Navigation Bar
 
-- The panel features a top navigation bar with the following functions:
-    - **Panel View Switch**: Switch between tabbed and list views.
-    - **Button Style Switch**: Instantly change button styles.
-    - **Interaction Mode**: Switch between Locked, Sort, and Edit modes via dropdown.
-    - **Search Feature**: Click the search icon to open the search box and filter categories and button names in real-time.
-    - **Panel Settings**: Open the panel settings page with one click.
-- **Tab bar scrolling** (tabbed view, many tabs): On mobile, swipe left/right on the tab bar; on desktop, hover the tab bar, hold **Shift**, and scroll the mouse wheel horizontally.
-- The navigation bar is designed for efficiency and a smooth user experience.
-
-### 🔍 Search Feature
-
-- Click the search icon in the navigation bar to open the search box.
-- After entering keywords, the panel will automatically filter and display matching categories and buttons.
-- Search only filters category names and button names, with real-time updates.
-- Click the clear button or close the search box to clear the search criteria.
+- **Search**: Click the search icon to open a search box. Enter keywords to filter categories and button names in real-time. Clear or close the search box to reset.
+- **Panel View Switch**: Switch between tabbed and list views.
+- **Button Style Switch**: Instantly change button styles.
+- **Interaction Mode**: Dropdown to switch between Locked, Sort, and Edit modes.
+- **Panel Settings**: Quick access to the plugin settings page.
+- **Tab Bar Scrolling** (tabbed view, many tabs): Swipe left/right on mobile; hold **Shift** and scroll on desktop.
 
 ### 🧩 Script Feature
 
 - In the button editor, select "Script" as the action type and choose or enter a script file name (`.js` only).
-- Script files must be placed in the script folder specified in plugin settings (e.g., `scripts/`). You can customize this path in the settings tab.
-- Two script formats are supported:
-    - **QuickAdd script format**: The script must export an async function, for example:
+- Script files must be placed in the folder specified in Path Config (e.g., `scripts/`).
+- Scripts must export an async function via `module.exports`:
 
         ```js
         // scripts/hello.js
-        module.exports = async function (params, app, plugin, notice) {
-            notice('Hello from script!');
-            // You can access the Obsidian API, plugin instance, etc. here
-        };
+        module.exports = async function (app, plugin, notice, obsidian) {
+        const { FuzzySuggestModal } = obsidian;
+        notice('Hello from script!');
+    };
         ```
 
-    - **Components script format**: The script must export an object whose `default.entry` is an async function, for example:
+Or define the function first:
 
-        ```js
-        // scripts/components-demo.js
-        exports.default = {
-            entry: async function (params, app, plugin, notice) {
-                notice('Hello from Components script!');
-                // You can access the Obsidian API, plugin instance, etc. here
-            },
-        };
-        ```
+    ```js
+    // scripts/hello.js
+    module.exports = hello;
 
-- The script environment injects `app` (Obsidian instance), `plugin` (plugin instance), and `notice` (notification method).
+    async function hello(app, plugin, notice, obsidian) {
+        const { Notice } = obsidian;
+        notice('Hello from script!');
+    }
+    ```
+
+- The following variables are injected into the script function:
+    - `app` — The running `obsidian.App` instance for interacting with the vault, workspace, etc. Note: this is an instance, not `obsidian.App` (the class); do not use with `new`.
+    - `plugin` — The current plugin instance, for accessing plugin settings.
+    - `notice` — A convenience notification function, equivalent to `new obsidian.Notice(msg)`.
+    - `obsidian` — The Obsidian module namespace, for destructuring classes like `App`, `FuzzySuggestModal`, `Notice`, etc.
 - Script errors are automatically caught and shown as notifications.
-- **Security Note**: Do not run scripts from untrusted sources. Script execution has inherent risks.
+- **Security Note**: Do not run scripts from untrusted sources.
 
-> Example: Write batch processing or automation scripts and run them with a single click.  
-> Example: Configure a button with “Create File → Insert Template → Run Script” actions, and all will be executed in order with one click.
+> Example: Configure a button with "Run Command A → Run Command B → Open Link" actions, and they will execute in order with one click.
 
 ## 🛠️ Development
 
