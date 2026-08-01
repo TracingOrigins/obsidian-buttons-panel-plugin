@@ -1,8 +1,8 @@
 {
 	"id": "buttons-panel",
 	"name": "Buttons Panel",
-	"version": "2.4.4",
-	"minAppVersion": "1.13.3",
+	"version": "2.4.5",
+	"minAppVersion": "1.13.4",
 	"description": "Create customizable button panel for quick access to files, commands, links, and scripts.",
 	"author": "Kevin",
 	"authorUrl": "https://github.com/TracingOrigins",
