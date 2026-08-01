@@ -8,14 +8,12 @@
 // - 插件初始化、资源注册、事件监听等关键逻辑
 // - 详细参数、返回值、用途说明
 //
-// 注释风格与 src/settings/components、modals、sections、types、utils、views/renderers 等目录下已确认文件保持一致。
 import { Plugin, WorkspaceLeaf, TFile, Notice, normalizePath } from 'obsidian';
 import { ButtonsPanelView } from '@/views/ButtonsPanelView';
 import { ButtonsPanelSettingTab } from '@/settings/ButtonsPanelSettingTab';
 import {
     DEFAULT_SETTINGS,
     ButtonsPanelPluginSettings,
-    ButtonConfig,
 } from '@/types';
 import type { ButtonsPanelPlugin as ButtonsPanelPluginType } from '@/types';
 import { t, tWithParams } from '@/utils/i18n';
@@ -51,33 +49,33 @@ export default class ButtonsPanelPlugin extends Plugin {
             this
         );
 
-        // 注册按钮面板视图（右侧边栏）
+        // 注册按钮面板视图
         this.registerView(
             BUTTONS_PANEL_VIEW_TYPE,
             (leaf: WorkspaceLeaf) =>
                 new ButtonsPanelView(leaf, this, this.settings.categories, this.settings.panelConfig)
         );
 
-        // 添加命令：打开按钮面板（右侧边栏）
+        // 添加命令：打开按钮面板
         this.addCommand({
             id: 'open-panel',
-            name: t('open_buttons_panel'),
+            name: t('open_panel'),
             callback: () => {
                 void this.activateView();
             },
         });
 
-        // 添加命令：打开配置面板（主页面新标签页）
+        // 添加命令：打开按钮面板选项
         this.addCommand({
             id: 'open-options',
-            name: t('open_buttons_panel_options'),
+            name: t('open_options'),
             callback: () => {
                 void this.activateSettingsView();
             },
         });
 
-        // 添加左侧ribbon图标，点击可快速打开按钮面板
-        this.addRibbonIcon('mouse', t('open_buttons_panel'), () => {
+        // 添加左侧功能区图标，点击可快速打开按钮面板
+        this.addRibbonIcon('mouse', t('open_panel'), () => {
             void this.activateView();
         });
 
@@ -106,30 +104,21 @@ export default class ButtonsPanelPlugin extends Plugin {
     /**
      * 插件卸载时自动调用。
      */
-    onunload() {
-        // 注销按钮面板视图和设置视图
-        // this.app.workspace.detachLeavesOfType(BUTTONS_PANEL_VIEW_TYPE);
-        // 不需要手动detach leaves，Obsidian会自动管理
-        // 如有手动注册的事件或资源，请在此清理
-    }
+    onunload() {}
 
     /**
      * 加载插件设置（异步），合并默认设置和已保存设置。
      */
     async loadSettings() {
-        const rawData = (await this.loadData()) as unknown;
-        const merged: ButtonsPanelPluginSettings =
+        const rawData = (await this.loadData()) as Record<string, unknown> | null;
+
+        this.settings =
             rawData && typeof rawData === 'object'
                 ? ({
                       ...DEFAULT_SETTINGS,
                       ...(rawData as Partial<ButtonsPanelPluginSettings>),
                   })
                 : DEFAULT_SETTINGS;
-        this.settings = merged;
-        // 只在初始化时重置运行时状态，避免重复调用时丢失状态
-        if (Object.keys(this.categoryOpenState).length === 0) {
-            this.categoryOpenState = {};
-        }
     }
 
     /**
@@ -154,31 +143,12 @@ export default class ButtonsPanelPlugin extends Plugin {
      * 更新所有已打开的按钮面板视图的设置（如面板样式等）。
      */
     updatePanels() {
-        try {
-            this.app.workspace.getLeavesOfType(BUTTONS_PANEL_VIEW_TYPE).forEach((leaf) => {
-                try {
-                    // 安全处理 DeferredView (Obsidian v1.7.2+)
-                    if (leaf.view instanceof ButtonsPanelView) {
-                        const view = leaf.view;
-                        if (
-                            view &&
-                            typeof view.updateCategories === 'function' &&
-                            typeof view.updatePanelConfig === 'function'
-                        ) {
-                            view.updateCategories(this.settings.categories);
-                            view.updatePanelConfig(this.settings.panelConfig);
-                        }
-                    }
-                } catch (error) {
-                    const errorMessage =
-                        error instanceof Error ? error.message : String(error);
-                    console.warn('更新按钮面板视图时出错:', errorMessage);
-                }
-            });
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            console.warn('更新按钮面板时出错:', errorMessage);
-        }
+        this.app.workspace.getLeavesOfType(BUTTONS_PANEL_VIEW_TYPE).forEach((leaf) => {
+            if (leaf.view instanceof ButtonsPanelView) {
+                leaf.view.updateCategories(this.settings.categories);
+                leaf.view.updatePanelConfig(this.settings.panelConfig);
+            }
+        });
     }
 
     /**
@@ -212,8 +182,7 @@ export default class ButtonsPanelPlugin extends Plugin {
     }
 
     /**
-     * 打开 Obsidian 设置面板，并直接定位到本插件的设置页（main）。
-     * 用于替代原有的「按钮面板选项」独立页面。
+     * 打开 Obsidian 设置面板，并直接定位到本插件的设置页
      */
     private async activateSettingsView() {
         const appAny = this.app as unknown as {
@@ -227,46 +196,13 @@ export default class ButtonsPanelPlugin extends Plugin {
         const setting = appAny.setting;
         if (!setting) return;
 
-        // 打开设置面板
+        // 打开设置页面
         setting.open();
 
         // 尝试直接定位到当前插件的设置页
         if (typeof setting.openTabById === 'function') {
             setting.openTabById(this.manifest.id);
         }
-    }
-
-    /**
-     * 更新所有已打开的按钮面板视图的按钮和设置。
-     * 用于按钮数据或面板设置变更后刷新界面。
-     */
-    private updateActiveView() {
-        const leaves = this.app.workspace.getLeavesOfType(BUTTONS_PANEL_VIEW_TYPE);
-        leaves.forEach((leaf) => {
-            try {
-                // 安全处理 DeferredView (Obsidian v1.7.2+)
-                if (leaf.view instanceof ButtonsPanelView) {
-                    const view = leaf.view;
-                    if (view) {
-                        view.updateCategories(this.settings.categories);
-                        view.updatePanelConfig(this.settings.panelConfig);
-                    }
-                }
-            } catch (error) {
-                const errorMessage =
-                    error instanceof Error ? error.message : String(error);
-                console.warn('更新活动视图时出错:', errorMessage);
-            }
-        });
-    }
-
-    /**
-     * 获取所有按钮的扁平化数组。
-     * 用于向后兼容和某些需要所有按钮的场景。
-     * @returns 所有按钮的数组
-     */
-    private getAllButtons(): ButtonConfig[] {
-        return this.settings.categories.flatMap((category) => category.buttons);
     }
 }
 
@@ -289,7 +225,6 @@ async function registerScriptCommands(plugin: ButtonsPanelPluginType) {
             name: tWithParams('script_command', { scriptName: file.name }),
             callback: async () => {
                 try {
-                    // new Notice(tWithParams('script_command_run', { scriptName: file.name }));
                     const dispatcher = plugin.actionDispatcher as {
                         scriptService?: { runScript: (action: unknown) => Promise<void> };
                     } | undefined;
@@ -303,6 +238,5 @@ async function registerScriptCommands(plugin: ButtonsPanelPluginType) {
                 }
             },
         });
-        // new Notice(tWithParams('script_command_registered', { scriptName: file.name }));
     }
 }

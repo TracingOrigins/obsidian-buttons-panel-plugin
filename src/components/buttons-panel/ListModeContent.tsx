@@ -12,7 +12,6 @@ import { AddButton } from '@/components/shared/AddButton';
 import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
 import { createCategoryMenuHandler } from '@/utils/categoryMenuUtils';
 import { t } from '@/utils/i18n';
-import './ListModeContent.css';
 
 interface ListModeContentProps {
     categories: CategoryConfig[];
@@ -63,14 +62,25 @@ export const ListModeContent: React.FC<ListModeContentProps> = ({
         return map;
     });
 
+    // 记录上次 autoCollapseOnMount 的值，用于检测变化
+    const prevAutoCollapseRef = React.useRef(autoCollapseOnMount);
+
     React.useEffect(() => {
+        const autoCollapseChanged = prevAutoCollapseRef.current !== autoCollapseOnMount;
+        prevAutoCollapseRef.current = autoCollapseOnMount;
+
         setOpenByCategoryId((prev) => {
             const next = new Map(prev);
             const defaultOpen = !autoCollapseOnMount;
             let changed = false;
 
             for (const c of categories) {
+                // 新增分类：用默认值
                 if (!next.has(c.id)) {
+                    next.set(c.id, defaultOpen);
+                    changed = true;
+                } else if (autoCollapseChanged) {
+                    // autoCollapseOnMount 切换时：重置所有已有分类
                     next.set(c.id, defaultOpen);
                     changed = true;
                 }

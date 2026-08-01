@@ -1,7 +1,6 @@
 import React from 'react';
 import type { CategoryConfig } from '@/types';
 import { PanelBody } from '@/components/buttons-panel/PanelBody';
-import './ButtonsPanelLayout.css';
 
 interface ButtonsPanelLayoutProps {
     categories: CategoryConfig[];

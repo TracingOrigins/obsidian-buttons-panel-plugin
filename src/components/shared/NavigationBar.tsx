@@ -3,7 +3,6 @@ import { setIcon, Menu } from 'obsidian';
 import { t } from '@/utils/i18n';
 import type { InteractionMode } from '@/types';
 import type { PanelViewType } from '@/utils/panelViewType';
-import './NavigationBar.css';
 
 interface NavIconButtonProps {
     icon: string;

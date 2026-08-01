@@ -49,29 +49,39 @@
 
 ## 📖 Usage
 
-### 🎯 Opening the Button Panel
+### 🎯 Button Panel
 
-- Use the command palette (Ctrl+P) and run "Open buttons panel (right sidebar)".
-- Click the grid icon in the left ribbon to quickly open the panel.
-- The button panel will appear in the right sidebar for fast access.
+Use the command palette (Ctrl+P) and run "Open buttons panel", or click the ribbon icon to quickly open the panel.
 
-### ⚙️ Button Panel Settings
+- **View Mode**: Switch between list, tabbed, or folder view from the top navigation bar dropdown.
+- **Button Style**: Switch between icon next to text or icon above text from the top navigation bar dropdown.
+- **Interaction Mode**: Switch between locked, sort, or edit mode from the top navigation bar dropdown.
 
-- Click the settings button in the navigation bar, or go to **Settings → Community Plugins → Buttons Panel**.
-- Includes two tabs: **Panel Config** and **Path Config**.
+### ⚙️ Button Panel Options
 
-#### Panel Config
+Click the settings button in the navigation bar, or go to **Settings → Community Plugins → Buttons Panel**.
 
-- **View Mode**: List, tabbed, or folder view.
-- **Button Style**: Icon next to text or icon above text.
-- **Animation**: Enable button hover animation.
 - **Show Navigation Bar**: Show or hide the top navigation bar.
+- **Enable Button Animation**: Enable or disable hover animation effects for buttons.
 
-#### Path Config
+#### List View
+
+- **Auto Collapse in List View**: When enabled, all categories start collapsed each time you switch to list view.
+
+#### Tabs View
+
+- **Tabs Auto Wrap**: When enabled, tabs wrap to the next line instead of horizontal scrolling.
+
+#### Folder View
+
+- **Folder Name Editable**: Click the folder name to rename when expanded.
+- **Show Button Count**: Display the number of buttons on the folder tile.
+- **Close on Blank Click**: Click any empty area inside the expanded folder to close it.
+
+#### Path
 
 - **Template Folder Path**: Set the folder for template files (e.g., `templates/`). The create file action uses templates from this path.
 - **Script Folder Path**: Set the folder for script files (e.g., `scripts/`). The run script action loads scripts from this path.
-- **Path Validation**: Paths are validated in real-time. Invalid paths are highlighted with a red border.
 - **One-Click Creation**: Click "Create Paths" to automatically create missing folders.
 
 ### 🔗 Buttons & Actions
@@ -82,7 +92,7 @@
     - **How to configure**: In the button editor, click "Add Action" to add multiple actions and drag to reorder them.
     - **Typical use cases**: One-click to create and open a template note, batch execute multiple commands, automate daily routines, and more.
 
-### 🔗 Supported Action Types
+#### Supported Action Types
 
 - **Open File**: Open any file in your vault.
 - **Command**: Execute any Obsidian command.
@@ -96,9 +106,18 @@
 - If any required field is empty, the corresponding input will be highlighted in red.
 - The red highlight disappears automatically once the field is filled.
 
+### 🧭 Top Navigation Bar
+
+- **Search**: Click the search icon to open a search box. Enter keywords to filter categories and button names in real-time. Clear or close the search box to reset.
+- **Panel View Switch**: Switch between tabbed and list views.
+- **Button Style Switch**: Instantly change button styles.
+- **Interaction Mode**: Dropdown to switch between Locked, Sort, and Edit modes.
+- **Panel Settings**: Quick access to the plugin settings page.
+- **Tab Bar Scrolling** (tabbed view, many tabs): Swipe left/right on mobile; hold **Shift** and scroll on desktop.
+
 ### 🖱️ Interaction Mode
 
-The navigation bar edit button opens a dropdown with three modes:
+Click the edit button in the navigation bar to open a dropdown with three modes:
 
 | Mode | Icon | Behavior |
 |------|------|----------|
@@ -110,22 +129,20 @@ The navigation bar edit button opens a dropdown with three modes:
 - **Drag-and-drop is only available in Sort mode**.
 - **Editing controls are only available in Edit mode**.
 
-### � Folder View
+### 📁 Folder View
 
 Switch to folder view from the navigation bar or settings. Categories appear as folder tiles in a responsive grid.
 
 | Feature | Description |
 |---------|-------------|
 | **Open/Close** | Click a tile to expand; click outside, press ESC, or click blank space (configurable) to close |
-| **Pin** | Click 📌 to lock — folder stays open until unpinned or you switch folders |
+| **📌 Pin** | Click 📌 to lock — folder stays open until unpinned or you switch folders |
 | **Edit name** | Click folder name to rename (configurable in settings) |
 | **Reorder folders** | Long-press drag in sort mode |
 | **Cross-folder drag** | Drag button out → auto-close → hover 0.6s on another tile → auto-expand → continue sorting |
 | **Auto-scroll** | Drag near edges inside expanded folder to scroll |
 
-**Folder settings**: folder name editable, show button count, close on blank click.
-
-### �🔀 Drag-and-Drop Reordering
+### 📦 Drag-and-Drop Reordering
 
 When **Sort mode** is active and **search is not active**, long-press and drag to reorder (mouse long-press works on desktop too):
 
@@ -143,16 +160,7 @@ When **Sort mode** is active and **search is not active**, long-press and drag t
 - **Drag to reorder**: Long-press (~0.5s) on a button or category/tab, then drag. While dragging, panel scrolling is locked so the item follows your finger.
 - If a quick swipe is detected before the long-press completes, the gesture is treated as scrolling and drag does not start.
 
-### 🧭 Top Navigation Bar
-
-- **Search**: Click the search icon to open a search box. Enter keywords to filter categories and button names in real-time. Clear or close the search box to reset.
-- **Panel View Switch**: Switch between tabbed and list views.
-- **Button Style Switch**: Instantly change button styles.
-- **Interaction Mode**: Dropdown to switch between Locked, Sort, and Edit modes.
-- **Panel Settings**: Quick access to the plugin settings page.
-- **Tab Bar Scrolling** (tabbed view, many tabs): Swipe left/right on mobile; hold **Shift** and scroll on desktop.
-
-### 🧩 Script Feature
+### Script Feature
 
 - In the button editor, select "Script" as the action type and choose or enter a script file name (`.js` only).
 - Script files must be placed in the folder specified in Path Config (e.g., `scripts/`).

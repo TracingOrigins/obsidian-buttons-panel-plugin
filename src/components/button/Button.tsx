@@ -4,7 +4,6 @@ import type { ButtonsPanelPlugin } from '@/types/plugin';
 import type { App } from 'obsidian';
 import { safeSetSVG } from '@/utils/dom';
 import { useButtonMenu } from '@/hooks';
-import './Button.css';
 
 interface SimpleButtonProps {
     button: ButtonConfig;

@@ -13,7 +13,6 @@ import { createCategoryMenuHandler } from '@/utils/categoryMenuUtils';
 import { categorySortableId } from '@/utils/categoryDragItems';
 import { useConfigContext } from '@/contexts/ConfigContext';
 import { t } from '@/utils/i18n';
-import './FolderModeContent.css';
 
 interface FolderModeContentProps {
     categories: CategoryConfig[];

@@ -55,9 +55,6 @@ import {
 } from '@/utils/panelDragCollision';
 import { snapCenterToCursor } from '@/utils/dndModifiers';
 import { PANEL_AUTO_SCROLL_OPTIONS } from '@/utils/panelAutoScroll';
-import '@/components/buttons-panel/DragTouchAction.css';
-import '@/components/buttons-panel/ButtonDrag.css';
-import '@/components/buttons-panel/CategoryDrag.css';
 
 const DESKTOP_LONG_PRESS_DELAY_MS = 400;
 const DESKTOP_LONG_PRESS_TOLERANCE_PX = 6;

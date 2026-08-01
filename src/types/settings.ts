@@ -63,7 +63,7 @@ export interface PanelConfig {
     /** 标签页是否自动换行 */
     tabsWrap?: boolean;
     /** 列表视图：是否在每次打开列表视图时默认折叠所有分类 */
-    autoCollapseListView?: boolean;
+    listAutoCollapse?: boolean;
     /** 文件夹视图：已展开文件夹名称是否可编辑 */
     folderDetailNameEditable?: boolean;
     /** 文件夹视图：是否显示按钮个数 */
@@ -109,7 +109,7 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
         interactionMode: 'edit',
         showTopNavBar: true,
         tabsWrap: false,
-        autoCollapseListView: false,
+        listAutoCollapse: false,
         folderDetailNameEditable: true,
         folderShowBtnCount: true,
         folderCloseOnBlankClick: false,

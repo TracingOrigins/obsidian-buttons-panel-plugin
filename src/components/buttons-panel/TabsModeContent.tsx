@@ -12,7 +12,6 @@ import { AddCategoryButton } from '@/components/shared/AddCategoryButton';
 import { IconButton } from '@/components/shared/IconButton';
 import { createCategoryMenuHandler } from '@/utils/categoryMenuUtils';
 import { t } from '@/utils/i18n';
-import './TabsModeContent.css';
 
 function resolveActiveTabId(
     preferredId: string | null | undefined,

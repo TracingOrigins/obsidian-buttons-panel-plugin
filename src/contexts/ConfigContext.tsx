@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import type { PanelConfig } from '@/types';
 
 export interface ConfigContextValue {
@@ -17,8 +17,20 @@ export const ConfigProvider: React.FC<React.PropsWithChildren<ConfigProviderProp
     children,
 }) => {
     const [panelConfig, updatePanelConfig] = useState<PanelConfig>(initialConfig);
+    // 标记是否为内部 setPanelConfig 调用，避免被外部 prop 同步覆盖
+    const internalUpdateRef = useRef(false);
+
+    // 外部 prop 变化时同步到 state
+    useEffect(() => {
+        if (internalUpdateRef.current) {
+            internalUpdateRef.current = false;
+            return;
+        }
+        updatePanelConfig(initialConfig);
+    }, [initialConfig]);
 
     const setPanelConfig = useCallback((config: PanelConfig) => {
+        internalUpdateRef.current = true;
         updatePanelConfig(config);
     }, []);
 

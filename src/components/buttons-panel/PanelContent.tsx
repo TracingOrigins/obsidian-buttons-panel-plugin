@@ -5,7 +5,6 @@ import { ButtonDragProvider } from '@/contexts/ButtonDragContext';
 import { TabsModeContent } from '@/components/buttons-panel/TabsModeContent';
 import { ListModeContent } from '@/components/buttons-panel/ListModeContent';
 import { FolderModeContent } from '@/components/buttons-panel/FolderModeContent';
-import './PanelContent.css';
 
 /** 列表视图时在 Obsidian view-content 上标记，供滚动条样式等使用（避免 CSS :has） */
 const VIEW_CONTENT_LIST_CLASS = 'buttons-panel-view-list';
@@ -34,7 +33,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
     const interactionMode = panelConfig.interactionMode ?? 'sort';
     const enableEditMode = interactionMode === 'edit';
     const tabsWrap = panelConfig.tabsWrap ?? false;
-    const autoCollapseListView = panelConfig.autoCollapseListView ?? false;
+    const listAutoCollapse = panelConfig.listAutoCollapse ?? false;
 
     const normalizedQuery = searchQuery?.trim().toLowerCase() ?? '';
 
@@ -108,7 +107,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({
                 displayStyle={displayStyle}
                 enableAnimation={enableAnimation}
                 enableEditMode={enableEditMode}
-                autoCollapseOnMount={autoCollapseListView}
+                autoCollapseOnMount={listAutoCollapse}
                 isSearchActive={normalizedQuery.length > 0}
             />
         );
