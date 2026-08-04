@@ -28,3 +28,6 @@ data.json
 
 # references
 references
+
+# CodeBuddy AI tooling config (skills, memory, automations)
+.codebuddy

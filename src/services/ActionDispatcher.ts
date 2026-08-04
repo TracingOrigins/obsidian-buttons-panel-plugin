@@ -18,7 +18,8 @@ export class ActionDispatcher {
     private createFileService: CreateFileService;
     private commandService: CommandService;
     private urlService: UrlService;
-    private scriptService: ScriptService;
+    /** 脚本动作服务，供表单层（如 ScriptAction）读取脚本元数据使用。 */
+    scriptService: ScriptService;
 
     /**
      * 构造函数，初始化各业务 Service 实例。

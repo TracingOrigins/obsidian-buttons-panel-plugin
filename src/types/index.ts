@@ -3,3 +3,4 @@
 export * from '@/types/action';
 export * from '@/types/settings';
 export * from '@/types/plugin';
+export * from '@/types/script';

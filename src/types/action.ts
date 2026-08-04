@@ -50,8 +50,6 @@ export interface CreateFileActionParams {
 export interface ScriptActionParams {
     /** 脚本名 */
     scriptName: string;
-    /** 脚本参数（可选） */
-	args?: unknown[];
 }
 
 /**

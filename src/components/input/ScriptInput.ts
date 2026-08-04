@@ -1,6 +1,9 @@
 import type { App, TFile } from 'obsidian';
 import { Setting, TextComponent } from 'obsidian';
-import { FileInputSuggest } from '@/components/suggest/FileInputSuggest';
+import {
+    FileInputSuggest,
+    type SuggestionMeta,
+} from '@/components/suggest/FileInputSuggest';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
 
 /**
@@ -21,6 +24,8 @@ export interface ScriptInputOptions {
     onScriptChange?: (scriptName: string) => void;
     /** 回车键回调 */
     onEnterKey?: () => void;
+    /** 下拉项元数据解析（用于展示脚本的本地化名称与描述） */
+    getMeta?: (file: TFile) => SuggestionMeta | null | Promise<SuggestionMeta | null>;
 }
 
 /**
@@ -52,11 +57,12 @@ export class ScriptInput {
             text.setPlaceholder(options.placeholder);
         });
 
-        // 附加脚本文件下拉建议（仅 js，列表中只显示文件名）
+        // 附加脚本文件下拉建议（仅 js，列表中展示本地化名称与描述）
         this.suggest = new FileInputSuggest(context.app, this.input.inputEl, {
             rootFolder: options.rootFolder || '',
             fileExts: ['js'],
             showFileNameOnly: true,
+            getMeta: options.getMeta,
         });
         this.suggest.onSelect((file: TFile, _evt) => {
             const fileName = file.name;

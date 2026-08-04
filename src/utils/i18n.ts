@@ -19,7 +19,7 @@ const locales: Record<string, Record<string, string>> = {
  * 优先使用Obsidian官方的getLanguage方法，其次使用浏览器语言。
  * @returns 当前语言代码（zh或en）
  */
-function getCurrentLang(): string {
+export function getCurrentLang(): string {
     try {
         const obsidianLang = getLanguage();
         if (obsidianLang && obsidianLang.startsWith('zh')) {

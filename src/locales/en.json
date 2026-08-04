@@ -108,7 +108,7 @@
     "script_folder": "Script folder",
     "script_folder_desc": "Folder path for storing script files",
     "script_folder_placeholder": "Enter script folder path",
-    "script_invalid_export": "Script was not exported as a function (module.exports). Top-level code has been run. Please check your script:\n{scriptFileName}",
+    "script_invalid_export": "Invalid script export. Use module.exports = { entry: main, ... } and make sure entry is a function. Please check your script:\n{scriptFileName}",
     "script_run_failed": "Script run failed",
     "scroll_load_more": "↓ Scroll to load more",
     "search": "Search",

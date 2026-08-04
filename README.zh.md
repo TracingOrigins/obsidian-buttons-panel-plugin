@@ -159,42 +159,41 @@
 - **拖拽排序**：在按钮或分类/标签上长按约 0.5 秒后再拖动；拖拽过程中会锁定面板滚动。
 - 若在长按完成前发生明显滑动，将视为滚动手势，不会进入拖拽。
 
-###  脚本功能说明
+### 脚本功能说明
 
-- 在按钮编辑界面，将动作类型选择为"脚本"，并选择或输入脚本文件名（仅支持 `.js` 文件）。
-- 脚本文件需放在路径配置中指定的脚本文件夹（如 `scripts/`）。
-- 脚本需导出一个异步函数，函数签名如下：
+- **选择脚本**：在按钮编辑界面将动作类型选择为"脚本"，并选择或输入脚本文件名（仅支持 `.js` 文件）。
+- **脚本位置**：脚本文件需放在路径配置指定的脚本文件夹（如 `scripts/`）。
+- **唯一格式**：脚本使用 CommonJS 的 `module.exports` 导出，入口函数**无参数**，通过 `this.$context` 获取上下文：
 
     ```js
     // scripts/hello.js
-    module.exports = async function (app, plugin, notice, obsidian) {
-        const { FuzzySuggestModal } = obsidian;
-        notice('Hello from script!');
+    module.exports = {
+        entry: main,
+        name: {
+            zh: '打招呼',
+            en: 'Say hello',
+            ru: 'Поздороваться',
+        },
+        description: {
+            zh: '向通知栏发送一条问候。',
+            en: 'Send a greeting to the notice bar.',
+            ru: 'Отправить приветствие в уведомление.',
+        },
+        tags: ['demo'],
     };
-    ```
 
-    或先定义函数再导出：
-
-    ```js
-    // scripts/hello.js
-    module.exports = hello;
-
-    async function hello(app, plugin, notice, obsidian) {
-        const { Notice } = obsidian;
+    async function main() {
+        const { app, obsidian, notice } = this.$context;
         notice('Hello from script!');
     }
     ```
 
-- 脚本运行时可使用以下注入变量：
-    - `app` — 运行中的 `obsidian.App` 实例，用于操作 vault、workspace 等；注意它不是 `obsidian.App` 类本身，不能用于 `new`
-    - `plugin` — 当前插件实例，用于读取插件设置等
-    - `notice` — 快捷通知函数，等价于 `new obsidian.Notice(msg)`
-    - `obsidian` — Obsidian 模块命名空间，用于解构出 `App`（类）、`FuzzySuggestModal`、`Notice` 等
-- 脚本异常会自动捕获并弹出通知。
-- **安全提示**：请勿运行不明来源的脚本，脚本执行有一定安全风险。
-
-
-> 示例：你可以为一个按钮配置"执行命令A→执行命令B→打开链接"三步操作，点击按钮后自动依次执行并跳转网页。
+- **运行上下文**：入口函数内通过 `this.$context` 获取，包含 `app`（运行中的 `obsidian.App` 实例，不是类本身，不能 `new`）、`plugin`、`obsidian`（模块命名空间，可解构 `Notice`/`TFile`/`Modal` 等）、`requestUrl`（等价于 `obsidian.requestUrl`，可规避 CORS）、`notice`（等价于 `new obsidian.Notice(msg)`）。
+- **入口函数必须用普通函数**：箭头函数没有自己的 `this`，无法获取 `$context`。
+- **辅助函数**：辅助函数不会自动拿到上下文，请由入口函数显式传参，例如 `await renameFile(app, obsidian, file)`。
+- **本地化**：`name` / `description` 支持本地化对象（键 `zh`/`en`/`ru`，缺语言时回退 `en` → `zh`）或普通字符串，在按钮设置里选择脚本时，下拉框会**按 Obsidian 当前语言**显示。
+- **字段顺序**：建议 `entry` → `name` → `description` → `tags`；其中 `entry` 必填，指向要执行的函数；`tags` 为可选的字符串数组，用于分类；辅助函数可直接写在同文件，不影响导出。
+- **异常与安全**：脚本异常会自动捕获并弹通知；**请勿运行不明来源的脚本**。
 
 ## 🛠️ 开发指南
 

@@ -1,8 +1,10 @@
-import type { App } from 'obsidian';
+import type { App, TFile } from 'obsidian';
 import { IButtonAction } from '@/actions/IButtonAction';
 import { t } from '@/utils/i18n';
 import { ScriptInput } from '@/components/input';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
+import type { ActionDispatcher } from '@/services/ActionDispatcher';
+import type { SuggestionMeta } from '@/components/suggest/FileInputSuggest';
 
 type ActionRenderContext = { app: App; plugin: ButtonsPanelPlugin };
 
@@ -12,21 +14,24 @@ type ActionRenderContext = { app: App; plugin: ButtonsPanelPlugin };
 export class ScriptAction implements IButtonAction {
     type = 'script';
     scriptName: string;
-    args?: unknown[];
     private scriptInput: ScriptInput | null = null;
 
     /**
      * 构造函数，初始化参数。
      */
-    constructor(params: { scriptName: string; args?: unknown[] }) {
+    constructor(params: { scriptName: string }) {
         this.scriptName = params.scriptName;
-        this.args = params.args;
     }
 
     /**
      * 渲染表单控件，绑定数据双向同步。
      */
     render(container: HTMLElement, context: ActionRenderContext) {
+        // 构造脚本元数据解析回调，用于下拉项展示当前语言的名称与描述
+        const getMeta = context.plugin
+            ? this.createScriptMetaGetter(context.plugin)
+            : undefined;
+
         // 使用可复用的脚本输入组件
         this.scriptInput = new ScriptInput(
             container,
@@ -36,6 +41,7 @@ export class ScriptAction implements IButtonAction {
                 placeholder: t('script_file_placeholder'),
                 searchTooltip: t('search_files_tooltip'),
                 rootFolder: context.plugin?.settings?.pathConfig?.scriptFolderPath || '',
+                getMeta,
             },
             { app: context.app, plugin: context.plugin },
             (value: string) => {
@@ -49,6 +55,26 @@ export class ScriptAction implements IButtonAction {
 
         // 设置初始值
         this.scriptInput.setValue(this.scriptName || '');
+    }
+
+    /**
+     * 构造脚本元数据解析回调，从 ActionDispatcher 的 ScriptService 读取脚本名称与描述，
+     * 并解析为当前语言下的展示文本。
+     */
+    private createScriptMetaGetter(
+        plugin: ButtonsPanelPlugin
+    ): (file: TFile) => Promise<SuggestionMeta | null> {
+        const dispatcher = plugin.actionDispatcher as ActionDispatcher | undefined;
+        const scriptService = dispatcher?.scriptService;
+        if (!scriptService) return async () => null;
+        return async (file: TFile): Promise<SuggestionMeta | null> => {
+            const meta = await scriptService.getScriptMeta(file);
+            if (!meta) return null;
+            return {
+                name: scriptService.resolveLocalizedText(meta.name, file.basename),
+                description: scriptService.resolveLocalizedText(meta.description, ''),
+            };
+        };
     }
 
     /**
@@ -74,7 +100,6 @@ export class ScriptAction implements IButtonAction {
             type: this.type,
             parameters: {
                 scriptName: this.scriptName,
-                args: this.args,
             },
         };
     }

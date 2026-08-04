@@ -162,39 +162,39 @@ When **Sort mode** is active and **search is not active**, long-press and drag t
 
 ### Script Feature
 
-- In the button editor, select "Script" as the action type and choose or enter a script file name (`.js` only).
-- Script files must be placed in the folder specified in Path Config (e.g., `scripts/`).
-- Scripts must export an async function via `module.exports`:
+- **Select a script**: In the button editor, set the action type to "Script" and choose or enter a script file name (`.js` only).
+- **Script location**: Scripts must be placed in the folder specified in Path Config (e.g. `scripts/`).
+- **Single format**: Scripts export via CommonJS `module.exports`. The entry function takes **no parameters** and reads its context from `this.$context`:
 
         ```js
         // scripts/hello.js
-        module.exports = async function (app, plugin, notice, obsidian) {
-        const { FuzzySuggestModal } = obsidian;
-        notice('Hello from script!');
-    };
+        module.exports = {
+            entry: main,
+            name: {
+                zh: '打招呼',
+                en: 'Say hello',
+                ru: 'Поздороваться',
+            },
+            description: {
+                zh: '向通知栏发送一条问候。',
+                en: 'Send a greeting to the notice bar.',
+                ru: 'Отправить приветствие в уведомление.',
+            },
+            tags: ['demo'],
+        };
+
+        async function main() {
+            const { app, obsidian, notice } = this.$context;
+            notice('Hello from script!');
+        }
         ```
 
-Or define the function first:
-
-    ```js
-    // scripts/hello.js
-    module.exports = hello;
-
-    async function hello(app, plugin, notice, obsidian) {
-        const { Notice } = obsidian;
-        notice('Hello from script!');
-    }
-    ```
-
-- The following variables are injected into the script function:
-    - `app` — The running `obsidian.App` instance for interacting with the vault, workspace, etc. Note: this is an instance, not `obsidian.App` (the class); do not use with `new`.
-    - `plugin` — The current plugin instance, for accessing plugin settings.
-    - `notice` — A convenience notification function, equivalent to `new obsidian.Notice(msg)`.
-    - `obsidian` — The Obsidian module namespace, for destructuring classes like `App`, `FuzzySuggestModal`, `Notice`, etc.
-- Script errors are automatically caught and shown as notifications.
-- **Security Note**: Do not run scripts from untrusted sources.
-
-> Example: Configure a button with "Run Command A → Run Command B → Open Link" actions, and they will execute in order with one click.
+- **Runtime context**: Available inside the entry function via `this.$context`: `app` (the running `obsidian.App` instance — not the class, so don't use `new`), `plugin`, `obsidian` (module namespace for destructuring `Notice`/`TFile`/`Modal`, etc.), `requestUrl` (equivalent to `obsidian.requestUrl`, avoids CORS), and `notice` (equivalent to `new obsidian.Notice(msg)`).
+- **Entry must be a regular function**: Arrow functions have no own `this`, so `$context` would be unavailable.
+- **Helper functions**: Helpers do not receive the context automatically — pass what they need explicitly, e.g. `await renameFile(app, obsidian, file)`.
+- **Localization**: `name` / `description` accept a localized object keyed by `zh`/`en`/`ru` (missing languages fall back to `en` → `zh`) or a plain string; when picking a script in the button settings, the dropdown shows them **in the current Obsidian language**.
+- **Field order**: `entry` → `name` → `description` → `tags` is recommended; `entry` is required and points to the function to run; `tags` is an optional string array for categorization; helper functions can live in the same file without affecting the export.
+- **Errors & security**: Script errors are automatically caught and shown as notifications; **do not run scripts from untrusted sources**.
 
 ## 🛠️ Development
 

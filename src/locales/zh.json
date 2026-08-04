@@ -108,7 +108,7 @@
     "script_folder": "脚本文件夹",
     "script_folder_desc": "用于存储脚本文件的文件夹路径",
     "script_folder_placeholder": "输入脚本文件夹路径",
-    "script_invalid_export": "脚本未导出为函数（module.exports），已运行顶层代码。请检查你的脚本：\n{scriptFileName}",
+    "script_invalid_export": "脚本导出格式无效，请使用 module.exports = { entry: main, ... } 并确保 entry 为函数。请检查你的脚本：\n{scriptFileName}",
     "script_run_failed": "脚本运行失败",
     "scroll_load_more": "↓ 滚动加载更多",
     "search": "搜索",

@@ -108,7 +108,7 @@
     "script_folder": "Папка скриптов",
     "script_folder_desc": "Путь к папке для хранения файлов скриптов",
     "script_folder_placeholder": "Введите путь к папке скриптов",
-    "script_invalid_export": "Скрипт не был экспортирован как функция (module.exports). Код верхнего уровня был выполнен. Проверьте скрипт:\n{scriptFileName}",
+    "script_invalid_export": "Неверный формат экспорта скрипта. Используйте module.exports = { entry: main, ... } и убедитесь, что entry — функция. Проверьте скрипт:\n{scriptFileName}",
     "script_run_failed": "Ошибка запуска скрипта",
     "scroll_load_more": "↓ Прокрутите для загрузки",
     "search": "Поиск",
