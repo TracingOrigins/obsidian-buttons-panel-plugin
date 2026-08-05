@@ -2,6 +2,7 @@ import React from 'react';
 import type { ButtonConfig, CategoryConfig } from '@/types';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
 import type { App } from 'obsidian';
+import { setTooltip } from 'obsidian';
 import { safeSetSVG } from '@/utils/dom';
 import { useButtonMenu } from '@/hooks';
 
@@ -51,6 +52,20 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
 
     // 使用 hook 获取右键菜单处理函数
     const handleContextMenu = useButtonMenu(button, category);
+
+    // 悬浮显示完整按钮名称（Obsidian 原生 tooltip 样式）
+    React.useEffect(() => {
+        const el = buttonRef.current;
+        if (el && button.name && plugin.settings.panelConfig.showButtonTooltip) {
+            setTooltip(el, button.name);
+        }
+        return () => {
+            if (el) {
+                // 关闭开关或卸载时移除已绑定的 tooltip
+                setTooltip(el, '');
+            }
+        };
+    }, [button.name, plugin.settings.panelConfig.showButtonTooltip]);
 
     // 绑定右键菜单
     React.useEffect(() => {

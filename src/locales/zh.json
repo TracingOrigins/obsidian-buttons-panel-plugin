@@ -60,6 +60,8 @@
     "edit_button_tooltip": "编辑",
     "enable_button_animation": "启用按钮动画",
     "enable_button_animation_desc": "为按钮启用鼠标悬停动画效果",
+    "show_button_tooltip": "悬浮显示按钮名称",
+    "show_button_tooltip_desc": "将鼠标悬停在按钮上时，以提示框显示完整按钮名称",
     "interaction_mode": "交互模式",
     "interaction_mode_desc": "锁定布局：禁用所有交互，仅查看；排序模式：可长按拖拽排序；编辑模式：右键/长按弹出菜单",
     "interaction_locked": "锁定布局",

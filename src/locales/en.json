@@ -60,6 +60,9 @@
     "edit_button_tooltip": "Edit",
     "enable_button_animation": "Enable button animation",
     "enable_button_animation_desc": "Enable hover animation effects for buttons",
+    "show_button_tooltip": "Show button name on hover",
+    "show_button_tooltip_desc": "Display the full button name as a tooltip when hovering over a button",
+
     "interaction_mode": "Interaction mode",
     "interaction_mode_desc": "Locked: view only, all interactions disabled; Sort: long-press drag to reorder; Edit: context menu for editing",
     "interaction_locked": "Locked layout",

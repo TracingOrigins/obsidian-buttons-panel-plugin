@@ -26,6 +26,11 @@ export class ButtonsPanelSettingTab extends PluginSettingTab {
                 render: (setting) => this.renderPanelToggle(setting, 'enableAnimation'),
             },
             {
+                name: t('show_button_tooltip'),
+                desc: t('show_button_tooltip_desc'),
+                render: (setting) => this.renderPanelToggle(setting, 'showButtonTooltip'),
+            },
+            {
                 type: 'group',
                 heading: t('list_options'),
                 items: [

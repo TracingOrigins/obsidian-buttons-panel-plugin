@@ -56,6 +56,8 @@ export interface PanelConfig {
     panelViewType: 'list' | 'tabs' | 'folder';
     /** 是否启用按钮动画 */
     enableAnimation?: boolean;
+    /** 悬浮按钮时是否显示完整名称提示 */
+    showButtonTooltip?: boolean;
     /** 交互模式：locked(锁定布局) / sort(排序) / edit(编辑) */
     interactionMode?: InteractionMode;
     /** 是否显示顶部导航栏 */
@@ -106,6 +108,7 @@ export const DEFAULT_SETTINGS: ButtonsPanelPluginSettings = {
         displayStyle: 'icon_top',
         panelViewType: 'list',
         enableAnimation: false,
+        showButtonTooltip: true,
         interactionMode: 'edit',
         showTopNavBar: true,
         tabsWrap: false,
