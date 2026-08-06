@@ -46,6 +46,10 @@
 3. 输入 `TracingOrigins/obsidian-buttons-panel-plugin`
 4. 启用插件
 
+## 📂 演示仓库
+
+想快速了解 Buttons Panel 的实际使用效果？查看 [演示仓库](https://github.com/TracingOrigins/obsidian-showcase-vault)，其中包含了插件完整配置示例和常见使用场景演示，可直接下载到本地用 Obsidian 打开体验。
+
 ## 📖 使用方法
 
 ### 🎯 按钮面板
@@ -98,6 +102,21 @@
 - **打开链接**: 打开外部网页链接
 - **创建文件**: 在指定位置创建新文件，文件名支持日期变量（如 `{{DATE:YYYY-MM-DD}}`），内容可使用固定模板
 - **运行脚本**: 运行库中自定义的 JS 脚本，脚本需放在路径配置指定的脚本文件夹下。
+
+### 🎨 自定义图标建议
+
+插件支持粘贴自定义 SVG 代码作为按钮图标，以下推荐几个在线图标库：
+
+- [iconfont - 阿里巴巴矢量图标库](https://www.iconfont.cn/)：国内最丰富的图标资源库，支持中文搜索
+- [Lucide](https://lucide.dev/)：插件内置图标库，也可直接复制 SVG 使用
+- [Feather Icons](https://feathericons.com/)：简洁精美的开源线性图标
+- [Tabler Icons](https://tabler.io/icons)：高质量线性图标，风格与 Lucide 兼容
+
+**使用技巧：**
+
+1. **优先选择线性图标**：线性图标（outline/stroke 风格）与 Obsidian 界面更协调，适应性更好。
+2. **将 `fill` 改为 `currentColor`**：复制 SVG 代码后，将 `fill` 属性值改为 `currentColor`（如 `fill="currentColor"`），这样图标颜色会自动跟随 Obsidian 主题色，在明暗主题间无缝切换。
+3. **建议使用 24px 网格图标**：选择 `viewBox="0 0 24 24"` 的图标，这是最通用的图标尺寸标准，与插件内置图标风格一致。
 
 ### ✅ 表单校验
 

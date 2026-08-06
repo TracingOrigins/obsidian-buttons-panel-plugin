@@ -47,6 +47,10 @@
 3. Enter `TracingOrigins/obsidian-buttons-panel-plugin`.
 4. Enable the plugin.
 
+## 📂 Showcase Vault
+
+Want to see Buttons Panel in action? Check out the [showcase vault](https://github.com/TracingOrigins/obsidian-showcase-vault), which includes complete configuration examples and common usage scenarios. Download it and open with Obsidian to try it out.
+
 ## 📖 Usage
 
 ### 🎯 Button Panel
@@ -99,6 +103,21 @@ Click the settings button in the navigation bar, or go to **Settings → Communi
 - **Open Link**: Open an external web link.
 - **Create File**: Create a new file at a specified location. The file name supports date variables (e.g., `{{DATE:YYYY-MM-DD}}`), and content can use a fixed template.
 - **Run Script**: Run a custom JS script from your vault. Scripts must be placed in the folder specified in Path Config.
+
+### 🎨 Custom Icon Tips
+
+You can paste custom SVG code as button icons. Here are some recommended online icon libraries:
+
+- [Lucide](https://lucide.dev/): The plugin's built-in icon library — you can also copy SVGs directly.
+- [Feather Icons](https://feathericons.com/): Clean, beautiful open-source outline icons.
+- [Tabler Icons](https://tabler.io/icons): High-quality outline icons compatible with Lucide's style.
+- [iconfont](https://www.iconfont.cn/): Alibaba's vast icon library with Chinese search support.
+
+**Tips:**
+
+1. **Prefer outline/stroke icons**: They blend better with Obsidian's UI and adapt more naturally.
+2. **Change `fill` to `currentColor`**: After copying the SVG, change `fill` to `currentColor` (e.g. `fill="currentColor"`) so the icon automatically follows Obsidian's theme color and works seamlessly across light and dark themes.
+3. **Use 24px grid icons**: Choose icons with `viewBox="0 0 24 24"` — the most universal size standard, matching the plugin's built-in icon style.
 
 ### ✅ Form Validation
 
