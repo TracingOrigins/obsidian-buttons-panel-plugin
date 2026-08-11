@@ -51,6 +51,15 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
 
     const gridClassName = contentClass;
 
+    // 必须在任何提前 return 之前无条件调用，保证 sortableEnabled 切换分支时 hooks 数量一致。
+    const setRefs = React.useCallback(
+        (node: HTMLDivElement | null) => {
+            setNodeRef(node);
+            (gridRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        },
+        [setNodeRef]
+    );
+
     const renderButtons = () =>
         orderedButtons.map((button, index) => {
             if (sortableEnabled) {
@@ -102,14 +111,6 @@ export const CategoryButtonGrid: React.FC<CategoryButtonGridProps> = ({
             </div>
         );
     }
-
-    const setRefs = React.useCallback(
-        (node: HTMLDivElement | null) => {
-            setNodeRef(node);
-            (gridRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-        },
-        [setNodeRef]
-    );
 
     return (
         <div ref={setRefs} className={gridClassName}>
