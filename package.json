@@ -1,6 +1,6 @@
 {
     "name": "buttons-panel",
-    "version": "2.4.6",
+    "version": "2.4.7",
     "description": "A modern button panel plugin for quick access to files, commands, links, and scripts.",
     "author": "Kevin",
     "license": "MIT",
@@ -13,7 +13,7 @@
     "scripts": {
         "dev": "node scripts/deploy.mjs dev && node esbuild.config.mjs",
         "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && node scripts/deploy.mjs build",
-        "version": "node version-bump.mjs && git add package.json manifest.json versions.json",
+        "version": "node version-bump.mjs && git add package.json package-lock.json manifest.json versions.json",
         "lint": "eslint ."
     },
     "keywords": [
