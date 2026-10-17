@@ -25,6 +25,7 @@ import {
 } from '@/utils/touchScrollActivation';
 import { isCoarsePointerDevice } from '@/utils/isCoarsePointerDevice';
 import { setPanelTouchDragLock } from '@/utils/touchDragLock';
+import { suppressObsidianTooltips } from '@/utils/tooltipSuppression';
 import { setIcon, type App } from 'obsidian';
 import type { ButtonConfig, CategoryConfig } from '@/types';
 import type { ButtonsPanelPlugin } from '@/types/plugin';
@@ -224,6 +225,12 @@ export const ButtonDragProvider: React.FC<ButtonDragProviderProps> = ({
     }, [isButtonDragActive, isCategoryDragActive]);
 
     useEffect(() => () => setPanelTouchDragLock(false), []);
+
+    // 拖拽期间抑制 tooltip：清掉拖拽开始前已弹出的，并拦截延迟触发的
+    useEffect(() => {
+        if (!isButtonDragActive && !isCategoryDragActive) return;
+        return suppressObsidianTooltips();
+    }, [isButtonDragActive, isCategoryDragActive]);
 
     const registerCategoryHover = useCallback(
         (handler: ((categoryId: string) => void) | null) => {

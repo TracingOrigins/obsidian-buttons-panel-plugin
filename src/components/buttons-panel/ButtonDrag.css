@@ -58,6 +58,8 @@ body .buttons-panel .buttons-panel-container button.buttons-panel-simple-button.
     opacity: 0.92;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     cursor: grabbing;
+    /* 预览不接收指针事件：否则跟随光标的预览会被 hover，弹出名称 tooltip */
+    pointer-events: none;
 }
 
 body button.buttons-panel-simple-button.button-drag-overlay .button-icon,

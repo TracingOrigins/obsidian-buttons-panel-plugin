@@ -21,7 +21,7 @@ body .view-content.buttons-panel.buttons-panel-view-list::-webkit-scrollbar {
     color: var(--text-muted);
     margin-bottom: 12px;
     padding-bottom: 4px;
-    border-bottom: 1px solid var(--background-modifier-border);
+    border-bottom: 1px solid color-mix(in srgb, var(--interactive-accent) 15%, transparent);
 }
 
 .buttons-panel .buttons-panel-category.list-category-closed .buttons-panel-category-title {

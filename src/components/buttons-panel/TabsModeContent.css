@@ -2,7 +2,7 @@
     display: flex;
     align-items: flex-end;
     gap: 0;
-    border-bottom: 1px solid var(--background-modifier-border);
+    border-bottom: 1px solid color-mix(in srgb, var(--interactive-accent) 50%, transparent);
     margin-bottom: 8px;
     padding: 0;
     background: none;

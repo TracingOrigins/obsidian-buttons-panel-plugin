@@ -5,6 +5,10 @@ import type { App } from 'obsidian';
 import { setTooltip } from 'obsidian';
 import { safeSetSVG } from '@/utils/dom';
 import { useButtonMenu } from '@/hooks';
+import {
+    useButtonDragOptional,
+    useCategoryDragOptional,
+} from '@/contexts/ButtonDragContext';
 
 interface SimpleButtonProps {
     button: ButtonConfig;
@@ -53,19 +57,30 @@ export const SimpleButton: React.FC<SimpleButtonProps> = ({
     // 使用 hook 获取右键菜单处理函数
     const handleContextMenu = useButtonMenu(button, category);
 
+    // 拖拽中（按钮拖拽或分类拖拽）不显示名称 tooltip：
+    // 拖拽预览跟随光标、且光标会掠过其他按钮，都会误触发悬浮提示
+    const buttonDrag = useButtonDragOptional();
+    const categoryDrag = useCategoryDragOptional();
+    const isDragActive = !!(buttonDrag?.isDragging || categoryDrag?.isDragging);
+
     // 悬浮显示完整按钮名称（Obsidian 原生 tooltip 样式）
     React.useEffect(() => {
         const el = buttonRef.current;
-        if (el && button.name && plugin.settings.panelConfig.showButtonTooltip) {
+        if (!el) return;
+        const shouldShow =
+            !!button.name &&
+            !!plugin.settings.panelConfig.showButtonTooltip &&
+            !isDragActive;
+        if (shouldShow) {
             setTooltip(el, button.name);
+        } else {
+            // 拖拽中/关闭开关时移除 tooltip，避免悬浮继续弹出
+            setTooltip(el, '');
         }
         return () => {
-            if (el) {
-                // 关闭开关或卸载时移除已绑定的 tooltip
-                setTooltip(el, '');
-            }
+            setTooltip(el, '');
         };
-    }, [button.name, plugin.settings.panelConfig.showButtonTooltip]);
+    }, [button.name, plugin.settings.panelConfig.showButtonTooltip, isDragActive]);
 
     // 绑定右键菜单
     React.useEffect(() => {
